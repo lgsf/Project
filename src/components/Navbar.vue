@@ -9,8 +9,8 @@
           <a class="nav-title">Project Zero</a>
         </router-link>
          <ul id="nav-list" class="right">
-          <li><router-link :to="{ name: 'Home' }"> Home</router-link></li>
-          <li><router-link :to="{ name: 'About' }" >About</router-link></li>
+          <li><router-link :to="{ name: 'Home' }">Home</router-link></li>
+          <li><router-link :to="{ name: 'About' }">About</router-link></li>
         </ul>
 
       </div>
@@ -26,23 +26,23 @@
         </div>
         </li>
         <li>        
-        <router-link to="Home">
-          <i class="material-icons">home</i><span>Home </span>
+        <router-link :to="{ name: 'Home' }">
+          <i class="material-icons">home</i><span>Home</span>
         </router-link>
       </li>
       <li>        
         <router-link to="/about">
-          <i class="material-icons">info</i><span >About </span>
+          <i class="material-icons">info</i><span>About</span>
         </router-link>
       </li>
       <li>        
         <router-link to="">
-          <i class="material-icons">account_box</i><span >Login </span>
+          <i class="material-icons">account_box</i><span>Login</span>
         </router-link>
       </li>
       <li>        
         <router-link to="">
-          <i class="material-icons">dashboard</i><span >Components </span>
+          <i class="material-icons">dashboard</i><span>Components</span>
         </router-link>
       </li>
 
