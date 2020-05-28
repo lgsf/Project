@@ -11,7 +11,7 @@
            <br> <br>
            <h4 class="center-align indigo-text text-darken-2">Nosso time</h4><br>
            <div class="row">
-            <div class="col s6">
+            <div class="col s12 m6 l4">
               <div class="card">
                 <div class="card-image">
                   <img src="images/img4.jpg" alt="">
@@ -31,10 +31,9 @@
                 </div>
               </div>
             </div>
-            <div class="col s6">
+            <div class="col s12 m6 l4">
               <div class="card">
                 <div class="card-image">
-                  <img src="images/img4.jpg" alt="">
                   <button type="button" class="halfway-fab btn-floating indigo darken-2 ">
                     <i class="material-icons">account_circle</i>
                   </button>
@@ -49,6 +48,24 @@
                 <div class="card-action indigo darken-2">
                   <a class="white-text" href="mailto:marco.mtfc@gmail.com">Email</a>
                   <a class="white-text" href="https://www.linkedin.com/in/marco-t%C3%BAlio-ferreira-ab162a31/">Linkedin</a>
+                </div>
+              </div>
+            </div>
+                        <div class="col s12 m6 l4">
+              <div class="card">
+                <div class="card-image">
+                  <button type="button" class="halfway-fab btn-floating indigo darken-2 ">
+                    <i class="material-icons">account_circle</i>
+                  </button>
+                </div>
+                <div class="card-content">
+                  <span class="card-title">Luiz Gustavo</span>
+                  <p>Luiz Gustavo é aluno do curso de Engenharia de Controle e Automação da UFMG. Tem experiência em desenvolvimento freelance de websites. É fã do design visual do Google.
+                    </p>
+                </div>
+                <div class="card-action indigo darken-2">
+                  <a class="white-text" href="mailto:lgsf@outlook.com">Email</a>
+                  <a class="white-text" href="https://www.linkedin.com/in/lgsf/">Linkedin</a>
                 </div>
               </div>
             </div>
