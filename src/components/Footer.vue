@@ -11,8 +11,8 @@
               <div class="col l4 offset-l2 s12">
                 <h5 class="white-text">Links</h5>
                 <ul>
-                  <li><a class="white-text" href="#!">Home</a></li>
-                  <li><a class="white-text" href="#!">About</a></li>
+                  <li><router-link class="white-text" :to="{ name: 'Home' }">Home</router-link></li>
+                  <li><router-link class="white-text" :to="{ name: 'About' }">About</router-link></li>
                   <li><a class="white-text" href="#!">Login</a></li>
                   <li><a class="white-text" href="#!">Components</a></li>
                 </ul>
