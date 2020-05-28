@@ -8,7 +8,7 @@
         <router-link to="">
           <a class="nav-title">Project Zero</a>
         </router-link>
-         <ul id="nav-list" class="right">
+         <ul id="nav-list" class="right hide-on-med-and-down">
           <li><router-link :to="{ name: 'Home' }">Home</router-link></li>
           <li><router-link :to="{ name: 'About' }">About</router-link></li>
         </ul>
@@ -31,7 +31,7 @@
         </router-link>
       </li>
       <li>        
-        <router-link to="/about">
+        <router-link :to="{ name: 'About' }">
           <i class="material-icons">info</i><span>About</span>
         </router-link>
       </li>
