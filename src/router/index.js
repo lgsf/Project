@@ -1,6 +1,11 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import Setup from '../views/Setup.vue'
+import Process from '../views/Process.vue'
+import Flux from '../views/Flux.vue'
+import Team from '../views/Team.vue'
+import Notifications from '../views/Notifications.vue'
 
 Vue.use(VueRouter)
 
@@ -10,13 +15,30 @@ Vue.use(VueRouter)
     name: 'Home',
     component: Home
   },
+  { 
+    path: '/setup', //Configuração
+    name: 'Setup',
+    component: Setup
+  },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    path: '/process', //Processos
+    name: 'Process',
+    component: Process
+  },
+  {
+    path: '/flux', //Fluxos
+    name: 'Flux',
+    component: Flux
+  },
+  {
+    path: '/team', //Usuários
+    name: 'Team',
+    component: Team
+  },
+  {
+    path: '/notifications', //Notificações
+    name: 'Notifications',
+    component: Notifications
   }
 ]
 
