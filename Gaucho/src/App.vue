@@ -4,11 +4,6 @@
      <v-content class="mx-5 mb-5">
       <router-view></router-view>
      </v-content>
-     <v-toolbar
-        flat
-        color="primary"
-        dark
-    ></v-toolbar>
   </v-app>
 </template>
 
