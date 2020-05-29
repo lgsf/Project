@@ -36,6 +36,11 @@
         </router-link>
       </li>
       <li>        
+        <router-link :to="{ name: 'Configuration' }">
+          <i class="material-icons">info</i><span>Configuration</span>
+        </router-link>
+      </li>
+      <li>        
         <router-link to="">
           <i class="material-icons">account_box</i><span>Login</span>
         </router-link>
