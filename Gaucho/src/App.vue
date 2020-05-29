@@ -4,7 +4,12 @@
      <v-content class="mx-5 mb-5">
       <router-view></router-view>
      </v-content>
-    </v-app>
+     <v-toolbar
+        flat
+        color="primary"
+        dark
+    ></v-toolbar>
+  </v-app>
 </template>
 
 <script>
@@ -18,7 +23,6 @@ export default {
   
   data () {
     return {
-      
     }
   }
 }
