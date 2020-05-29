@@ -73,15 +73,20 @@
       screenTitle: 'Configurações',
       themeSelectLabel: 'Tema',
       options: [
-        { code: 1, description: 'Gray'}, 
-        { code: 2, description: 'DarkBlue'}, 
-        { code: 3, description: 'Orange'},
+        { code: 1, description: 'Cinza'}, 
+        { code: 2, description: 'Azul'}, 
         ], 
-      selectedTheme: { code: 1, description: 'Gray'},
+      selectedTheme: { code: 1, description: 'Cinza'},
       companyNameLabel: 'Razão social',
       companyName: '',
       companyContactLabel: 'Contato',
       companyContact: ''
-    }), 
+    }),
+    watch: {
+      selectedTheme: function(newVal){
+          this.$vuetify.theme.dark = newVal.code == 1;
+          this.$vuetify.theme.light = newVal.code == 2;
+      } 
+    }
   } 
 </script>

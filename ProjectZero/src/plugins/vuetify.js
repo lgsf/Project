@@ -9,12 +9,19 @@ export default new Vuetify({
     iconfont: 'md'
   },
   theme: {
-    primary: '#ff0000',
-    secondary: '#424242',
-    accent: '#82B1FF',
-    error: '#ff4444',
-    info: '#33b5e5',
-    success: '#00C851',
-    warning: '#ffbb33'
-  }
+    themes: {
+      light: {
+        primary: '#607D8B',
+        secondary: '#CFD8DC',
+        accent: '#8c9eff',
+        error: '#b71c1c',
+      },
+      dark: {
+        primary: '#3949AB',
+        secondary: '#9FA8DA',
+        accent: '#8c9eff',
+        error: '#b71c1c',
+      },
+    },
+  },
 })
