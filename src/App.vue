@@ -1,39 +1,36 @@
 <template>
   <div id="app">
-    <Navbar/>
-    <router-view/>
-    </db>
-    <Footer/>
+    <Navbar />
+    <router-view />
+    <!-- <db/> -->
+    <Footer />
   </div>
 </template>
 
 <script>
-import Navbar from '@/components/Navbar.vue'
-import Footer from '@/components/Footer.vue'
-import db from '@/firebase/firebaseConfig.js'
+import Navbar from "@/components/Navbar.vue";
+import Footer from "@/components/Footer.vue";
+import db from "@/firebase/firebaseConfig.js";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     Navbar,
     Footer
   },
-  data(){
-    return{
-
-    }
+  data() {
+    return {};
   },
-  created(){
+  created() {
     //fetch data
-    db.collection('employees').get()
-    .then(snapshot => {
-      console.log(snapshot);
-    })
+    db.collection("employees")
+      .get()
+      .then(snapshot => {
+        console.log(snapshot);
+      });
   }
-
-}
+};
 </script>
 
 <style>
-  
 </style>

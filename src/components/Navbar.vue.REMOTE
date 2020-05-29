@@ -13,9 +13,6 @@
           <li>
             <router-link :to="{ name: 'About' }">About</router-link>
           </li>
-          <li>
-            <router-link :to="{ name: 'Configuration' }">Configuration</router-link>
-          </li>
         </ul>
       </div>
     </nav>
