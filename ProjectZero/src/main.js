@@ -4,9 +4,10 @@ import router from './router'
 import vuetify from './plugins/vuetify'
 import firebase from "firebase";
 import VueTextareaAutosize from 'vue-textarea-autosize'
+import AlertCmp from './components/shared/Alert.vue'
+import { store } from './store'
 
 Vue.use(VueTextareaAutosize)
-
 Vue.config.productionTip = false
 
 firebase.initializeApp({
@@ -21,9 +22,11 @@ firebase.initializeApp({
 
 export const db = firebase.firestore();
 
+Vue.component('app-alert', AlertCmp)
 
 new Vue({
   router,
   vuetify,
+  store,
   render: h => h(App)
 }).$mount('#app')
