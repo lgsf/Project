@@ -18,7 +18,7 @@
               <v-select 
               :items="options" 
               :label="themeSelectLabel" 
-              :value="selectedTheme" 
+              :value="configuration.selectedTheme" 
               @input="setSelectedTheme"
               item-text="description"
               item-value="code"
@@ -28,7 +28,7 @@
           <v-layout row>
             <v-flex xs12 sm6 offset-sm3>
               <v-text-field
-                v-model="companyName"
+                v-model="configuration.companyName"
                 :label="companyNameLabel"
               />
             </v-flex>
@@ -36,7 +36,7 @@
           <v-layout row>
             <v-flex xs12 sm6 offset-sm3>
               <v-text-field
-                v-model="companyContact"
+                v-model="configuration.companyContact"
                 :label="companyContactLabel"
               />
             </v-flex>
@@ -44,7 +44,7 @@
           <v-layout row>
             <v-flex xs12 sm6 offset-sm3>
               <v-text-field
-                v-model="companyEmail"
+                v-model="configuration.companyEmail"
                 :label="companyEmailLabel"
               />
             </v-flex>
@@ -83,7 +83,6 @@
 </template> 
 
 <script> 
-  import { db } from '@/main'
   export default { 
     data: () => ({ 
       screenTitle: 'Configurações',
@@ -94,15 +93,18 @@
         ], 
       companyNameLabel: 'Razão social',
       companyContactLabel: 'Contato',
-      companyEmailLabel: 'E-mail',
-      selectedTheme: '',
-      companyName: '',
-      companyContact: '',
-      companyEmail: ''
+      companyEmailLabel: 'E-mail'
     }),
+    watch: {
+      currentTheme: function (value) {
+        console.log('currentThemeChanged' + value)
+        this.$vuetify.theme.light = value == 1
+        this.$vuetify.theme.dark = value == 2
+      },
+    },
     computed: {
       configuration () {
-        return this.$store.actions
+        return this.$store.getters.getConfiguration
       },
       error (){
         return this.$store.getters.error
@@ -112,25 +114,13 @@
       }
     },
     mounted () {
-      this.getConfigurations()
+      this.$store.dispatch('loadConfiguration')
     },
     methods: {
-      async getConfigurations () {
-        let snapshot = await db.collection('systemConfiguration').get()
-        const events = []
-        snapshot.forEach(config => {
-          let appData = config.data()
-          this.selectedTheme = appData.theme_code;
-          this.companyName = appData.company_name;
-          this.companyContact = appData.company_phone;
-          this.companyEmail = appData.company_email;
-          events.push(appData)
-        })
-        this.events = events
-      },
       setSelectedTheme(value) {
         this.$vuetify.theme.light = value == 1;
         this.$vuetify.theme.dark = value == 2;
+        this.configuration.selectedTheme = value;
       },
       uploadLogoButtonClick(){
         this.$refs.uploadLogo.click();
@@ -149,14 +139,9 @@
         this.image = inputFile
       },
       saveConfiguration() {
-        const configuration = {
-          themeCode: this.selectedTheme,
-          companyName: this.companyName,
-          companyContact: this.companyContact,
-          companyEmail: this.companyEmail,
-          image: this.image
-        }
-        this.$store.dispatch('saveConfiguration', configuration)
+        this.$store.dispatch('saveConfiguration', this.configuration).then(
+          this.$store.dispatch('loadConfiguration')
+        )
       },
       onDismissed() {
         this.$store.dispatch('clearError')
