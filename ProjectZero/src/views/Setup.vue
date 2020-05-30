@@ -1,4 +1,4 @@
-<template> 
+<template > 
   <v-card class="col-6" justify="center">
     <v-toolbar
         flat
@@ -68,6 +68,7 @@
 </template> 
 
 <script> 
+
   export default { 
     data: () => ({ 
       screenTitle: 'Configurações',

@@ -19,11 +19,11 @@ firebase.initializeApp({
   appId: "1:793390803395:web:6526a11dff48740bb03576"
 });
 
-export const db = firebase.firestore();
-
+export const db = firebase.firestore()
 
 new Vue({
   router,
   vuetify,
   render: h => h(App)
 }).$mount('#app')
+
