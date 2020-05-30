@@ -1,3 +1,17 @@
+<<<<<<< HEAD
+<template > 
+  <v-card class="col-6" justify="center">
+    <v-toolbar
+        flat
+        color="primary"
+        dark
+    >
+    <v-toolbar-title>{{screenTitle}}</v-toolbar-title></v-toolbar>
+    <v-card-text>
+      <v-row>
+        <v-col class="col-6">
+          <v-select 
+=======
 <template> 
   <v-container>
     <v-layout row>
@@ -16,6 +30,7 @@
           <v-layout row>
             <v-flex xs12 sm6 offset-sm3>
               <v-select 
+>>>>>>> 47a1c8e54a9a52392805365360a45c8803e5ca3f
               :items="options" 
               :label="themeSelectLabel" 
               :value="selectedTheme" 
@@ -83,7 +98,11 @@
 </template> 
 
 <script> 
+<<<<<<< HEAD
+
+=======
   import { db } from '@/main'
+>>>>>>> 47a1c8e54a9a52392805365360a45c8803e5ca3f
   export default { 
     data: () => ({ 
       screenTitle: 'Configurações',

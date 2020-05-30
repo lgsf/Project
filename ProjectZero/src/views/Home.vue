@@ -15,8 +15,6 @@
 import Calendar from '@/components/Calendar'
 import Table from '@/components/Table'
 
-
-
 export default {
   name: 'Home',
    components: { Calendar,  Table },
