@@ -4,10 +4,10 @@
       <v-sheet height="64">
         <v-toolbar flat color="white">
           <v-btn color="grey" dark @click.stop="dialog = true">
-            New Event
+            Novo lembrete
           </v-btn>
           <v-btn outlined class="mr-4" @click="setToday">
-            Today
+            Hoje
           </v-btn>
           <v-btn fab text small @click="prev">
             <v-icon small>mdi-chevron-left</v-icon>
@@ -26,16 +26,16 @@
             </template>
             <v-list>
               <v-list-item @click="type = 'day'">
-                <v-list-item-title>Day</v-list-item-title>
+                <v-list-item-title>Dia</v-list-item-title>
               </v-list-item>
               <v-list-item @click="type = 'week'">
-                <v-list-item-title>Week</v-list-item-title>
+                <v-list-item-title>Semana</v-list-item-title>
               </v-list-item>
               <v-list-item @click="type = 'month'">
-                <v-list-item-title>Month</v-list-item-title>
+                <v-list-item-title>Mês</v-list-item-title>
               </v-list-item>
               <v-list-item @click="type = '4day'">
-                <v-list-item-title>4 days</v-list-item-title>
+                <v-list-item-title>4 dias</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -46,13 +46,13 @@
         <v-card>
           <v-container>
             <v-form @submit.prevent="addEvent">
-              <v-text-field v-model="name" type="text" label="event name (required)"></v-text-field>
-              <v-text-field v-model="details" type="text" label="detail"></v-text-field>
-              <v-text-field v-model="start" type="date" label="start (required)"></v-text-field>
-              <v-text-field v-model="end" type="date" label="end (required)"></v-text-field>
-              <v-text-field v-model="color" type="color" label="color (click to open color menu)"></v-text-field>
+              <v-text-field v-model="name" type="text" label="Nome do lembrete"></v-text-field>
+              <v-text-field v-model="details" type="text" label="Detalhe"></v-text-field>
+              <v-text-field v-model="start" type="date" label="Início"></v-text-field>
+              <v-text-field v-model="end" type="date" label="Fim"></v-text-field>
+              <v-text-field v-model="color" type="color" label="selecione a cor do pin"></v-text-field>
               <v-btn type="submit" color="primary" class="mr-4" @click.stop="dialog = false">
-                create event
+                criar lembrete
               </v-btn>
             </v-form>
           </v-container>
@@ -69,7 +69,7 @@
               <v-text-field v-model="end" type="date" label="end (required)"></v-text-field>
               <v-text-field v-model="color" type="color" label="color (click to open color menu)"></v-text-field>
               <v-btn type="submit" color="primary" class="mr-4" @click.stop="dialog = false">
-                create event
+                Criar lembrete
               </v-btn>
             </v-form>
           </v-container>
@@ -246,7 +246,7 @@ export default {
         this.end = '',
         this.color = ''
       } else {
-        alert('You must enter event name, start, and end time')
+        alert('Você deve inserir o nome, início e fim do evento')
       }
     },
     editEvent (ev) {

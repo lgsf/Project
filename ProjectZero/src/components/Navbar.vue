@@ -75,7 +75,7 @@ export default {
     return {
       drawer: false,
       links: [
-        { icon: "dashboard", text: "Home", route: "/" },
+        { icon: "dashboard", text: "Home", route: "/home" },
         { icon: "settings", text: "Configuração", route: "/setup" },
         { icon: "contacts", text: "Clientes", route: "/clients" },
         { icon: "event_note", text: "Processos", route: "/process" },
