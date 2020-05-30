@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import firebase from 'firebase'
+import firebase from 'firebase/app'
 
 export default {
   name: 'Login',
@@ -32,6 +32,20 @@ export default {
       feedback: null
     }
   },
+  beforeCreate: () => {
+      let flag = firebase.auth().currentUser
+      if (flag){
+        console.log("1")
+        console.log(flag)
+        console.log("rodei antes do oush do logun")
+          this.$router.push({ name: 'Home' })
+        }
+      
+      else{ console.log('eu rodei')
+
+      }
+
+    },
  
   methods: {
     login(){
@@ -40,12 +54,13 @@ export default {
         firebase.auth().signInWithEmailAndPassword(this.email, this.password)
         .then(user => {
         console.log(user)
+        console.log("rodei antes do oush do logun")
           this.$router.push({ name: 'Home' })
         }).catch(err => {
           this.feedback = err.message
         })
       } else {
-        this.feedback = 'Please fill in both fields'
+        this.feedback = 'Por fazer preencha ambos os campos!'
       }
     }
   }

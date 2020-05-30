@@ -12,56 +12,42 @@
         <v-icon right>exit_to_app</v-icon>
       </v-btn>
     </v-toolbar>
-    <div v-if="drawer" @click="drawer = !drawer">
+    <div v-if="drawer">
       <v-navigation-drawer app v-model="drawer" class="grey-3">
         <v-card>
           <v-list flat>
             <v-subheader>Menu</v-subheader>
-            <v-list-item-group v-model="item" color="primary">
-              <v-list-item v-for="(item, i) in links" :key="i" router :to="item.route">
-                <v-list-item-icon v-if="!item.sublinks">
-                  <v-icon v-text="item.icon" @click="drawer = !drawer"></v-icon>
+            <div v-for="(link, i) in links" :key="i">
+              <v-list-item v-if="!link.subLinks" :key="i" color="primary" router :to="link.route">
+                <v-list-item-icon>
+                  <v-icon v-text="link.icon" @click="drawer = !drawer"></v-icon>
                 </v-list-item-icon>
-                <v-list-item-content v-if="!item.sublinks">
-                  <v-list-item-title v-text="item.text" @click="drawer = !drawer"></v-list-item-title>
-                </v-list-item-content>
-
-                <v-list-item-icon v-if="!!item.sublinks">
-                  <v-menu top open-on-hover offset-x>
-                    <template v-slot:activator="{ on }">
-                      <v-icon v-text="item.icon" v-on="on"></v-icon>
-                    </template>
-                    <v-list>
-                      <v-list-item
-                        v-for="(subitem, index) in item.sublinks"
-                        :key="index"
-                        router
-                        :to="subitem.route"
-                      >
-                        <v-list-item-title>{{ subitem.text }}</v-list-item-title>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
-                </v-list-item-icon>
-                <v-list-item-content v-if="!!item.sublinks">
-                  <v-menu top open-on-hover>
-                    <template v-slot:activator="{ on }">
-                      <span v-text="item.text" v-on="on"></span>
-                    </template>
-                    <v-list>
-                      <v-list-item
-                        v-for="(subitem, index) in item.sublinks"
-                        :key="index"
-                        router
-                        :to="subitem.route"
-                      >
-                        <v-list-item-title>{{ subitem.text }}</v-list-item-title>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
+                <v-list-item-content>
+                  <v-list-item-title v-text="link.text" @click="drawer = !drawer"></v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
-            </v-list-item-group>
+
+              <v-list-group v-else :key="i" color="primary">
+                <template v-slot:activator>
+                  <v-list-item-icon>
+                    <v-icon v-text="link.icon"></v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-title v-text="link.text"></v-list-item-title>
+                </template>
+
+                <v-list-item
+                  v-for="(sublink, i) in link.subLinks"
+                  :to="sublink.route"
+                  :key="i"
+                  class="sub-menu"
+                >
+                  <v-list-item-icon>
+                    <v-icon v-text="sublink.icon" @click="drawer = !drawer"></v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-title v-text="sublink.text" @click="drawer = !drawer" />
+                </v-list-item>
+              </v-list-group>
+            </div>
           </v-list>
         </v-card>
       </v-navigation-drawer>
@@ -73,7 +59,7 @@
 export default {
   data() {
     return {
-      drawer: false,
+      drawer: true,
       links: [
         { icon: "dashboard", text: "Home", route: "/home" },
         { icon: "settings", text: "Configuração", route: "/setup" },
@@ -82,11 +68,11 @@ export default {
         { icon: "receipt", text: "Fluxos", route: "/flux" },
         {
           icon: "account_box",
-          text: "Usuários",
+          text: "Pessoal",
           route: "/team",
-          sublinks: [
-            { icon: "person", text: "Administrar Usuários", route: "/team" },
-            { icon: "people", text: "Administrar Grupos", route: "/groups" }
+          subLinks: [
+            { icon: "person", text: "Usuários", route: "/team" },
+            { icon: "people", text: "Grupos", route: "/groups" }
           ]
         },
         { icon: "notifications", text: "Notificações", route: "/notifications" }
@@ -97,4 +83,7 @@ export default {
 </script>
 
 <style>
+.sub-menu {
+  margin-left: 20px;
+}
 </style>

@@ -10,10 +10,10 @@
             Hoje
           </v-btn>
           <v-btn fab text small @click="prev">
-            <v-icon small>mdi-chevron-left</v-icon>
+            <v-icon small>chevron-left</v-icon>
           </v-btn>
           <v-btn fab text small @click="next">
-            <v-icon small>mdi-chevron-right</v-icon>
+            <v-icon small>chevron-right</v-icon>
           </v-btn>
           <v-toolbar-title>{{ title }}</v-toolbar-title>
           <div class="flex-grow-1"></div>
@@ -21,7 +21,7 @@
             <template v-slot:activator="{ on }">
               <v-btn outlined v-on="on">
                 <span>{{ typeToLabel[type] }}</span>
-                <v-icon right>mdi-menu-down</v-icon>
+                <v-icon right>menu-down</v-icon>
               </v-btn>
             </template>
             <v-list>
@@ -47,12 +47,12 @@
           <v-container>
             <v-form @submit.prevent="addEvent">
               <v-text-field v-model="name" type="text" label="Nome do lembrete"></v-text-field>
-              <v-text-field v-model="details" type="text" label="Detalhe"></v-text-field>
-              <v-text-field v-model="start" type="date" label="Início"></v-text-field>
-              <v-text-field v-model="end" type="date" label="Fim"></v-text-field>
-              <v-text-field v-model="color" type="color" label="selecione a cor do pin"></v-text-field>
+              <v-text-field v-model="details" type="text" label="Detalhes"></v-text-field>
+              <v-text-field v-model="start" type="date" label="Qual o início"></v-text-field>
+              <v-text-field v-model="end" type="date" label="Qual o fim?"></v-text-field>
+              <v-text-field v-model="color" type="color" label="Selecione a cor do painel de cores"></v-text-field>
               <v-btn type="submit" color="primary" class="mr-4" @click.stop="dialog = false">
-                criar lembrete
+                Criar lembrete
               </v-btn>
             </v-form>
           </v-container>
@@ -63,11 +63,11 @@
         <v-card>
           <v-container>
             <v-form @submit.prevent="addEvent">
-              <v-text-field v-model="name" type="text" label="event name (required)"></v-text-field>
-              <v-text-field v-model="details" type="text" label="detail"></v-text-field>
-              <v-text-field v-model="start" type="date" label="start (required)"></v-text-field>
-              <v-text-field v-model="end" type="date" label="end (required)"></v-text-field>
-              <v-text-field v-model="color" type="color" label="color (click to open color menu)"></v-text-field>
+              <v-text-field v-model="name" type="text" label="Nome do lmebrete"></v-text-field>
+              <v-text-field v-model="details" type="text" label="Detahles"></v-text-field>
+              <v-text-field v-model="start" type="date" label="Qual o início?"></v-text-field>
+              <v-text-field v-model="end" type="date" label="Qual o fim?"></v-text-field>
+              <v-text-field v-model="color" type="color" label="Selecione a cor do painel de cores"></v-text-field>
               <v-btn type="submit" color="primary" class="mr-4" @click.stop="dialog = false">
                 Criar lembrete
               </v-btn>
@@ -101,7 +101,7 @@
   <v-card color="grey lighten-4" :width="350" flat>
     <v-toolbar :color="selectedEvent.color" dark>
       <v-btn @click="deleteEvent(selectedEvent.id)" icon>
-        <v-icon>mdi-delete</v-icon>
+        <v-icon>delete</v-icon>
       </v-btn>
       <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
       <div class="flex-grow-1"></div>

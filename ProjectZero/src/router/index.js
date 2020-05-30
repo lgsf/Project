@@ -8,7 +8,7 @@ import Process from '../views/Process.vue'
 import Flux from '../views/Flux.vue'
 import Team from '../views/Team.vue'
 import Notifications from '../views/Notifications.vue'
-import firebase from 'firebase'
+
 
 Vue.use(VueRouter)
 
@@ -23,22 +23,29 @@ Vue.use(VueRouter)
     path: '/home', //Home
     name: 'Home',
     component: Home
-  
    },
   { 
     path: '/setup', //Configuração
     name: 'Setup',
     component: Setup,
-    },
+    meta: {
+        requiresAuth: true,
+    }},
   {
     path: '/process', //Processos
     name: 'Process',
     component: Process,
+    meta: {
+      requiresAuth: true,
+  }
     },
   {
   path: '/clients', //Processos
   name: 'Clients',
   component: Clients,
+  meta: {
+    requiresAuth: true,
+}
   },
   {
     path: '/flux', //Fluxos
@@ -64,25 +71,4 @@ const router = new VueRouter({
   
 })
 
-// router guards
-router.beforeEach((to, from, next) => {
-  // check to see if route has auth guard
-  if(to.matched.some(rec => rec.meta.requiresAuth)){
-    // check auth state of user
-    let user = firebase.auth().currentUser;
-    if (user) {
-      // User is signed in. Proceed to route
-      next('/home')
-      console.log("oi", user)
-    } else {
-      // No user is signed in. Redirect to login
-      next({
-        name: 'Login'
-      })
-    }
-  } else {
-    // if route is not guarded by auth, proceed
-    next()
-  }
-})
 export default router

@@ -20,7 +20,7 @@ firebase.initializeApp({
   appId: "1:793390803395:web:6526a11dff48740bb03576"
 });
 
-export const db = firebase.firestore();
+export const db = firebase.firestore()
 
 Vue.component('app-alert', AlertCmp)
 
@@ -30,3 +30,4 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app')
+
