@@ -1,24 +1,24 @@
 <template>
   
-    <v-col class="col-6 offset-3" justify="center">
+    <v-col class="xs-12 sm-6 offset-3" justify="center">
       <v-sheet height="64">
-        <v-toolbar flat color="white">
+        <v-toolbar flat color="primary">
           <v-btn color="primary" class="mr-1" dark @click.stop="dialog = true">
             Novo lembrete
           </v-btn>
           <v-btn color="primary" class="mr-1" @click="setToday">
             Hoje
           </v-btn>
-          <v-btn color="primary"  class="mr-1" @click="prev">
-            <v-icon small>skip_previous</v-icon>
+          <v-btn color="primary" class="mr-1"  @click="prev">
+            <v-icon >skip_previous</v-icon>
           </v-btn>
           <v-btn color="primary" class="mr-1" @click="next">
-            <v-icon small>skip_next</v-icon>
+            <v-icon >skip_next</v-icon>
           </v-btn>
           <v-spacer></v-spacer>
           <v-menu bottom right>
             <template v-slot:activator="{ on }">
-              <v-btn outlined v-on="on">
+              <v-btn color="primary" v-on="on">
                 <span>{{ typeToLabel[type] }}</span>
                 <v-icon right>menu-down</v-icon>
               </v-btn>
@@ -75,7 +75,7 @@
         </v-card>
       </v-dialog>
 
-<v-sheet height="600">
+<v-sheet height="400">
   <v-calendar
   ref="calendar"
   v-model="focus"
@@ -116,20 +116,20 @@
         type="text"
         style="width: 100%"
         :min-height="100"
-        placeholder="add note">
+        placeholder="Add">
       </textarea-autosize>
     </form>
   </v-card-text>
 
   <v-card-actions>
     <v-btn text color="secondary" @click="selectedOpen = false">
-      close
+      Fechar
     </v-btn>
     <v-btn v-if="currentlyEditing !== selectedEvent.id" text @click.prevent="editEvent(selectedEvent)">
-      edit
+      Editar
     </v-btn>
     <v-btn text v-else type="submit" @click.prevent="updateEvent(selectedEvent)">
-      Save
+      Salvar
     </v-btn>
   </v-card-actions>
 </v-card>

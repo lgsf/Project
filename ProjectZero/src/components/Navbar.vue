@@ -21,10 +21,10 @@
             <div v-for="(link, i) in links" :key="i">
               <v-list-item v-if="!link.subLinks" :key="i" color="primary" router :to="link.route">
                 <v-list-item-icon>
-                  <v-icon v-text="link.icon" @click="drawer = !drawer"></v-icon>
+                  <v-icon v-text="link.icon" ></v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title v-text="link.text" @click="drawer = !drawer"></v-list-item-title>
+                  <v-list-item-title v-text="link.text" ></v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
 
@@ -70,9 +70,9 @@ export default {
         {
           icon: "account_box",
           text: "Pessoal",
-          route: "/users",
+          route: "/team",
           subLinks: [
-            { icon: "person", text: "Usuários", route: "/users" },
+            { icon: "person", text: "Usuários", route: "/team" },
             { icon: "people", text: "Grupos", route: "/groups" }
           ]
         },
@@ -88,7 +88,6 @@ export default {
     methods: {
         logout() {
             this.$store.dispatch('userSignOut')
-            console.log("sai")
         }
 }
 }
