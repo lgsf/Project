@@ -1,86 +1,92 @@
 <template>
   <v-container>
-    <v-card class='mx-auto' width="800px">
-    <v-toolbar color="primary" dark>
-      <v-toolbar-title>
-        {{ screenTitle }}
-      </v-toolbar-title>
-    </v-toolbar>
-        <v-form @submit.prevent="saveConfiguration">
-          <v-row>
-            <v-col class='ms-6 me-6'>
-              <v-select 
-              :items="options" 
-              :label="themeSelectLabel" 
-              v-model="selectedTheme" 
-              @change="setSelectedTheme($event)"
-              ></v-select>
-            </v-col>
-          </v-row>
-        <v-row>
-          <v-col class='ms-6 me-6'>
-            <v-text-field
-              v-model="companyName"
-              :label="companyNameLabel"
-            />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col class='ms-6 me-6'>
-            <v-text-field
-              v-model="companyContact"
-              :label="companyContactLabel"
-            />
-         </v-col>
-        </v-row>
-        <v-row>
-          <v-col class='ms-6 me-6'>
-            <v-text-field
-              v-model="companyEmail"
-              :label="companyEmailLabel"
-            />
-          </v-col>
-        </v-row>
-        <v-row justify='center'>
-          <v-col cols="3" class='ms-6 me-6'>
-            <div style="text-align: center;">
-              <img :src="imageUrl" height="150"/>
-            </div>
-          </v-col>
-        </v-row>
-        <v-row justify='center'>
-          <v-col cols="3" class='ms-6 me-6'>
-            <div style="text-align: center;">
-              <v-btn raised class="primary" @click="uploadLogoButtonClick">Upload logo</v-btn>
-              <input 
-                type="file" 
-                style="display: none" 
-                ref="uploadLogo" 
-                accept="image/*"
-                @change="onFilePicked"/>
-            </div>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-spacer></v-spacer>
-          <v-spacer></v-spacer>
-          <v-spacer></v-spacer>
-          <v-spacer></v-spacer>
-          <v-spacer></v-spacer>
-          <v-spacer></v-spacer>
-          <v-spacer></v-spacer>
-          <v-col class='ms-6 me-6 outer'>
-              <v-btn
-                color="success"
-                depressed
-                type="submit"
-              > 
-                Salvar
-              </v-btn>
-          </v-col>
-        </v-row>
-      </v-form>
-    </v-card>
+    <v-row justify="center">
+      <v-col cols="lg-6">
+        <v-card class='mx-auto'>
+        <v-toolbar color="primary" dark>
+          <v-toolbar-title>
+            {{ screenTitle }}
+          </v-toolbar-title>
+        </v-toolbar>
+            <v-form @submit.prevent="saveConfiguration">
+              <v-row>
+                <v-col class='ms-6 me-6'>
+                  <v-select 
+                  :items="options" 
+                  :label="themeSelectLabel" 
+                  v-model="selectedTheme" 
+                  @change="setSelectedTheme($event)"
+                  ></v-select>
+                </v-col>
+              </v-row>
+            <v-row>
+              <v-col class='ms-6 me-6'>
+                <v-text-field
+                  v-model="companyName"
+                  :label="companyNameLabel"
+                />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col class='ms-6 me-6'>
+                <v-text-field
+                  v-model="companyContact"
+                  :label="companyContactLabel"
+                />
+             </v-col>
+            </v-row>
+            <v-row>
+              <v-col class='ms-6 me-6'>
+                <v-text-field
+                  v-model="companyEmail"
+                  :label="companyEmailLabel"
+                />
+              </v-col>
+            </v-row>
+            <v-row justify='center'>
+              <v-col class='ms-6 me-6'>
+                <div style="text-align: center;">
+                  <img :src="imageUrl" height="150"/>
+                </div>
+              </v-col>
+            </v-row>
+            <v-row justify='center'>
+              <v-col class='ms-6 me-6'>
+                <div style="text-align: center;">
+                  <v-btn raised class="primary" @click="uploadLogoButtonClick">Upload logo</v-btn>
+                  <input 
+                    type="file" 
+                    style="display: none" 
+                    ref="uploadLogo" 
+                    accept="image/*"
+                    @change="onFilePicked"/>
+                </div>
+              </v-col>
+            </v-row>
+            <v-row>
+             <div class="d-none d-lg-block">
+                <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
+              </div>
+              <v-col class='ms-6 me-6 outer'>
+                  <v-btn
+                    color="success"
+                    depressed
+                    type="submit"
+                  > 
+                    Salvar
+                  </v-btn>
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 

@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row justify="center">
-      <v-col cols="lg-8">
+      <v-col cols="lg-6">
         <v-card class="mx-auto">
           <v-toolbar class="primary" dark>
             <v-toolbar-title>{{title}}</v-toolbar-title>

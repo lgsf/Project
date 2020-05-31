@@ -6,7 +6,7 @@ import Home from '../views/Home.vue'
 import Setup from '../views/Setup.vue'
 import Process from '../views/Process.vue'
 import Flux from '../views/Flux.vue'
-import Team from '../views/Team.vue'
+import Users from '../views/Users.vue'
 import Groups from '../views/Groups.vue'
 import Notifications from '../views/Notifications.vue'
 
@@ -55,9 +55,9 @@ const routes = [
     component: Flux,
   },
   {
-    path: '/team', //Usuários
-    name: 'Team',
-    component: Team,
+    path: '/users', //Usuários
+    name: 'Users',
+    component: Users,
   },
   {
     path: '/groups', //Grupos
