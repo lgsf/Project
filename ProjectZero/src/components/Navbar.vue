@@ -7,7 +7,8 @@
         <span>Aqui</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn color="grey-2">
+      <v-btn @click="logout"
+      color="grey-2">
         <span>Sair</span>
         <v-icon right>exit_to_app</v-icon>
       </v-btn>
@@ -78,8 +79,19 @@ export default {
         { icon: "notifications", text: "Notificações", route: "/notifications" }
       ]
     };
-  }
-};
+  },
+  computed: {
+        isAuthenticated() {
+            return this.$store.getters.isAuthenticated
+        }
+    },
+    methods: {
+        logout() {
+            this.$store.dispatch('userSignOut')
+            console.log("sai")
+        }
+}
+}
 </script>
 
 <style>

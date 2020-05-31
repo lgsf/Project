@@ -9,7 +9,7 @@ import Flux from '../views/Flux.vue'
 import Team from '../views/Team.vue'
 import Groups from '../views/Groups.vue'
 import Notifications from '../views/Notifications.vue'
-
+import {store} from '../store'
 
 Vue.use(VueRouter)
 
@@ -23,7 +23,10 @@ const routes = [
   {
     path: '/home', //Home
     name: 'Home',
-    component: Home
+    component: Home,
+    meta: {
+      requiresAuth: true,
+    }
   },
   {
     path: '/setup', //Configuração
@@ -58,16 +61,25 @@ const routes = [
     path: '/team', //Usuários
     name: 'Team',
     component: Team,
+    meta: {
+      requiresAuth: true,
+    }
   },
   {
     path: '/groups', //Grupos
     name: 'Groups',
     component: Groups,
+    meta: {
+      requiresAuth: true,
+    }
   },
   {
     path: '/notifications', //Notificações
     name: 'Notifications',
     component: Notifications,
+    meta: {
+      requiresAuth: true,
+    }
   }
 ]
 
@@ -77,5 +89,19 @@ const router = new VueRouter({
   routes
 
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.authRequired)) {
+      if (!store.state.isAuthenticated) {
+          next({
+              path: '/'
+          });
+      } else {
+          next();
+      }
+  } else {
+      next();
+  }
+});
 
 export default router
