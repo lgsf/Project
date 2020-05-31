@@ -3,7 +3,7 @@
   <br>
  <v-row class="dark" justify="center">
       <v-card>
-        <v-card-title class="primary">
+        <v-card-title class="primary ">
           <h3 class="white--text">Login</h3>
             <v-spacer></v-spacer>
           <v-icon right class="white--text">account_box</v-icon>
