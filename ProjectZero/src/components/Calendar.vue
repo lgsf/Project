@@ -1,22 +1,21 @@
 <template>
-
+  
     <v-col class="col-6 offset-3" justify="center">
       <v-sheet height="64">
         <v-toolbar flat color="white">
-          <v-btn color="grey" dark @click.stop="dialog = true">
+          <v-btn color="primary" class="mr-1" dark @click.stop="dialog = true">
             Novo lembrete
           </v-btn>
-          <v-btn outlined class="mr-4" @click="setToday">
+          <v-btn color="primary" class="mr-1" @click="setToday">
             Hoje
           </v-btn>
-          <v-btn fab text small @click="prev">
-            <v-icon small>chevron-left</v-icon>
+          <v-btn color="primary"  class="mr-1" @click="prev">
+            <v-icon small>skip_previous</v-icon>
           </v-btn>
-          <v-btn fab text small @click="next">
-            <v-icon small>chevron-right</v-icon>
+          <v-btn color="primary" class="mr-1" @click="next">
+            <v-icon small>skip_next</v-icon>
           </v-btn>
-          <v-toolbar-title>{{ title }}</v-toolbar-title>
-          <div class="flex-grow-1"></div>
+          <v-spacer></v-spacer>
           <v-menu bottom right>
             <template v-slot:activator="{ on }">
               <v-btn outlined v-on="on">
@@ -147,10 +146,10 @@ export default {
     focus: new Date().toISOString().substr(0, 10),
     type: 'month',
     typeToLabel: {
-      month: 'Month',
-      week: 'Week',
-      day: 'Day',
-      '4day': '4 Days',
+      month: 'Mês',
+      week: 'Semana',
+      day: 'Dia',
+      '4day': '4 Dias',
     },
     name: null,
     details: null,

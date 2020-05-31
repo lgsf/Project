@@ -9,7 +9,7 @@ import Flux from '../views/Flux.vue'
 import Users from '../views/Users.vue'
 import Groups from '../views/Groups.vue'
 import Notifications from '../views/Notifications.vue'
-import { store } from '../store'
+import {store} from '../store'
 
 Vue.use(VueRouter)
 
@@ -58,12 +58,18 @@ const routes = [
     component: Flux,
   },
   {
+<<<<<<< HEAD
     path: '/users', //Usuários
     name: 'Users',
     component: Users,
+=======
+    path: '/team', //Usuários
+    name: 'Team',
+    component: Team,
     meta: {
       requiresAuth: true,
     }
+>>>>>>> 493bc47264694c5c7055920a3133321c138d6ff2
   },
   {
     path: '/groups', //Grupos
@@ -92,15 +98,15 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.authRequired)) {
-    if (!store.state.isAuthenticated) {
-      next({
-        path: '/'
-      });
-    } else {
-      next();
-    }
+      if (!store.state.isAuthenticated) {
+          next({
+              path: '/'
+          });
+      } else {
+          next();
+      }
   } else {
-    next();
+      next();
   }
 });
 
