@@ -1,23 +1,37 @@
 <template>
 <div class="login">
-<v-card height="300" class="col-3" >   
-    <v-row>
-    <v-toolbar
-        flat
-        color="white"
-    >
-   <span> <v-toolbar-title >Login</v-toolbar-title></span></v-toolbar>
-</v-row>
-<v-row >
-  <v-text-field label="e-mail" type="mail" v-model="email"></v-text-field>
-  <v-text-field label="senha" type="password" v-model="password"></v-text-field>
-    </v-row>
-    <v-btn @click="login"
-        color="success"
-        depressed
-      > Save</v-btn>
+  <br>
+ <v-row justify="center">
+      <v-card>
+        <v-card-title>
+          <h3 class="primary--text">Login</h3>
+        </v-card-title>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col cols="12">
+                <v-text-field label="e-mail" type="mail" v-model="email"></v-text-field>
+                </v-col><v-col cols="12">
+                <v-text-field label="senha" type="password" v-model="password"></v-text-field>
+                </v-col>
+             
+               
+              <v-btn @click="login"
+                  color="success"
+                  depressed
+                > Login</v-btn>
+                 <v-spacer></v-spacer>
+                <v-btn @click="reset"
+                  color="error"
+                  depressed
+                > Esqueci a senha</v-btn>
+                 </v-row>
+          </v-container>
+   </v-card-text>
   </v-card>
-  </div>
+
+</v-row>
+</div>
 </template>
 
 <script>
@@ -62,6 +76,9 @@ export default {
       } else {
         this.feedback = 'Por fazer preencha ambos os campos!'
       }
+    },
+    reset(){
+      console.log('testando reset');
     }
   }
 }
