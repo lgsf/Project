@@ -1,12 +1,12 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col cols="12">
+    <v-row justify="center">
+      <v-col cols="lg-8">
         <h1 class="primary--text">{{title}}</h1>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="12">
+    <v-row justify="center">
+      <v-col cols="lg-8">
         <v-card>
           <v-card-title>
             {{title}}
