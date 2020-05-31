@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
 import Clients from '../views/Clients.vue'
 import Home from '../views/Home.vue'
-import Setup from '../views/Setup.vue'
+import Setup from '../views/Setup2.vue'
 import Process from '../views/Process.vue'
 import Flux from '../views/Flux.vue'
 import Team from '../views/Team.vue'
@@ -59,11 +59,14 @@ const routes = [
     name: 'Team',
     component: Team,
   },
+<<<<<<< HEAD
+=======
   {
     path: '/groups', //Grupos
     name: 'Groups',
     component: Groups,
   },
+>>>>>>> c7adc8f62edd9a5b59870e697844d6b3a83fbd29
   {
     path: '/notifications', //Notificações
     name: 'Notifications',
