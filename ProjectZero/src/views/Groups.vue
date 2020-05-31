@@ -1,0 +1,77 @@
+<template>
+  <v-container>
+    <v-row>
+      <v-col cols="12">
+        <h1 class="primary--text">{{title}}</h1>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12">
+        <v-card>
+          <v-card-title>
+            {{title}}
+            <v-spacer></v-spacer>
+            <v-text-field
+              v-model="search"
+              append-icon="mdi-magnify"
+              :label="searchLabel"
+              single-line
+              hide-details
+            ></v-text-field>
+          </v-card-title>
+          <v-data-table
+            :headers="headers"
+            :items="desserts"
+            :search="search"
+            show-select
+            single-select
+            item-key="name"
+            v-model="selected"
+          ></v-data-table>
+          <v-btn color="red" dark fixed bottom right fab>
+            <v-icon v-show="selected.length == 0" @click="editGroup">mdi-plus</v-icon>
+            <v-icon v-show="selected.length == 1" @click="editGroup">mdi-pen</v-icon>
+          </v-btn>
+        </v-card>
+      </v-col>
+    </v-row>
+    <EditGroup ref="EditGroup" />
+  </v-container>
+</template>
+<script>
+import EditGroup from "./EditGroup";
+
+export default {
+  components: { EditGroup },
+  data() {
+    return {
+      search: "",
+      title: "Grupos",
+      searchLabel: "Buscar",
+      selected: [],
+      headers: [
+        {
+          text: "Nome",
+          align: "start",
+          value: "name"
+        }
+      ],
+      desserts: [
+        {
+          name: "Admin"
+        },
+        {
+          name: "Operador"
+        }
+      ]
+    };
+  },
+  methods: {
+    editGroup: function() {
+      this.$refs.EditGroup.show();
+    }
+  }
+};
+</script>
+<style>
+</style>

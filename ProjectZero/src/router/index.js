@@ -7,6 +7,7 @@ import Setup from '../views/Setup2.vue'
 import Process from '../views/Process.vue'
 import Flux from '../views/Flux.vue'
 import Team from '../views/Team.vue'
+import Groups from '../views/Groups.vue'
 import Notifications from '../views/Notifications.vue'
 
 
@@ -57,6 +58,11 @@ const routes = [
     path: '/team', //Usuários
     name: 'Team',
     component: Team,
+  },
+  {
+    path: '/groups', //Grupos
+    name: 'Groups',
+    component: Groups,
   },
   {
     path: '/notifications', //Notificações

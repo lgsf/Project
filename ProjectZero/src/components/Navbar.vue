@@ -1,6 +1,6 @@
 <template>
   <nav>
-    <v-toolbar app flat>
+    <v-app-bar app flat>
       <v-app-bar-nav-icon @click="drawer = !drawer" class="grey--text"></v-app-bar-nav-icon>
       <v-toolbar-title class="text-uppercase grey--text">
         <span class="font-weight-light">Logo</span>
@@ -11,7 +11,7 @@
         <span>Sair</span>
         <v-icon right>exit_to_app</v-icon>
       </v-btn>
-    </v-toolbar>
+    </v-app-bar>
     <div v-if="drawer">
       <v-navigation-drawer app v-model="drawer" class="grey-3">
         <v-card>
