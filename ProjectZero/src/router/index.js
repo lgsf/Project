@@ -9,7 +9,7 @@ import Flux from '../views/Flux.vue'
 import Users from '../views/Users.vue'
 import Groups from '../views/Groups.vue'
 import Notifications from '../views/Notifications.vue'
-import { store } from '../store'
+//import { store } from '../store'
 
 Vue.use(VueRouter)
 
@@ -25,7 +25,7 @@ const routes = [
     name: 'Home',
     component: Home,
     meta: {
-      requiresAuth: true,
+      authRequired: true
     }
   },
   {
@@ -33,7 +33,7 @@ const routes = [
     name: 'Setup',
     component: Setup,
     meta: {
-      requiresAuth: true,
+      authRequired: true
     }
   },
   {
@@ -41,7 +41,7 @@ const routes = [
     name: 'Process',
     component: Process,
     meta: {
-      requiresAuth: true,
+      authRequired: true
     }
   },
   {
@@ -49,20 +49,23 @@ const routes = [
     name: 'Clients',
     component: Clients,
     meta: {
-      requiresAuth: true,
+      authRequired: true
     }
   },
   {
     path: '/flux', //Fluxos
     name: 'Flux',
     component: Flux,
+    meta: {
+    authRequired: true
+    }
   },
   {
     path: '/users', //Usuários
     name: 'Users',
     component: Users,
     meta: {
-      requiresAuth: true,
+      authRequired: true
     }
   },
   {
@@ -70,7 +73,7 @@ const routes = [
     name: 'Groups',
     component: Groups,
     meta: {
-      requiresAuth: true,
+      authRequired: true
     }
   },
   {
@@ -78,7 +81,7 @@ const routes = [
     name: 'Notifications',
     component: Notifications,
     meta: {
-      requiresAuth: true,
+      authRequired: true
     }
   }
 ]
@@ -90,8 +93,10 @@ const router = new VueRouter({
 
 })
 
+/*
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.authRequired)) {
+  if (to.matched.some(record => record.meta.authRequired))
+   {
     if (!store.state.isAuthenticated) {
       next({
         path: '/'
@@ -103,5 +108,6 @@ router.beforeEach((to, from, next) => {
     next();
   }
 });
+*/
 
 export default router
