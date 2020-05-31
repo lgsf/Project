@@ -1,8 +1,8 @@
 <template>
   <nav>
     <v-app-bar app flat>
-      <v-app-bar-nav-icon @click="drawer = !drawer" class="grey--text"></v-app-bar-nav-icon>
-      <v-toolbar-title class="text-uppercase grey--text">
+      <v-app-bar-nav-icon @click="drawer = !drawer" class=""></v-app-bar-nav-icon>
+      <v-toolbar-title class="text-uppercase">
         <span class="font-weight-light">Logo</span>
         <span>Aqui</span>
       </v-toolbar-title>
@@ -43,7 +43,7 @@
                   class="sub-menu"
                 >
                   <v-list-item-icon>
-                    <v-icon v-text="sublink.icon" @click="drawer = !drawer"></v-icon>
+                    <v-icon v-text="sublink.icon" ></v-icon>
                   </v-list-item-icon>
                   <v-list-item-title v-text="sublink.text" @click="drawer = !drawer" />
                 </v-list-item>
