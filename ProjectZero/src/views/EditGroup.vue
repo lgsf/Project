@@ -81,7 +81,7 @@ export default {
       this.groupName = "";
       this.groupEmail = "";
       this.dialog = false;
-      loadMeunuOptions();
+      //loadMeunuOptions();
     }
   },
   mounted() {

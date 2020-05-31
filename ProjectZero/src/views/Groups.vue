@@ -2,40 +2,45 @@
   <v-container>
     <v-row justify="center">
       <v-col cols="lg-8">
-        <h1 class="primary--text">{{title}}</h1>
-      </v-col>
-    </v-row>
-    <v-row justify="center">
-      <v-col cols="lg-8">
-        <v-card>
-          <v-card-title>
-            {{title}}
-            <v-spacer></v-spacer>
-            <v-text-field
-              v-model="search"
-              append-icon="mdi-magnify"
-              :label="searchLabel"
-              single-line
-              hide-details
-            ></v-text-field>
-          </v-card-title>
-          <v-data-table
-            :headers="headers"
-            :items="desserts"
-            :search="search"
-            show-select
-            single-select
-            item-key="name"
-            v-model="selected"
-          ></v-data-table>
-          <v-btn color="red" dark fixed bottom right fab>
-            <v-icon v-show="selected.length == 0" @click="editGroup">mdi-plus</v-icon>
-            <v-icon v-show="selected.length == 1" @click="editGroup">mdi-pen</v-icon>
-          </v-btn>
+        <v-card class="mx-auto">
+          <v-toolbar class="primary" dark>
+            <v-toolbar-title>{{title}}</v-toolbar-title>
+          </v-toolbar>
+          <v-row justify="center">
+            <v-col cols="12">
+              <v-card-title>
+                <v-spacer></v-spacer>
+                <v-text-field
+                  v-model="search"
+                  append-icon="mdi-magnify"
+                  :label="searchLabel"
+                  single-line
+                  hide-details
+                ></v-text-field>
+              </v-card-title>
+              <v-row>
+                <v-col cols="12">
+                  <v-data-table
+                    :headers="headers"
+                    :items="desserts"
+                    :search="search"
+                    show-select
+                    single-select
+                    item-key="name"
+                    v-model="selected"
+                  ></v-data-table>
+                </v-col>
+              </v-row>
+              <v-btn color="red" dark fixed bottom right fab>
+                <v-icon v-show="selected.length == 0" @click="editGroup">mdi-plus</v-icon>
+                <v-icon v-show="selected.length == 1" @click="editGroup">mdi-pen</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+          <EditGroup ref="EditGroup" />
         </v-card>
       </v-col>
     </v-row>
-    <EditGroup ref="EditGroup" />
   </v-container>
 </template>
 <script>
