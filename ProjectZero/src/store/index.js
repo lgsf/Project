@@ -1,16 +1,12 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-<<<<<<< HEAD
 import firebase from 'firebase'
-import router from '@/router';
-=======
->>>>>>> 85200cda85bb4dbb4fceb8730d29beea77e9f8e5
+import router from '@/router'
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   state: {
-<<<<<<< HEAD
     user: null,
     isAuthenticated: false,
 },
@@ -61,15 +57,4 @@ getters: {
         return state.user !== null && state.user !== undefined;
     }
 }
-=======
-  },
-  mutations: {
-  },
-  actions: {
-  },
-  modules: {
-  },
-  getters: {
-  }
->>>>>>> 85200cda85bb4dbb4fceb8730d29beea77e9f8e5
 })
