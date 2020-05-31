@@ -1,56 +1,56 @@
-<template> 
+<template>
   <v-container>
-    <v-layout row>
-      <v-flex xs12 sm6 offset-sm3>
-        <h1 class="primary--text">Configurações</h1>
-      </v-flex>
-    </v-layout>
-    <v-layout row v-if="error">
-      <v-flex xs12 sm6 offset-sm3>
-        <app-alert @dismissed="onDismissed" :text="error.message"></app-alert>
-      </v-flex>
-    </v-layout>
-    <v-layout row>
-      <v-flex xs12> 
-        <form @submit.prevent="saveConfiguration">
-          <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
+    <v-card class='mx-auto' width="800px">
+    <v-toolbar color="primary" dark>
+      <v-toolbar-title>
+        {{ screenTitle }}
+      </v-toolbar-title>
+    </v-toolbar>
+        <v-form @submit.prevent="saveConfiguration">
+          <v-row>
+            <v-col class='ms-6 me-6'>
               <v-select 
               :items="options" 
               :label="themeSelectLabel" 
-              :value="configuration.selectedTheme" 
-              @input="setSelectedTheme"
-              item-text="description"
-              item-value="code"
+              v-model="selectedTheme" 
+              @change="setSelectedTheme($event)"
               ></v-select>
-            </v-flex>
-          </v-layout>
-          <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
-              <v-text-field
-                v-model="configuration.companyName"
-                :label="companyNameLabel"
-              />
-            </v-flex>
-          </v-layout>
-          <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
-              <v-text-field
-                v-model="configuration.companyContact"
-                :label="companyContactLabel"
-              />
-            </v-flex>
-          </v-layout>
-          <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
-              <v-text-field
-                v-model="configuration.companyEmail"
-                :label="companyEmailLabel"
-              />
-            </v-flex>
-          </v-layout>
-          <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
+            </v-col>
+          </v-row>
+        <v-row>
+          <v-col class='ms-6 me-6'>
+            <v-text-field
+              v-model="companyName"
+              :label="companyNameLabel"
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col class='ms-6 me-6'>
+            <v-text-field
+              v-model="companyContact"
+              :label="companyContactLabel"
+            />
+         </v-col>
+        </v-row>
+        <v-row>
+          <v-col class='ms-6 me-6'>
+            <v-text-field
+              v-model="companyEmail"
+              :label="companyEmailLabel"
+            />
+          </v-col>
+        </v-row>
+        <v-row justify='center'>
+          <v-col cols="3" class='ms-6 me-6'>
+            <div style="text-align: center;">
+              <img :src="imageUrl" height="150"/>
+            </div>
+          </v-col>
+        </v-row>
+        <v-row justify='center'>
+          <v-col cols="3" class='ms-6 me-6'>
+            <div style="text-align: center;">
               <v-btn raised class="primary" @click="uploadLogoButtonClick">Upload logo</v-btn>
               <input 
                 type="file" 
@@ -58,94 +58,131 @@
                 ref="uploadLogo" 
                 accept="image/*"
                 @change="onFilePicked"/>
-            </v-flex>
-          </v-layout>
-          <v-layout row>
-            <v-flex xs12 sm6 offset-sm3>
+            </div>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-spacer></v-spacer>
+          <v-spacer></v-spacer>
+          <v-spacer></v-spacer>
+          <v-spacer></v-spacer>
+          <v-spacer></v-spacer>
+          <v-spacer></v-spacer>
+          <v-spacer></v-spacer>
+          <v-col class='ms-6 me-6 outer'>
               <v-btn
                 color="success"
                 depressed
                 type="submit"
-                :disabled="loading"
-                :loading="loading"
               > 
                 Salvar
-                <span slot="loader" class="custom-loader">
-                  <v-icon light>cached</v-icon>
-                </span>
               </v-btn>
-            </v-flex>
-          </v-layout>
-        </form>
-      </v-flex>
-    </v-layout>
+          </v-col>
+        </v-row>
+      </v-form>
+    </v-card>
   </v-container>
-</template> 
+</template>
 
-<script> 
-  export default { 
-    data: () => ({ 
+<script>
+import { db } from '@/main'
+import { fileStorage } from '@/main'
+export default {
+  data() {
+    return {
       screenTitle: 'Configurações',
       themeSelectLabel: 'Tema',
       options: [
-        { code: 1, description: 'Light'}, 
-        { code: 2, description: 'Dark'}, 
+        'Light', 
+        'Dark'
         ], 
       companyNameLabel: 'Razão social',
       companyContactLabel: 'Contato',
-      companyEmailLabel: 'E-mail'
-    }),
-    watch: {
-      currentTheme: function (value) {
-        console.log('currentThemeChanged' + value)
-        this.$vuetify.theme.light = value == 1
-        this.$vuetify.theme.dark = value == 2
-      },
-    },
-    computed: {
-      configuration () {
-        return this.$store.getters.getConfiguration
-      },
-      error (){
-        return this.$store.getters.error
-      },
-      loading (){
-        return this.$store.getters.loading
-      }
-    },
-    mounted () {
-      this.$store.dispatch('loadConfiguration')
-    },
-    methods: {
-      setSelectedTheme(value) {
-        this.$vuetify.theme.light = value == 1;
-        this.$vuetify.theme.dark = value == 2;
-        this.configuration.selectedTheme = value;
-      },
-      uploadLogoButtonClick(){
+      companyEmailLabel: 'E-mail',
+      id: '',
+      selectedTheme: 'Light',
+      companyName: '',
+      companyContact: '',
+      companyEmail: '',
+      image: null,
+      imageUrl: ''
+};    
+  },
+  methods: {
+    uploadLogoButtonClick(){
         this.$refs.uploadLogo.click();
       },
-      onFilePicked (event){
+    setSelectedTheme(value) {
+        this.$vuetify.theme.light = value == 'Light';
+        this.$vuetify.theme.dark = value == 'Dark';
+      },
+    onFilePicked (event){
         const inputFile = event.target.files[0];
-        let fileName = inputFile.name;
-        if(fileName.lastIndexOf('.') <= 0){
-          return alert('Por favor, insira um arquivo válido.');
-        }
         const fileReader = new FileReader();
-        fileReader.addEventListener('load', () => {
-          this.imageUrl = fileReader.result;
-        });
+        fileReader.onload = (e) => {
+          this.imageUrl = e.target.result;
+        };
+
         fileReader.readAsDataURL(inputFile);
         this.image = inputFile
-      },
-      saveConfiguration() {
-        this.$store.dispatch('saveConfiguration', this.configuration).then(
-          this.$store.dispatch('loadConfiguration')
-        )
-      },
-      onDismissed() {
-        this.$store.dispatch('clearError')
-      }
-    }
-  } 
+    },
+    readConfiguration() {
+      db.collection("systemConfiguration")
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            this.id = doc.id
+            this.companyName = doc.data().company_name
+            this.companyContact = doc.data().company_phone
+            this.companyEmail = doc.data().company_email
+            this.selectedTheme = doc.data().theme_code
+            });
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
+        });
+
+        fileStorage.ref().listAll()
+        .then(result => {
+          console.log(result.items[0])
+          result.items[0].getDownloadURL()
+          .then((url) => { this.imageUrl = url });
+        })
+        .catch((error) => {
+          console.log("Error getting logo image: ", error);
+        });
+    },
+    saveConfiguration() {
+      db.collection("systemConfiguration")
+        .doc(this.id)
+        .update({
+          company_name: this.companyName,
+          company_phone: this.companyContact,
+          company_email: this.companyEmail,
+          theme_code: this.selectedTheme,
+        })
+        .then(() => {
+          const fileName = 'logo' + this.image.name.slice(this.image.name.lastIndexOf('.'))
+          const storageRef = fileStorage.ref(fileName)
+          storageRef.put(this.image)
+        })
+        .then(()=>{
+          this.readConfiguration();
+        })
+        .catch((error) => {
+          console.error("Error updating document: ", error);
+        });
+    },
+  },
+  mounted() {
+    this.readConfiguration();
+  },
+};
 </script>
+
+<style>
+#outer {
+  width: 100%;
+  text-align: center;
+}
+</style>
