@@ -15,12 +15,13 @@ firebase.initializeApp({
   authDomain: "projectzero-9bff2.firebaseapp.com",
   databaseURL: "https://projectzero-9bff2.firebaseio.com",
   projectId: "projectzero-9bff2",
-  storageBucket: "projectzero-9bff2.appspot.com",
+  storageBucket: "gs://projectzero-9bff2.appspot.com",
   messagingSenderId: "793390803395",
   appId: "1:793390803395:web:6526a11dff48740bb03576"
 });
 
 export const db = firebase.firestore()
+export const fileStorage = firebase.storage()
 
 Vue.component('app-alert', AlertCmp)
 
