@@ -20,11 +20,11 @@
                                 :rules="emailRules"
                                 required></v-text-field>
                 </v-col>
-                <v-btn @click="limpar"
+                <v-btn @click="reset"
                   color="success"
                 > Limpar</v-btn>
                  <v-spacer></v-spacer>
-              <v-btn @click="reset"
+              <v-btn @click="resetPassword"
                   color="primary"
                   :disabled="!valid"
                 > Enviar senha</v-btn>
@@ -53,11 +53,14 @@ export default {
         };
     },
     methods: {
-        reset() {
+        resetPassword() {
                 this.$store.dispatch('resetPassword', {
                     email: this.email
                 })
-        }
+        },
+        reset () {
+        this.email = ''
+      }
     }
 }
 

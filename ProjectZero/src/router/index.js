@@ -36,7 +36,7 @@ const routes = [
     }
   },
   {
-    path: '/setup', //Configuração
+    path: '/setup', //Configurações
     name: 'Setup',
     component: Setup,
     meta: {
