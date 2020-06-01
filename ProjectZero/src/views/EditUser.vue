@@ -25,7 +25,7 @@
             </v-row>
             <v-row>
               <v-col cols="12">
-                <DatePicker dateLabel="Data de Nascimento" v-on:update="updateDate" ref="DatePicker"/>
+                <DatePicker dateLabel="Data de Nascimento" :dateObj="birthDate" v-on:update="updateDate" ref="DatePicker"/>
               </v-col>
             </v-row>
             <v-row>

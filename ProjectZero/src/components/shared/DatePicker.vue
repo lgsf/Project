@@ -26,7 +26,7 @@
 
 <script>
   export default {
-    props: ["dateLabel"],
+    props: ["dateLabel", "dateObj"],
     data: () => ({
       date: new Date().toISOString().substr(0, 10),
       dateFormatted: '',
@@ -41,11 +41,14 @@
             this.$emit('update', this.dateFormatted)
         },
         formatDate (date) {
-        if (!date) return null
-
-        const [year, month, day] = date.split('-')
-        return `${day}/${month}/${year}`
-      }
-    }
+            if (!date) return null  
+            const [year, month, day] = date.split('-')
+            return `${day}/${month}/${year}`
+        }
+    },
+    mounted() {
+        this.dateFormatted = this.dateObj
+        this.date = new Date(this.dateObj).toISOString().substr(0, 10)
+    },
   }
 </script>
