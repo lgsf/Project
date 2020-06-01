@@ -6,7 +6,7 @@
           <v-toolbar color="primary" dark>
             <h3>{{ screenTitle }}</h3>
             <v-spacer></v-spacer>
-        <v-icon right class="white--text">account_box</v-icon>
+            <v-icon right class="white--text">account_box</v-icon>
           </v-toolbar>
           <v-card-title>
             <v-text-field
@@ -30,9 +30,9 @@
               ></v-data-table>
             </v-col>
           </v-row>
-          <v-btn color="error" dark fixed bottom right fab>
-            <v-icon v-show="!showEdit" @click="createUser">mdi-plus</v-icon>
-            <v-icon v-show="showEdit" @click="editUser">mdi-pen</v-icon>
+          <v-btn color="error" dark fixed bottom right fab @click="createOrUpdateUser">
+            <v-icon v-show="!showEdit">mdi-plus</v-icon>
+            <v-icon v-show="showEdit">mdi-pen</v-icon>
           </v-btn>
           <EditUser :refreshUsersMethod="readUsers" ref="EditUser" />
         </v-card>
@@ -78,10 +78,11 @@ export default {
         {
           text: "Grupo",
           align: "start",
-          value: "group"
+          value: "group.name"
         }
       ],
-      desserts: []
+      desserts: [],
+      userGroups: []
     };
   },
   watch: {
@@ -102,7 +103,7 @@ export default {
               phone: doc.data().phone,
               email: doc.data().email,
               birthDate: doc.data().birth_date,
-              group: doc.data().group_name
+              group: this.userGroups.find(group => group.id == doc.data().group_id)
             });
           });
         })
@@ -122,11 +123,35 @@ export default {
       }
       this.$refs.EditUser.openEdit(dto);
     },
+    readGroups() {
+      console.log('loadinggroups')
+      db.collection("groups")
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => { this.userGroups.push({
+              name: doc.data().name,
+              id: doc.id
+            })
+          });
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
+        });
+    },
     createUser: function() {
       this.$refs.EditUser.openCreate();
+    },
+    createOrUpdateUser: function(){
+      if(this.showEdit){
+        this.editUser()
+      }
+      else{
+        this.createUser()
+      }
     }
   },
   mounted() {
+    this.readGroups()
     this.readUsers();
   }
 };

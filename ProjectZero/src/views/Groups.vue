@@ -35,9 +35,9 @@
                   ></v-data-table>
                 </v-col>
               </v-row>
-              <v-btn color="error" dark fixed bottom right fab>
-                <v-icon v-show="selected.length == 0" @click="editGroup">mdi-plus</v-icon>
-                <v-icon v-show="selected.length == 1" @click="editGroup">mdi-pen</v-icon>
+              <v-btn color="error" dark fixed bottom right fab @click="editGroup">
+                <v-icon v-show="!showEdit">mdi-plus</v-icon>
+                <v-icon v-show="showEdit">mdi-pen</v-icon>
               </v-btn>
             </v-col>
           </v-row>
@@ -76,6 +76,7 @@ export default {
       search: "",
       title: "Grupos",
       searchLabel: "Buscar",
+      showEdit: false,
       selected: [],
       headers: [
         {
@@ -86,6 +87,11 @@ export default {
       ],
       groups: groups
     };
+  },
+  watch: {
+    selected: function() {
+      this.showEdit = this.selected ? this.selected.length == 1 : false;
+    }
   },
   methods: {
     loadGroups: loadGroups,
