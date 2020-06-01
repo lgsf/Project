@@ -21,7 +21,8 @@
         class="grey-3 py-4 text-center"
         cols="12"
       >
-        {{ new Date().getFullYear() }} — <strong>Project Zero Todos os direitos reservados</strong>
+      &copy;
+        {{ new Date().getFullYear() }}.  Todos os direitos reservados — <strong>Project Zero</strong>
 
       </v-col>
     </v-row>
