@@ -58,22 +58,6 @@
 <script>
 import { db } from "@/main";
 
-function loadMeunu(model) {
-  db.collection("groups")
-    .doc("bmyiE5pvx66Ct7Wmj78b")
-    .get()
-    .then(function(snapshots) {
-      onMenuLoaded(snapshots, model);
-    });
-}
-
-function onMenuLoaded(groupSnapshot, model) {
-  let groupData = groupSnapshot.data();
-  model.links = groupData.menu.sort(function(a, b) {
-    return a.id < b.id ? -1 : 1;
-  });
-}
-
 export default {
   data() {
     return {
@@ -84,15 +68,38 @@ export default {
   computed: {
     isAuthenticated() {
       return this.$store.getters.isAuthenticated;
+    },
+    userObj() {
+      return this.$store.getters.userObj;
     }
   },
   methods: {
     logout() {
       this.$store.dispatch("userSignOut");
+    },
+    loadMenu() {
+      let groupId = "bmyiE5pvx66Ct7Wmj78b"
+      console.log(this.userObj)
+      if(this.userObj && this.userObj.group_id)
+        groupId = this.userObj.group_id
+      if(groupId){
+          db.collection("groups")
+              .doc(groupId)
+              .get()
+              .then((snapshots) => {
+                this.onMenuLoaded(snapshots);
+        });
+      }
+    },
+    onMenuLoaded(groupSnapshot) {
+      let groupData = groupSnapshot.data();
+      this.links = groupData.menu.sort(function(a, b) {
+        return a.id < b.id ? -1 : 1;
+      });
     }
   },
   mounted() {
-    loadMeunu(this);
+    this.loadMenu();
   }
 };
 </script>

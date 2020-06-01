@@ -1,6 +1,6 @@
 <template>
   <v-app class="grey lighten-4">
-    <Navbar />
+    <Navbar v-if="isAuthenticated"/>
      <v-content class="mx-5 mb-5">
       <router-view></router-view>
      </v-content>
@@ -21,6 +21,11 @@ export default {
   data () {
     return {
     }
+  },
+  computed: {
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated;
+    }
   }
-  }
+}
 </script>

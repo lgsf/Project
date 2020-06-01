@@ -100,65 +100,67 @@ export default {
       this.show()
     },
     openCreate(){
+      this.resetVariables()
+      this.show()
+    },
+    resetVariables(){
       this.id = null
       this.name = ''
       this.email = ''
       this.phone = ''
       this.birthDate = ''
       this.group = ''
-      this.show()
     },
     show() {
       this.dialog = true
     },
     close() {
-      this.name = ''
-      this.email = ''
-      this.phone =''
-      this.birthDate = ''
-      this.group = ''
+      this.resetVariables()
       this.dialog = false
     },
     save(){
       if(this.id){
-        db.collection("users")
-                .doc(this.id)
-                .update({
-                  name: this.name,
-                  email: this.email,
-                  phone: this.phone,
-                  birth_date: this.birthDate,
-                  group_id: this.group.id,
-                })
-                .then(()=>{
-                  this.close();
-                })
-                .catch((error) => {
-                  console.error("Error updating document: ", error);
-                });
+        this.createUser()
       }
       else{
-        db.collection("users")
-                .add({
-                  name: this.name,
-                  email: this.email,
-                  phone: this.phone,
-                  birth_date: this.birthDate,
-                  group_id: this.group,
-                })
-                .then(()=>{
-                  this.close();
-                })
-                .catch((error) => {
-                  console.error("Error inserting document: ", error);
-                });
-
-        this.$store.dispatch('userSignUp', {
-                    email: this.email,
-                    password: 'temporario'
-                })
+        this.createUser()
       }
       this.refreshUsersMethod();
+    },
+    createUser(){
+      db.collection("users")
+        .add({
+          name: this.name,
+          email: this.email,
+          phone: this.phone,
+          birth_date: this.birthDate,
+          group_id: this.group,
+        })
+        .then(()=>{
+          this.close();
+        })
+        .catch((error) => {
+          console.error("Error inserting document: ", error);
+        });
+
+        this.$store.dispatch('userSignUp', { email: this.email, password: 'temporario' })
+    },
+    updateUser(){
+      db.collection("users")
+        .doc(this.id)
+        .update({
+          name: this.name,
+          email: this.email,
+          phone: this.phone,
+          birth_date: this.birthDate,
+          group_id: this.group.id,
+        })
+        .then(()=>{
+          this.close();
+        })
+        .catch((error) => {
+          console.error("Error updating document: ", error);
+        });
     },
     readGroups() {
       db.collection("groups")
