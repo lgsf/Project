@@ -47,8 +47,10 @@
         }
     },
     mounted() {
-        this.dateFormatted = this.dateObj
-        this.date = new Date(this.dateObj).toISOString().substr(0, 10)
+        if(this.dateObj){
+            this.dateFormatted = this.dateObj
+            this.date = new Date(this.dateObj).toISOString().substr(0, 10)
+        }
     },
   }
 </script>

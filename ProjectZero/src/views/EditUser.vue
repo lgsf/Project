@@ -15,7 +15,7 @@
             </v-row>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Email" v-model="email"  @change="setEmail"></v-text-field>
+                <v-text-field label="Email" v-model="email" :disabled="id"  @change="setEmail"></v-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -62,8 +62,7 @@ export default {
   data() {
     return {
       dialog: false,
-      menu1: false,
-      dateFormatted: this.formatDate(new Date().toISOString().substr(0, 10)), 
+      id: null,
       name: '',
       email: '',
       phone: '',
@@ -75,8 +74,6 @@ export default {
   methods: {
     updateDate(value){
       this.birthDate = value
-      console.log("update date")
-      console.log(this.birthDate)
     },
     setName(value){
       this.name = value
@@ -103,6 +100,12 @@ export default {
       this.show()
     },
     openCreate(){
+      this.id = null
+      this.name = ''
+      this.email = ''
+      this.phone = ''
+      this.birthDate = ''
+      this.group = ''
       this.show()
     },
     show() {
