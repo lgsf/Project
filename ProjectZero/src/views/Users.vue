@@ -28,7 +28,7 @@
               ></v-data-table>
             </v-col>
           </v-row>
-          <v-btn color="red" dark fixed bottom right fab>
+          <v-btn color="error" dark fixed bottom right fab>
             <v-icon v-show="!showEdit" @click="createUser">mdi-plus</v-icon>
             <v-icon v-show="showEdit" @click="editUser">mdi-pen</v-icon>
           </v-btn>
@@ -40,15 +40,15 @@
 </template>
 
 <script>
-import { db } from '@/main'
+import { db } from "@/main";
 import EditUser from "./EditUser";
 
 export default {
   components: { EditUser },
   data() {
     return {
-      search: '',
-      screenTitle: 'Usuários',
+      search: "",
+      screenTitle: "Usuários",
       searchLabel: "Buscar",
       showEdit: false,
       selected: [],
@@ -79,46 +79,52 @@ export default {
           value: "group"
         }
       ],
-      desserts: [
-      ]
-    };    
+      desserts: []
+    };
   },
-  watch:{
+  watch: {
     selected: function() {
-      this.showEdit = this.selected ? this.selected.length == 1 : false 
-    },
+      this.showEdit = this.selected ? this.selected.length == 1 : false;
+    }
   },
   methods: {
     readUsers() {
-      this.desserts = []
+      this.desserts = [];
       db.collection("users")
         .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
+        .then(querySnapshot => {
+          querySnapshot.forEach(doc => {
             this.desserts.push({
-                id: doc.id,
-                name: doc.data().name,
-                phone: doc.data().phone,
-                email: doc.data().email,
-                birthDate: doc.data().birth_date,
-                group: doc.data().group_name
-                })
+              id: doc.id,
+              name: doc.data().name,
+              phone: doc.data().phone,
+              email: doc.data().email,
+              birthDate: doc.data().birth_date,
+              group: doc.data().group_name
             });
+          });
         })
-        .catch((error) => {
+        .catch(error => {
           console.log("Error getting documents: ", error);
         });
     },
     editUser: function() {
-      let item = this.selected[0]
-      this.$refs.EditUser.openEdit(item.id, item.name, item.phone, item.email, item.birthDate, item.group);
+      let item = this.selected[0];
+      this.$refs.EditUser.openEdit(
+        item.id,
+        item.name,
+        item.phone,
+        item.email,
+        item.birthDate,
+        item.group
+      );
     },
     createUser: function() {
       this.$refs.EditUser.openCreate();
     }
   },
   mounted() {
-    this.readUsers()
-  },
+    this.readUsers();
+  }
 };
 </script>
