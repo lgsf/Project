@@ -70,9 +70,9 @@ export default {
         {
           icon: "account_box",
           text: "Pessoal",
-          route: "/team",
+          route: "/users",
           subLinks: [
-            { icon: "person", text: "Usuários", route: "/team" },
+            { icon: "person", text: "Usuários", route: "/users" },
             { icon: "people", text: "Grupos", route: "/groups" }
           ]
         },
