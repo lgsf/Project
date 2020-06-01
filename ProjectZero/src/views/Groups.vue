@@ -9,7 +9,6 @@
           <v-row justify="center">
             <v-col cols="12">
               <v-card-title>
-                <v-spacer></v-spacer>
                 <v-text-field
                   v-model="search"
                   append-icon="mdi-magnify"
@@ -37,7 +36,7 @@
               </v-btn>
             </v-col>
           </v-row>
-          <EditGroup ref="EditGroup" />
+          <EditGroup :refreshGroups="loadGroups" ref="EditGroup" />
         </v-card>
       </v-col>
     </v-row>
@@ -50,15 +49,17 @@ import EditGroup from "./EditGroup";
 var groups = [];
 
 function loadGroups() {
+  groups.splice(0, groups.length);
   db.collection("groups")
     .get()
     .then(onGroupsLoaded);
 }
 
-function onGroupsLoaded(snapshot) {
-  snapshot.forEach(config => {
-    let appData = config.data();
-    groups.push(appData);
+function onGroupsLoaded(snapshots) {
+  snapshots.forEach(groupSnapShot => {
+    let groupData = groupSnapShot.data();
+    groupData.id = groupSnapShot.id;
+    groups.push(groupData);
   });
 }
 
@@ -81,8 +82,10 @@ export default {
     };
   },
   methods: {
+    loadGroups: loadGroups,
     editGroup: function() {
-      this.$refs.EditGroup.show();
+      let group = this.selected.length > 0 ? this.selected[0] : {};
+      this.$refs.EditGroup.show(group);
     }
   },
   mounted() {

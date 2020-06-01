@@ -55,6 +55,7 @@ import { db } from "@/main";
 var menuItems = [];
 
 function loadMeunuOptions() {
+  menuItems.splice(0, menuItems.length);
   db.collection("menuItems")
     .get()
     .then(onMenuOptionsLoaded);
@@ -67,7 +68,67 @@ function onMenuOptionsLoaded(snapshot) {
   });
 }
 
+function fillGroupData(model, dataObj) {
+  model.groupId = dataObj.id;
+  model.groupName = dataObj.name;
+  model.groupEmail = dataObj.email;
+  (dataObj.menu || []).forEach(menuItem => {
+    model.selection.push(menuItem.id);
+    if (!menuItem.children) return;
+    menuItem.children.forEach(menuSubItem =>
+      model.selection.push(menuSubItem.id)
+    );
+  });
+}
+
+function createNewGroup(self) {
+  let menu = getMenuSelectedItems(self);
+  db.collection("groups")
+    .add({
+      name: self.groupName || "",
+      email: self.groupEmail || "",
+      menu: menu || []
+    })
+    .then(function() {
+      self.close();
+      if (!self.refreshGroups) return;
+      self.refreshGroups();
+    })
+    .catch(function(error) {
+      console.error("Error writing document: ", error);
+    });
+}
+
+function getMenuSelectedItems(self) {
+  return self.items.filter(
+    m =>
+      self.selection.includes(m.id) ||
+      (!!m.children &&
+        m.children.filter(n => self.selection.includes(n.id)).length > 0)
+  );
+}
+
+function updateExistingGroup(self) {
+  let menu = getMenuSelectedItems(self);
+  db.collection("groups")
+    .doc(self.groupId)
+    .set({
+      name: self.groupName || "",
+      email: self.groupEmail || "",
+      menu: menu || []
+    })
+    .then(function() {
+      self.close();
+      if (!self.refreshGroups) return;
+      self.refreshGroups();
+    })
+    .catch(function(error) {
+      console.error("Error writing document: ", error);
+    });
+}
+
 export default {
+  props: ["refreshGroups"],
   data() {
     return {
       dialog: false,
@@ -79,7 +140,8 @@ export default {
     };
   },
   methods: {
-    show() {
+    show(obj) {
+      fillGroupData(this, obj);
       this.dialog = true;
     },
     close() {
@@ -90,24 +152,8 @@ export default {
     },
     save() {
       let self = this;
-      let menu = this.items.filter(
-        m =>
-          this.selection.includes(m.id) ||
-          (!!m.children &&
-            m.children.filter(n => this.selection.includes(n.id)).length > 0)
-      );
-      db.collection("groups")
-        .add({
-          name: this.groupName,
-          email: this.groupEmail,
-          menu: menu
-        })
-        .then(function() {
-          self.close();
-        })
-        .catch(function(error) {
-          console.error("Error writing document: ", error);
-        });
+      if (!self.groupId) createNewGroup(self);
+      else updateExistingGroup(self);
     }
   },
   mounted() {
