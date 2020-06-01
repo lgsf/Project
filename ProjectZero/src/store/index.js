@@ -50,6 +50,22 @@ actions: {
                 router.push('/');
             });
     },
+
+    resetPassword({ commit }, { email }) {
+      firebase
+          .auth()
+          .sendPasswordResetEmail(email)
+          .then(() => {
+            commit('setUser', null);
+            commit('setIsAuthenticated', false);
+            router.push('/');
+        })
+        .catch(() => {
+            commit('setUser', null);
+            commit('setIsAuthenticated', false);
+            router.push('/');
+        });
+  }
    
 },
 getters: {
