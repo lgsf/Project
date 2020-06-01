@@ -4,9 +4,9 @@
  <v-row class="dark" justify="center">
       <v-card>
         <v-card-title class="primary ">
-          <h3 class="white--text">Login</h3>
+          <h3 class="white--text">Esqueci a senha</h3>
             <v-spacer></v-spacer>
-          <v-icon right class="white--text">account_box</v-icon>
+          <v-icon right class="white--text">vpn_key</v-icon>
         </v-card-title>
           <v-card-text>
             <v-container>
@@ -19,23 +19,15 @@
                                 v-model="email"
                                 :rules="emailRules"
                                 required></v-text-field>
-                </v-col><v-col cols="12">
-                <v-text-field name="password"
-                                label="Password"
-                                type="password"
-                                v-model="password"
-                                :rules="passwordRules"
-                                required></v-text-field>
                 </v-col>
-                <v-btn 
-                  color="error"
-                  router :to="{name: 'ResetPassword'}"
-                > Esqueci a senha</v-btn>
+                <v-btn @click="limpar"
+                  color="success"
+                > Limpar</v-btn>
                  <v-spacer></v-spacer>
-              <v-btn @click="login"
+              <v-btn @click="reset"
                   color="primary"
                   :disabled="!valid"
-                > Login</v-btn>
+                > Enviar senha</v-btn>
                  </v-row>
                  </v-form>
           </v-container>
@@ -47,34 +39,28 @@
 </template>
 
 <script>
+
 export default {
-    name: 'Login',
+    name: 'ResetPassword',
     data() {
         return {
             valid: false,
             email: '',
-            password: '',
             emailRules: [
                 v => !!v || 'E-mail is required',
                 v => /.+@.+/.test(v) || 'E-mail must be valid'
-            ],
-            passwordRules: [
-                v => !!v || 'Password is required',
-                v =>
-                    v.length >= 6 ||
-                    'Password must be greater than 6 characters'
             ]
         };
     },
     methods: {
-        login() {
-                this.$store.dispatch('userLogin', {
-                    email: this.email,
-                    password: this.password
+        reset() {
+                this.$store.dispatch('resetPassword', {
+                    email: this.email
                 })
         }
     }
 }
+
 </script>
 <style>
 

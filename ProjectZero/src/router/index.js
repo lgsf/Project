@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
+import ResetPassword from '../views/ResetPassword.vue'
 import Clients from '../views/Clients.vue'
 import Home from '../views/Home.vue'
 import Setup from '../views/Setup.vue'
@@ -18,6 +19,12 @@ const routes = [
     path: '/',
     name: 'Login',
     component: Login,
+
+  },
+  {
+    path: '/resetpassword',
+    name: 'ResetPassword',
+    component: ResetPassword,
 
   },
   {
