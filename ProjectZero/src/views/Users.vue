@@ -4,7 +4,9 @@
       <v-col cols="lg-6">
         <v-card class="mx-auto">
           <v-toolbar color="primary" dark>
-            <v-toolbar-title>{{ screenTitle }}</v-toolbar-title>
+            <h3>{{ screenTitle }}</h3>
+            <v-spacer></v-spacer>
+        <v-icon right class="white--text">account_box</v-icon>
           </v-toolbar>
           <v-card-title>
             <v-text-field

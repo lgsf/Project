@@ -3,11 +3,11 @@
   <br>
  <v-row class="dark" justify="center">
       <v-card>
-        <v-card-title class="primary ">
-          <h3 class="white--text">Esqueci a senha</h3>
+        <v-toolbar class="primary ">
+          <h3 class="white--text">{{ screenTitle }}</h3>
             <v-spacer></v-spacer>
           <v-icon right class="white--text">vpn_key</v-icon>
-        </v-card-title>
+        </v-toolbar>
           <v-card-text>
             <v-container>
               <v-form v-model="valid" > 
@@ -20,11 +20,11 @@
                                 :rules="emailRules"
                                 required></v-text-field>
                 </v-col>
-                <v-btn @click="limpar"
+                <v-btn @click="reset"
                   color="success"
                 > Limpar</v-btn>
                  <v-spacer></v-spacer>
-              <v-btn @click="reset"
+              <v-btn @click="resetPassword"
                   color="primary"
                   :disabled="!valid"
                 > Enviar senha</v-btn>
@@ -45,6 +45,7 @@ export default {
     data() {
         return {
             valid: false,
+            screenTitle: 'Esqueci a senha',
             email: '',
             emailRules: [
                 v => !!v || 'E-mail is required',
@@ -53,11 +54,14 @@ export default {
         };
     },
     methods: {
-        reset() {
+        resetPassword() {
                 this.$store.dispatch('resetPassword', {
                     email: this.email
                 })
-        }
+        },
+        reset () {
+        this.email = ''
+      }
     }
 }
 
