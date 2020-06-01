@@ -2,9 +2,10 @@
   <v-row justify="center">
     <v-dialog v-model="dialog" persistent max-width="600px">
       <v-card>
-        <v-card-title>
-          <h1 class="primary--text">Usuário</h1>
-        </v-card-title>
+        <v-toolbar class="primary" dark>
+          <v-toolbar-title>Usuario</v-toolbar-title>
+        </v-toolbar>
+        <v-divider></v-divider>
         <v-card-text>
           <v-container>
             <v-row>
@@ -19,32 +20,12 @@
             </v-row>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Telefone" v-model="phone"  @change="setPhone"></v-text-field>
+                <v-text-field label="Telefone" v-model="phone" @change="setPhone"></v-text-field>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12">
-              <v-menu
-          ref="menu1"
-          v-model="menu1"
-          :close-on-content-click="false"
-          transition="scale-transition"
-          offset-y
-          max-width="290px"
-          min-width="290px"
-        >
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                    v-model="dateFormatted"
-                    label="Data de nascimento"
-                    persistent-hint
-                    prepend-icon="event"
-                    @blur="date = parseDate(dateFormatted)"
-                    v-on="on"
-                  ></v-text-field>
-                </template>
-                <v-date-picker v-model="birthDate" no-title @input="setBirthDate"></v-date-picker>
-                </v-menu>
+                <DatePicker dateLabel="Data de Nascimento" v-on:update="updateDate" ref="DatePicker"/>
               </v-col>
             </v-row>
             <v-row>
@@ -61,6 +42,7 @@
           </v-container>
           <small>*Obrigatório</small>
         </v-card-text>
+        <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="close">Fechar</v-btn>
@@ -72,8 +54,10 @@
 </template>
 <script>
 import { db } from "@/main";
+import DatePicker from "@/components/shared/DatePicker";
 
 export default {
+  components: { DatePicker },
   props: ['refreshUsersMethod'],
   data() {
     return {
@@ -89,6 +73,11 @@ export default {
     };
   },
   methods: {
+    updateDate(value){
+      this.birthDate = value
+      console.log("update date")
+      console.log(this.birthDate)
+    },
     setName(value){
       this.name = value
     },
@@ -98,22 +87,19 @@ export default {
     setPhone(value){
       this.phone = value
     },
-    setBirthDate(value){
-      this.birthDate = value
-    },
     formatDate (date) {
         if (!date) return null
 
         const [year, month, day] = date.split('-')
         return `${month}/${day}/${year}`
       },
-    openEdit(id, name, email, phone, birthDate, group){
-      this.id = id
-      this.name = name
-      this.email = email
-      this.phone = phone
-      this.birthDate = birthDate
-      this.group = { name: group }
+    openEdit(dto){
+      this.id = dto.id
+      this.name = dto.name
+      this.email = dto.email
+      this.phone = dto.phone
+      this.birthDate = dto.birthDate
+      this.group = { name: dto.group }
       this.show()
     },
     openCreate(){
@@ -149,6 +135,8 @@ export default {
                 });
       }
       else{
+        console.log("save")
+      console.log(this.birthDate)
         db.collection("users")
                 .add({
                   name: this.name,
