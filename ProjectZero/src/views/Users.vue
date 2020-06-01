@@ -112,14 +112,15 @@ export default {
     },
     editUser: function() {
       let item = this.selected[0];
-      this.$refs.EditUser.openEdit(
-        item.id,
-        item.name,
-        item.phone,
-        item.email,
-        item.birthDate,
-        item.group
-      );
+      let dto = {
+        id: item.id,
+        name: item.name,
+        phone: item.phone,
+        email: item.email,
+        birthDate: item.birthDate,
+        group: item.group
+      }
+      this.$refs.EditUser.openEdit(dto);
     },
     createUser: function() {
       this.$refs.EditUser.openCreate();
