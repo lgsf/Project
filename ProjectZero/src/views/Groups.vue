@@ -22,7 +22,7 @@
                 <v-col cols="12">
                   <v-data-table
                     :headers="headers"
-                    :items="desserts"
+                    :items="groups"
                     :search="search"
                     show-select
                     single-select
@@ -44,7 +44,23 @@
   </v-container>
 </template>
 <script>
+import { db } from "@/main";
 import EditGroup from "./EditGroup";
+
+var groups = [];
+
+function loadGroups() {
+  db.collection("groups")
+    .get()
+    .then(onGroupsLoaded);
+}
+
+function onGroupsLoaded(snapshot) {
+  snapshot.forEach(config => {
+    let appData = config.data();
+    groups.push(appData);
+  });
+}
 
 export default {
   components: { EditGroup },
@@ -61,20 +77,16 @@ export default {
           value: "name"
         }
       ],
-      desserts: [
-        {
-          name: "Admin"
-        },
-        {
-          name: "Operador"
-        }
-      ]
+      groups: groups
     };
   },
   methods: {
     editGroup: function() {
       this.$refs.EditGroup.show();
     }
+  },
+  mounted() {
+    loadGroups();
   }
 };
 </script>

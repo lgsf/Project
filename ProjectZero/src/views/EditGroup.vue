@@ -1,20 +1,21 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="dialog" persistent max-width="600px">
+    <v-dialog v-model="dialog" persistent scrollable max-width="600px">
       <v-card>
-        <v-card-title>
-          <h1 class="primary--text">Grupo</h1>
-        </v-card-title>
+        <v-toolbar class="primary" dark>
+          <v-toolbar-title>Grupo</v-toolbar-title>
+        </v-toolbar>
+        <v-divider></v-divider>
         <v-card-text>
           <v-container>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Grupo*" :value="groupName" required></v-text-field>
+                <v-text-field label="Grupo*" v-model="groupName" required></v-text-field>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Email" :value="groupEmail"></v-text-field>
+                <v-text-field label="Email" v-model="groupEmail"></v-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -26,6 +27,7 @@
               <v-col cols="12">
                 <v-treeview
                   :items="items"
+                  v-model="selection"
                   dense
                   selectable
                   open-on-click
@@ -37,10 +39,11 @@
           </v-container>
           <small>*Obrigatório</small>
         </v-card-text>
+        <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="close">Fechar</v-btn>
-          <v-btn color="blue darken-1" text @click="close">Salvar</v-btn>
+          <v-btn color="blue darken-1" text @click="save">Salvar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -68,9 +71,11 @@ export default {
   data() {
     return {
       dialog: false,
+      groupId: "",
       groupName: "",
       groupEmail: "",
-      items: menuItems
+      items: menuItems,
+      selection: []
     };
   },
   methods: {
@@ -81,7 +86,28 @@ export default {
       this.groupName = "";
       this.groupEmail = "";
       this.dialog = false;
-      //loadMeunuOptions();
+      this.selection.splice(0, this.selection.length);
+    },
+    save() {
+      let self = this;
+      let menu = this.items.filter(
+        m =>
+          this.selection.includes(m.id) ||
+          (!!m.children &&
+            m.children.filter(n => this.selection.includes(n.id)).length > 0)
+      );
+      db.collection("groups")
+        .add({
+          name: this.groupName,
+          email: this.groupEmail,
+          menu: menu
+        })
+        .then(function() {
+          self.close();
+        })
+        .catch(function(error) {
+          console.error("Error writing document: ", error);
+        });
     }
   },
   mounted() {
