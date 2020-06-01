@@ -30,9 +30,9 @@
               ></v-data-table>
             </v-col>
           </v-row>
-          <v-btn color="error" dark fixed bottom right fab>
-            <v-icon v-show="!showEdit" @click="createUser">mdi-plus</v-icon>
-            <v-icon v-show="showEdit" @click="editUser">mdi-pen</v-icon>
+          <v-btn color="error" dark fixed bottom right fab @click="createOrUpdateUser">
+            <v-icon v-show="!showEdit">mdi-plus</v-icon>
+            <v-icon v-show="showEdit">mdi-pen</v-icon>
           </v-btn>
           <EditUser :refreshUsersMethod="readUsers" ref="EditUser" />
         </v-card>
@@ -140,6 +140,14 @@ export default {
     },
     createUser: function() {
       this.$refs.EditUser.openCreate();
+    },
+    createOrUpdateUser: function(){
+      if(this.showEdit){
+        this.editUser()
+      }
+      else{
+        this.createUser()
+      }
     }
   },
   mounted() {

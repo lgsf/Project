@@ -149,6 +149,11 @@ export default {
                 .catch((error) => {
                   console.error("Error inserting document: ", error);
                 });
+
+        this.$store.dispatch('userSignUp', {
+                    email: this.email,
+                    password: 'temporario'
+                })
       }
       this.refreshUsersMethod();
     },

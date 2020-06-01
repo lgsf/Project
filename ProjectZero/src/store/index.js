@@ -6,72 +6,86 @@ import router from '@/router'
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
-  state: {
-    user: null,
-    isAuthenticated: false,
-},
-mutations: {
-    setUser(state, payload) {
-        state.user = payload;
+    state: {
+        user: null,
+        isAuthenticated: false,
+        successMessage: ''
     },
-    setIsAuthenticated(state, payload) {
-        state.isAuthenticated = payload;
-    }
-},
-actions: {
-    userLogin({ commit }, { email, password }) {
-        firebase
-            .auth()
-            .signInWithEmailAndPassword(email, password)
-            .then(user => {
-                commit('setUser', user);
-                commit('setIsAuthenticated', true);
-                router.push('/home');
-            })
-            .catch(() => {
-                commit('setUser', null);
-                commit('setIsAuthenticated', false);
-                router.push('/');
-            });
+    mutations: {
+        setUser(state, payload) {
+            state.user = payload;
+        },
+        setIsAuthenticated(state, payload) {
+            state.isAuthenticated = payload;
+        },
+        setSuccessMessage(state, payload) {
+            state.successMessage = payload
+        }
     },
-  
-    userSignOut({ commit }) {
-        firebase
-            .auth()
-            .signOut()
-            .then(() => {
-                commit('setUser', null);
-                commit('setIsAuthenticated', false);
-                router.push('/');
-            })
-            .catch(() => {
-                commit('setUser', null);
-                commit('setIsAuthenticated', false);
-                router.push('/');
-            });
-    },
+    actions: {
+        userLogin({ commit }, { email, password }) {
+            firebase
+                .auth()
+                .signInWithEmailAndPassword(email, password)
+                .then(user => {
+                    commit('setUser', user);
+                    commit('setIsAuthenticated', true);
+                    router.push('/home');
+                })
+                .catch(() => {
+                    commit('setUser', null);
+                    commit('setIsAuthenticated', false);
+                    router.push('/');
+                });
+        },
 
-    resetPassword({ commit }, { email }) {
-      firebase
-          .auth()
-          .sendPasswordResetEmail(email)
-          .then(() => {
-            commit('setUser', null);
-            commit('setIsAuthenticated', false);
-            router.push('/');
-        })
-        .catch(() => {
-            commit('setUser', null);
-            commit('setIsAuthenticated', false);
-            router.push('/');
-        });
-  }
-   
-},
-getters: {
-    isAuthenticated(state) {
-        return state.user !== null && state.user !== undefined;
-    }
+        userSignOut({ commit }) {
+            firebase
+                .auth()
+                .signOut()
+                .then(() => {
+                    commit('setUser', null);
+                    commit('setIsAuthenticated', false);
+                    router.push('/');
+                })
+                .catch(() => {
+                    commit('setUser', null);
+                    commit('setIsAuthenticated', false);
+                    router.push('/');
+                });
+        },
 
-}
+        userSignUp({ commit }, payload) {
+            firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
+                .then(function (userRecord) {
+                    commit('setSuccessMessage', 'Usuario criado com sucesso: ' + userRecord.name);
+                })
+                .catch(function (error) {
+                    commit('setErrorMessage', 'Erro ao tentar criar o usuário: ' + error.message);
+                });
+        },
+
+        resetPassword({ commit }, { email }) {
+            firebase
+                .auth()
+                .sendPasswordResetEmail(email)
+                .then(() => {
+                    commit('setUser', null);
+                    commit('setIsAuthenticated', false);
+                    router.push('/');
+                })
+                .catch(() => {
+                    commit('setUser', null);
+                    commit('setIsAuthenticated', false);
+                    router.push('/');
+                });
+        }
+
+    },
+    getters: {
+        isAuthenticated(state) {
+            return state.user !== null && state.user !== undefined;
+        }
+
+    }
 })
