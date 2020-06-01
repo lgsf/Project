@@ -1,12 +1,13 @@
 <template>
-  <v-container>
-    <v-row justify="center">
-      <v-col cols="lg-6">
-        <v-card class='mx-auto'>
-        <v-toolbar color="primary" dark>
-          <v-toolbar-title>
+<div class="setup">
+    <v-row justify="center" dark> 
+        <v-card>
+        <v-toolbar class="primary white--text" dark>
+          <h3>
             {{ screenTitle }}
-          </v-toolbar-title>
+          </h3>
+          <v-spacer></v-spacer>
+        <v-icon right class="white--text">build</v-icon>
         </v-toolbar>
             <v-form @submit.prevent="saveConfiguration">
               <v-row>
@@ -63,19 +64,20 @@
                 </div>
               </v-col>
             </v-row>
-            <v-row>
-             <div class="d-none d-lg-block">
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
-              </div>
-              <v-col class='ms-6 me-6 outer'>
-                  <v-btn
+            <v-row >
+              <v-col class='ms-6 me-6' >
+                 <v-btn
                     color="success"
+                    depressed
+                    @click="readConfiguration"
+                  > 
+                    Carregar padrão
+                  </v-btn>
+                  </v-col>
+
+                  <v-col class='ms-6 me-6'>
+                   <v-btn
+                    color="primary"
                     depressed
                     type="submit"
                   > 
@@ -85,9 +87,8 @@
             </v-row>
           </v-form>
         </v-card>
-      </v-col>
     </v-row>
-  </v-container>
+  </div>
 </template>
 
 <script>
