@@ -4,7 +4,7 @@
  <v-row class="dark" justify="center">
       <v-card>
         <v-toolbar class="primary ">
-          <h3 class="white--text">Login</h3>
+          <h3 class="white--text">{{ screenTitle }}</h3>
             <v-spacer></v-spacer>
           <v-icon right class="white--text">account_box</v-icon>
         </v-toolbar>
@@ -52,6 +52,7 @@ export default {
     data() {
         return {
             valid: false,
+            screenTitle: 'Login',
             email: '',
             password: '',
             emailRules: [

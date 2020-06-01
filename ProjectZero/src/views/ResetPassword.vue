@@ -4,7 +4,7 @@
  <v-row class="dark" justify="center">
       <v-card>
         <v-toolbar class="primary ">
-          <h3 class="white--text">Esqueci a senha</h3>
+          <h3 class="white--text">{{ screenTitle }}</h3>
             <v-spacer></v-spacer>
           <v-icon right class="white--text">vpn_key</v-icon>
         </v-toolbar>
@@ -45,6 +45,7 @@ export default {
     data() {
         return {
             valid: false,
+            screenTitle: 'Esqueci a senha',
             email: '',
             emailRules: [
                 v => !!v || 'E-mail is required',

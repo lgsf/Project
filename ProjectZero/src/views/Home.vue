@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-  <v-subheader> <h3> Bem-vindo {{}}! </h3></v-subheader>
+  <v-subheader> <h3> Bem-vindo {{id}}! </h3></v-subheader>
   <v-container  >
   <v-row >
     <Table/>
@@ -15,16 +15,18 @@
 import Calendar from '@/components/Calendar'
 import Table from '@/components/Table'
 
+
 export default {
   name: 'Home',
    components: { Calendar,  Table },
   data(){
     return {
-      
-
+            id: 'usuário'
     }
   },
+  methods: {
   
+  }
 
 }
 </script>
