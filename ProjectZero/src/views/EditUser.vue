@@ -35,7 +35,7 @@
                   label="Grupos" 
                   v-model="group" 
                   item-text="name"
-                  item-value="name"
+                  item-value="id"
                 ></v-select>
               </v-col>
             </v-row>
@@ -99,7 +99,7 @@ export default {
       this.email = dto.email
       this.phone = dto.phone
       this.birthDate = dto.birthDate
-      this.group = { name: dto.group }
+      this.group = { name: dto.group.name, id: dto.group.id }
       this.show()
     },
     openCreate(){
@@ -125,7 +125,7 @@ export default {
                   email: this.email,
                   phone: this.phone,
                   birth_date: this.birthDate,
-                  group: this.group,
+                  group_id: this.group.id,
                 })
                 .then(()=>{
                   this.close();
@@ -135,15 +135,13 @@ export default {
                 });
       }
       else{
-        console.log("save")
-      console.log(this.birthDate)
         db.collection("users")
                 .add({
                   name: this.name,
                   email: this.email,
                   phone: this.phone,
                   birth_date: this.birthDate,
-                  group_name: this.group,
+                  group_id: this.group,
                 })
                 .then(()=>{
                   this.close();
@@ -159,7 +157,8 @@ export default {
         .get()
         .then((querySnapshot) => {
           querySnapshot.forEach((doc) => { this.userGroups.push({
-              name: doc.data().name
+              name: doc.data().name,
+              id: doc.id
             })
           });
         })
