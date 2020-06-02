@@ -3,9 +3,12 @@ import Vuex from 'vuex'
 import firebase from 'firebase'
 import router from '@/router'
 
+import groups from './modules/groups'
+
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
+    modules: { groups },
     state: {
         user: null,
         userObj: null,
