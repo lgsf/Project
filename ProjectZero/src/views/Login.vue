@@ -8,6 +8,7 @@
             <v-spacer></v-spacer>
           <v-icon right class="white--text">account_box</v-icon>
         </v-toolbar>
+        <Alert/>
           <v-card-text>
             <v-container>
               <v-form v-model="valid" > 
@@ -47,7 +48,10 @@
 </template>
 
 <script>
+import Alert from "@/components/shared/Alert";
+
 export default {
+    components: { Alert },
     name: 'Login',
     data() {
         return {
