@@ -8,6 +8,7 @@
             <v-spacer></v-spacer>
             <v-icon right class="white--text">account_box</v-icon>
           </v-toolbar>
+          <Alert/>
           <v-card-title>
             <v-text-field
               v-model="search"
@@ -44,9 +45,10 @@
 <script>
 import { db } from "@/main";
 import EditUser from "./EditUser";
+import Alert from "@/components/shared/Alert";
 
 export default {
-  components: { EditUser },
+  components: { EditUser, Alert },
   data() {
     return {
       search: "",

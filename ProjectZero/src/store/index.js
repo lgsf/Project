@@ -10,7 +10,10 @@ export const store = new Vuex.Store({
         user: null,
         userObj: null,
         isAuthenticated: false,
-        successMessage: ''
+        successMessage: '',
+        errorMessage: '',
+        warningMessage: '',
+        infoMessage: ''
     },
     mutations: {
         setUser(state, payload) {
@@ -20,14 +23,23 @@ export const store = new Vuex.Store({
         },
         setUserObj(state, payload) {
             state.userObj = payload
-            console.log('setei o userObj')
-            console.log(state.userObj)
         },
         setIsAuthenticated(state, payload) {
             state.isAuthenticated = payload;
         },
         setSuccessMessage(state, payload) {
             state.successMessage = payload
+        },
+        setErrorMessage(state, payload) {
+            state.errorMessage = payload
+        }
+        ,
+        setWarningMessage(state, payload) {
+            state.warningMessage = payload
+        }
+        ,
+        setInfoMessage(state, payload) {
+            state.infoMessage = payload
         }
     },
     actions: {
@@ -50,6 +62,7 @@ export const store = new Vuex.Store({
                     console.log(error)
                     commit('setUser', null);
                     commit('setIsAuthenticated', false);
+                    commit('setErrorMessage', 'Erro ao tentar fazer o login: ' + error.message);
                     router.push('/');
                 });
         },
@@ -61,6 +74,7 @@ export const store = new Vuex.Store({
                 .then(() => {
                     commit('setUser', null);
                     commit('setIsAuthenticated', false);
+                    commit('setSuccessMessage', 'Sessão encerrada com sucesso.');
                     router.push('/');
                 })
                 .catch(() => {
@@ -82,19 +96,16 @@ export const store = new Vuex.Store({
 
         getUserObj({ commit }, payload) {
             firebase.firestore().collection("users")
-                //.where('email', '==', payload.user.email)
                 .get()
                 .then(function (querySnapshot) {
                     querySnapshot.forEach(doc => {
-                        console.log('encontrei usuario na tabela de usuario')
-                        console.log(doc)
                         if (doc.email == payload.user.email) {
                             commit('setUserObj', doc)
                         }
                     });
                 })
                 .catch(error => {
-                    console.log("Error getting documents: ", error);
+                    console.log("Erro ao buscar os usuários: ", error.message);
                 });
 
         },
@@ -122,6 +133,18 @@ export const store = new Vuex.Store({
         },
         userObj(state) {
             return state.userObj;
+        },
+        successMessage(state) {
+            return state.successMessage
+        },
+        errorMessage(state) {
+            return state.errorMessage
+        },
+        warningMessage(state) {
+            return state.warningMessage
+        },
+        infoMessage(state) {
+            return state.infoMessage
         }
     }
 })
