@@ -51,12 +51,13 @@
               <v-text-field v-model="end" type="date" label="Qual o fim?"></v-text-field>
               <v-text-field v-model="color" type="color" label="Escolha a cor do lembrete"></v-text-field>
               <v-card-actions>
-                <v-btn color="success" class="mr-4" @click="close">
+                <v-spacer></v-spacer>
+                <v-btn text color="blue darken-1"  @click="close">
                 Limpar
               </v-btn>
-              <v-spacer></v-spacer>
-              <v-btn type="submit" right color="primary" class="mr-4" @click.stop="dialog = false">
-                Criar lembrete
+              
+              <v-btn type="submit" text color="blue darken-1"  @click.stop="dialog = false">
+                Salvar
               </v-btn>
               </v-card-actions>
             </v-form>
@@ -74,12 +75,13 @@
               <v-text-field v-model="end" type="date" label="Qual o fim?"></v-text-field>
               <v-text-field v-model="color" type="color" label="Escolha a cor do lembrete"></v-text-field>
               <v-card-actions>
-                <v-btn color="success" class="mr-4" @click="close">
+                <v-spacer></v-spacer>
+                <v-btn text color="blue darken-1"  @click="close">
                 Limpar
               </v-btn>
-              <v-spacer></v-spacer>
-              <v-btn type="submit" right color="primary" class="mr-4" @click.stop="dialog = false">
-                Criar lembrete
+              
+              <v-btn type="submit" text color="blue darken-1"  @click.stop="dialog = false">
+                Salvar
               </v-btn>
               </v-card-actions>
             </v-form>
@@ -135,13 +137,13 @@
   </v-card-text>
 
   <v-card-actions>
-    <v-btn text color="secondary" @click="selectedOpen = false">
+    <v-btn text color="blue darken-1" @click="selectedOpen = false">
       Fechar
     </v-btn>
-    <v-btn v-if="currentlyEditing !== selectedEvent.id" text @click.prevent="editEvent(selectedEvent)">
+    <v-btn color="blue darken-1" v-if="currentlyEditing !== selectedEvent.id" text @click.prevent="editEvent(selectedEvent)">
       Editar
     </v-btn>
-    <v-btn text v-else type="submit" @click.prevent="updateEvent(selectedEvent)">
+    <v-btn color="blue darken-1" text v-else type="submit" @click.prevent="updateEvent(selectedEvent)">
       Salvar
     </v-btn>
   </v-card-actions>
