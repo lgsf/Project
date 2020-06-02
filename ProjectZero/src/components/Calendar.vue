@@ -44,15 +44,21 @@
       <v-dialog v-model="dialog" max-width="500">
         <v-card>
           <v-container>
-            <v-form @submit.prevent="addEvent">
-              <v-text-field v-model="name" type="text" label="Nome do lembrete"></v-text-field>
-              <v-text-field v-model="details" type="text" label="Detalhes"></v-text-field>
-              <v-text-field v-model="start" type="date" label="Qual o início"></v-text-field>
+            <v-form @submit.prevent="addEvent" >
+              <v-text-field v-model="name" type="text" label="Qual o título do lembrete?"></v-text-field>
+              <v-text-field v-model="details" type="text" label="Quais os detalhes?"></v-text-field>
+              <v-text-field v-model="start" type="date" label="Qual o início?"></v-text-field>
               <v-text-field v-model="end" type="date" label="Qual o fim?"></v-text-field>
-              <v-text-field v-model="color" type="color" label="Selecione a cor do painel de cores"></v-text-field>
-              <v-btn type="submit" color="primary" class="mr-4" @click.stop="dialog = false">
+              <v-text-field v-model="color" type="color" label="Escolha a cor do lembrete"></v-text-field>
+              <v-card-actions>
+                <v-btn color="success" class="mr-4" @click="close">
+                Limpar
+              </v-btn>
+              <v-spacer></v-spacer>
+              <v-btn type="submit" right color="primary" class="mr-4" @click.stop="dialog = false">
                 Criar lembrete
               </v-btn>
+              </v-card-actions>
             </v-form>
           </v-container>
         </v-card>
@@ -61,15 +67,21 @@
       <v-dialog v-model="dialogDate" max-width="500">
         <v-card>
           <v-container>
-            <v-form @submit.prevent="addEvent">
-              <v-text-field v-model="name" type="text" label="Nome do lmebrete"></v-text-field>
-              <v-text-field v-model="details" type="text" label="Detahles"></v-text-field>
+            <v-form @submit.prevent="addEvent" >
+              <v-text-field v-model="name" type="text" label="Qual o título do lembrete?"></v-text-field>
+              <v-text-field v-model="details" type="text" label="Quais os detalhes?"></v-text-field>
               <v-text-field v-model="start" type="date" label="Qual o início?"></v-text-field>
               <v-text-field v-model="end" type="date" label="Qual o fim?"></v-text-field>
-              <v-text-field v-model="color" type="color" label="Selecione a cor do painel de cores"></v-text-field>
-              <v-btn type="submit" color="primary" class="mr-4" @click.stop="dialog = false">
+              <v-text-field v-model="color" type="color" label="Escolha a cor do lembrete"></v-text-field>
+              <v-card-actions>
+                <v-btn color="success" class="mr-4" @click="close">
+                Limpar
+              </v-btn>
+              <v-spacer></v-spacer>
+              <v-btn type="submit" right color="primary" class="mr-4" @click.stop="dialog = false">
                 Criar lembrete
               </v-btn>
+              </v-card-actions>
             </v-form>
           </v-container>
         </v-card>
@@ -78,6 +90,7 @@
 <v-sheet height="400">
   <v-calendar
   ref="calendar"
+  locale="pt"
   v-model="focus"
   color="primary"
   :events="events"
@@ -208,6 +221,13 @@ export default {
         events.push(appData)
       })
       this.events = events
+    },
+    close() {
+      this.title = ''
+      this.name = ''
+      this.detail =''
+      this.date= ''
+      this.dialog = false
     },
     setDialogDate( { date }) {
       this.dialogDate = true
