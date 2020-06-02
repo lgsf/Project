@@ -1,6 +1,6 @@
 <template>
   
-    <v-col class="xs-12 sm-6 offset-3" justify="center">
+    <v-col class="xs-12 sm-6" justify="center">
       <v-sheet height="64">
         <v-toolbar flat color="primary">
           <v-btn color="primary" class="mr-1" dark @click.stop="dialog = true">
