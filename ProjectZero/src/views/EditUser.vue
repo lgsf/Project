@@ -142,13 +142,19 @@ export default {
           });
       } else {
         let self = this;
+        let uid = "";
         firebase
           .auth()
           .createUserWithEmailAndPassword(this.email, "temporario")
           .then(function(userRecord) {
-            return db
-              .collection("users")
-              .doc(userRecord.user.uid)
+            uid = userRecord.user.uid;
+            return new Promise(function(resolve) {
+              resolve(uid);
+            });
+          })
+          .then(function(uid) {
+            db.collection("users")
+              .doc(uid)
               .set({
                 name: self.name,
                 email: self.email,
