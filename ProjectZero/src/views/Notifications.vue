@@ -79,7 +79,6 @@ export default {
         }
         ],
       desserts: [],
-
       name: null,
       detail: null,
       date: null

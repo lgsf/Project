@@ -3,7 +3,7 @@
   <v-subheader> <h3> Bem-vindo {{id}}! </h3></v-subheader>
   <v-container  >
   <v-row >
-    <Table/>
+    <NotificationTable/>
    <Calendar/>
    </v-row>
   </v-container>
@@ -13,12 +13,12 @@
 <script>
 // @ is an alias to /src
 import Calendar from '@/components/Calendar'
-import Table from '@/components/Table'
+import NotificationTable from '@/components/NotificationTable'
 
 
 export default {
   name: 'Home',
-   components: { Calendar,  Table },
+   components: { Calendar,  NotificationTable },
   data(){
     return {
             id: 'usuário'

@@ -23,6 +23,11 @@
                 <v-text-field label="Detalhes" v-model="detail" @change="setDetail"></v-text-field>
               </v-col>
             </v-row>
+                        <v-row>
+              <v-col cols="12">
+                <v-text-field label="Data" v-model="date" @change="formatDate"></v-text-field>
+              </v-col>
+            </v-row>
           </v-container>
           <small>*Obrigatório</small>
         </v-card-text>

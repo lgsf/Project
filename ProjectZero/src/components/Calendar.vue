@@ -1,24 +1,24 @@
 <template>
   
-    <v-col class="xs-12 sm-6 offset-3" justify="center">
+    <v-col class="xs-12 sm-6" justify="center">
       <v-sheet height="64">
         <v-toolbar flat color="primary">
-          <v-btn color="primary" class="mr-1" dark @click.stop="dialog = true">
-            Novo lembrete
+          <v-btn color="primary" class="mr-1 " small @click.stop="dialog = true">
+            <v-icon>add</v-icon>
           </v-btn>
-          <v-btn color="primary" class="mr-1" @click="setToday">
+          <v-btn color="primary" class="mr-1"  small @click="setToday">
             Hoje
           </v-btn>
-          <v-btn color="primary" class="mr-1"  @click="prev">
+          <v-btn color="primary" class="mr-1" small @click="prev">
             <v-icon >skip_previous</v-icon>
           </v-btn>
-          <v-btn color="primary" class="mr-1" @click="next">
+          <v-btn color="primary" class="mr-1" small @click="next">
             <v-icon >skip_next</v-icon>
           </v-btn>
           <v-spacer></v-spacer>
           <v-menu bottom right>
             <template v-slot:activator="{ on }">
-              <v-btn color="primary" v-on="on">
+              <v-btn small color="primary" v-on="on">
                 <span>{{ typeToLabel[type] }}</span>
                 <v-icon right>menu-down</v-icon>
               </v-btn>
