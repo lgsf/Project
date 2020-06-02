@@ -177,6 +177,41 @@ export default {
       }
       this.refreshUsersMethod();
     },
+    createUser(){
+      db.collection("users")
+        .add({
+          name: this.name,
+          email: this.email,
+          phone: this.phone,
+          birth_date: this.birthDate,
+          group_id: this.group,
+        })
+        .then(()=>{
+          this.close();
+        })
+        .catch((error) => {
+          console.error("Error inserting document: ", error);
+        });
+
+        this.$store.dispatch('userSignUp', { email: this.email, password: 'temporario' })
+    },
+    updateUser(){
+      db.collection("users")
+        .doc(this.id)
+        .update({
+          name: this.name,
+          email: this.email,
+          phone: this.phone,
+          birth_date: this.birthDate,
+          group_id: this.group.id,
+        })
+        .then(()=>{
+          this.close();
+        })
+        .catch((error) => {
+          console.error("Error updating document: ", error);
+        });
+    },
     readGroups() {
       db.collection("groups")
         .get()

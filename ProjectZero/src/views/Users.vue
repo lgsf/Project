@@ -124,7 +124,6 @@ export default {
       this.$refs.EditUser.openEdit(dto);
     },
     readGroups() {
-      console.log('loadinggroups')
       db.collection("groups")
         .get()
         .then((querySnapshot) => {

@@ -57,31 +57,6 @@
 
 <script>
 import { db } from "@/main";
-import firebase from "firebase";
-
-function loadMeunu(model) {
-  let uid = firebase.auth().currentUser.uid;
-  db.collection("users")
-    .doc(uid)
-    .get()
-    .then(function(userSnapshot) {
-      let userData = userSnapshot.data();
-      return db
-        .collection("groups")
-        .doc(userData.group_id)
-        .get();
-    })
-    .then(function(snapshots) {
-      onMenuLoaded(snapshots, model);
-    });
-}
-
-function onMenuLoaded(groupSnapshot, model) {
-  let groupData = groupSnapshot.data();
-  model.links = groupData.menu.sort(function(a, b) {
-    return a.id < b.id ? -1 : 1;
-  });
-}
 
 export default {
   data() {
@@ -93,15 +68,38 @@ export default {
   computed: {
     isAuthenticated() {
       return this.$store.getters.isAuthenticated;
+    },
+    userObj() {
+      return this.$store.getters.userObj;
     }
   },
   methods: {
     logout() {
       this.$store.dispatch("userSignOut");
+    },
+    loadMenu() {
+      let groupId = "bmyiE5pvx66Ct7Wmj78b"
+      console.log(this.userObj)
+      if(this.userObj && this.userObj.group_id)
+        groupId = this.userObj.group_id
+      if(groupId){
+          db.collection("groups")
+              .doc(groupId)
+              .get()
+              .then((snapshots) => {
+                this.onMenuLoaded(snapshots);
+        });
+      }
+    },
+    onMenuLoaded(groupSnapshot) {
+      let groupData = groupSnapshot.data();
+      this.links = groupData.menu.sort(function(a, b) {
+        return a.id < b.id ? -1 : 1;
+      });
     }
   },
   mounted() {
-    loadMeunu(this);
+    this.loadMenu();
   }
 };
 </script>

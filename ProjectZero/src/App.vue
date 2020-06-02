@@ -3,8 +3,8 @@
     <Navbar v-if="isAuthenticated()" />
     <v-content class="mx-5 mb-5">
       <router-view></router-view>
-    </v-content>
-    <Footer />
+     </v-content>
+     <Footer />
   </v-app>
 </template>
 
@@ -14,6 +14,7 @@ import Footer from "./components/Footer";
 import firebase from "firebase";
 
 export default {
+  
   components: { Navbar, Footer },
 
   name: "App",
@@ -26,5 +27,5 @@ export default {
       return !!firebase.auth().currentUser;
     }
   }
-};
+}
 </script>
