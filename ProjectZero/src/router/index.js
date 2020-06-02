@@ -10,7 +10,7 @@ import Flux from '../views/Flux.vue'
 import Users from '../views/Users.vue'
 import Groups from '../views/Groups.vue'
 import Notifications from '../views/Notifications.vue'
-//import { store } from '../store'
+import { store } from '../store'
 
 Vue.use(VueRouter)
 
@@ -64,7 +64,7 @@ const routes = [
     name: 'Flux',
     component: Flux,
     meta: {
-    authRequired: true
+      authRequired: true
     }
   },
   {
@@ -100,10 +100,9 @@ const router = new VueRouter({
 
 })
 
-/*
+
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.authRequired))
-   {
+  if (to.matched.some(record => record.meta.authRequired)) {
     if (!store.state.isAuthenticated) {
       next({
         path: '/'
@@ -115,6 +114,5 @@ router.beforeEach((to, from, next) => {
     next();
   }
 });
-*/
 
 export default router

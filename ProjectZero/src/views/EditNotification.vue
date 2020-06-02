@@ -29,6 +29,7 @@
         <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
+          <v-btn  color="blue darken-1" text @click="deleteNotification">Apagar</v-btn>
           <v-btn color="blue darken-1" text @click="close">Fechar</v-btn>
           <v-btn color="blue darken-1" text @click="save">Salvar</v-btn>
         </v-card-actions>
@@ -102,10 +103,10 @@ export default {
                   date: this.date
                 })
                 .then(()=>{
-                  this.close();
+                  this.close()
                 })
                 .catch((error) => {
-                  console.error("Error updating document: ", error);
+                  console.error("Error updating document: ", error)
                 });
       }
       else{
@@ -117,13 +118,27 @@ export default {
                   date: this.date
                 })
                 .then(()=>{
+                  this.close()
+                })
+                .catch((error) => {
+                  console.error("Error inserting document: ", error)
+                });
+      }
+      this.refreshNotificationsMethod();
+    },
+    deleteNotification(){
+        if(this.id){
+        db.collection("notifications")
+                .doc(this.id)
+                .delete()
+                .then(()=>{
                   this.close();
                 })
                 .catch((error) => {
-                  console.error("Error inserting document: ", error);
+                  console.error("Error deleting: ", error)
                 });
-      }
-      this.refreshUsersMethod();
+        }
+        this.refreshNotificationsMethod()
     }
   }
 
