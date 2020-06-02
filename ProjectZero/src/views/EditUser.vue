@@ -68,14 +68,6 @@ export default {
   data() {
     return {
       dialog: false,
-<<<<<<< HEAD
-      id: null,
-      name: '',
-      email: '',
-      phone: '',
-      birthDate: '',
-      group: '',
-=======
       menu1: false,
       dateFormatted: this.formatDate(new Date().toISOString().substr(0, 10)),
       name: "",
@@ -83,20 +75,14 @@ export default {
       phone: "",
       birthDate: "",
       group: "",
->>>>>>> 45b7755a401facc6c81a1f1423d680202cb2f619
       userGroups: []
     };
   },
   methods: {
-<<<<<<< HEAD
-    updateDate(value){
-      this.birthDate = value
-=======
     updateDate(value) {
       this.birthDate = value;
       console.log("update date");
       console.log(this.birthDate);
->>>>>>> 45b7755a401facc6c81a1f1423d680202cb2f619
     },
     setName(value) {
       this.name = value;
@@ -113,33 +99,6 @@ export default {
       const [year, month, day] = date.split("-");
       return `${month}/${day}/${year}`;
     },
-<<<<<<< HEAD
-    openCreate(){
-      this.resetVariables()
-      this.show()
-    },
-    resetVariables(){
-      this.id = null
-      this.name = ''
-      this.email = ''
-      this.phone = ''
-      this.birthDate = ''
-      this.group = ''
-    },
-    show() {
-      this.dialog = true
-    },
-    close() {
-      this.resetVariables()
-      this.dialog = false
-    },
-    save(){
-      if(this.id){
-        this.createUser()
-      }
-      else{
-        this.createUser()
-=======
     openEdit(dto) {
       this.id = dto.id;
       this.name = dto.name;
@@ -215,7 +174,6 @@ export default {
           email: this.email,
           password: "temporario"
         });
->>>>>>> 45b7755a401facc6c81a1f1423d680202cb2f619
       }
       this.refreshUsersMethod();
     },
