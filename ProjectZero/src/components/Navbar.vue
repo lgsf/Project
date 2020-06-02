@@ -57,11 +57,20 @@
 
 <script>
 import { db } from "@/main";
+import firebase from "firebase";
 
 function loadMeunu(model) {
-  db.collection("groups")
-    .doc("bmyiE5pvx66Ct7Wmj78b")
+  let uid = firebase.auth().currentUser.uid;
+  db.collection("users")
+    .doc(uid)
     .get()
+    .then(function(userSnapshot) {
+      let userData = userSnapshot.data();
+      return db
+        .collection("groups")
+        .doc(userData.group_id)
+        .get();
+    })
     .then(function(snapshots) {
       onMenuLoaded(snapshots, model);
     });

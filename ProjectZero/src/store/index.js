@@ -14,6 +14,8 @@ export const store = new Vuex.Store({
     mutations: {
         setUser(state, payload) {
             state.user = payload;
+            if (!!payload && !!payload.user)
+                state.user.uid = payload.user.uid;
         },
         setIsAuthenticated(state, payload) {
             state.isAuthenticated = payload;

@@ -15,7 +15,7 @@
             </v-row>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Email" v-model="email"  @change="setEmail"></v-text-field>
+                <v-text-field label="Email" v-model="email" @change="setEmail"></v-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -25,15 +25,20 @@
             </v-row>
             <v-row>
               <v-col cols="12">
-                <DatePicker dateLabel="Data de Nascimento" :dateObj="birthDate" v-on:update="updateDate" ref="DatePicker"/>
+                <DatePicker
+                  dateLabel="Data de Nascimento"
+                  :dateObj="birthDate"
+                  v-on:update="updateDate"
+                  ref="DatePicker"
+                />
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12">
-                <v-select 
-                  :items="userGroups" 
-                  label="Grupos" 
-                  v-model="group" 
+                <v-select
+                  :items="userGroups"
+                  label="Grupos"
+                  v-model="group"
                   item-text="name"
                   item-value="id"
                 ></v-select>
@@ -54,126 +59,136 @@
 </template>
 <script>
 import { db } from "@/main";
+import firebase from "firebase";
 import DatePicker from "@/components/shared/DatePicker";
 
 export default {
   components: { DatePicker },
-  props: ['refreshUsersMethod'],
+  props: ["refreshUsersMethod"],
   data() {
     return {
       dialog: false,
       menu1: false,
-      dateFormatted: this.formatDate(new Date().toISOString().substr(0, 10)), 
-      name: '',
-      email: '',
-      phone: '',
-      birthDate: '',
-      group: '',
+      dateFormatted: this.formatDate(new Date().toISOString().substr(0, 10)),
+      name: "",
+      email: "",
+      phone: "",
+      birthDate: "",
+      group: "",
       userGroups: []
     };
   },
   methods: {
-    updateDate(value){
-      this.birthDate = value
-      console.log("update date")
-      console.log(this.birthDate)
+    updateDate(value) {
+      this.birthDate = value;
+      console.log("update date");
+      console.log(this.birthDate);
     },
-    setName(value){
-      this.name = value
+    setName(value) {
+      this.name = value;
     },
-    setEmail(value){
-      this.email = value
+    setEmail(value) {
+      this.email = value;
     },
-    setPhone(value){
-      this.phone = value
+    setPhone(value) {
+      this.phone = value;
     },
-    formatDate (date) {
-        if (!date) return null
+    formatDate(date) {
+      if (!date) return null;
 
-        const [year, month, day] = date.split('-')
-        return `${month}/${day}/${year}`
-      },
-    openEdit(dto){
-      this.id = dto.id
-      this.name = dto.name
-      this.email = dto.email
-      this.phone = dto.phone
-      this.birthDate = dto.birthDate
-      this.group = { name: dto.group.name, id: dto.group.id }
-      this.show()
+      const [year, month, day] = date.split("-");
+      return `${month}/${day}/${year}`;
     },
-    openCreate(){
-      this.show()
+    openEdit(dto) {
+      this.id = dto.id;
+      this.name = dto.name;
+      this.email = dto.email;
+      this.phone = dto.phone;
+      this.birthDate = dto.birthDate;
+      this.group = { name: dto.group.name, id: dto.group.id };
+      this.show();
+    },
+    openCreate() {
+      this.show();
     },
     show() {
-      this.dialog = true
+      this.id = "";
+      this.dialog = true;
     },
     close() {
-      this.name = ''
-      this.email = ''
-      this.phone =''
-      this.birthDate = ''
-      this.group = ''
-      this.dialog = false
+      this.name = "";
+      this.email = "";
+      this.phone = "";
+      this.birthDate = "";
+      this.group = "";
+      this.dialog = false;
     },
-    save(){
-      if(this.id){
+    save() {
+      if (this.id) {
         db.collection("users")
-                .doc(this.id)
-                .update({
-                  name: this.name,
-                  email: this.email,
-                  phone: this.phone,
-                  birth_date: this.birthDate,
-                  group_id: this.group.id,
-                })
-                .then(()=>{
-                  this.close();
-                })
-                .catch((error) => {
-                  console.error("Error updating document: ", error);
-                });
-      }
-      else{
-        db.collection("users")
-                .add({
-                  name: this.name,
-                  email: this.email,
-                  phone: this.phone,
-                  birth_date: this.birthDate,
-                  group_id: this.group,
-                })
-                .then(()=>{
-                  this.close();
-                })
-                .catch((error) => {
-                  console.error("Error inserting document: ", error);
-                });
+          .doc(this.id)
+          .update({
+            name: this.name,
+            email: this.email,
+            phone: this.phone,
+            birth_date: this.birthDate,
+            group_id: this.group_id
+          })
+          .then(() => {
+            this.close();
+          })
+          .catch(error => {
+            console.error("Error updating document: ", error);
+          });
+      } else {
+        let self = this;
+        firebase
+          .auth()
+          .createUserWithEmailAndPassword(this.email, "temporario")
+          .then(function(userRecord) {
+            return db
+              .collection("users")
+              .doc(userRecord.user.uid)
+              .set({
+                name: self.name,
+                email: self.email,
+                phone: self.phone,
+                birth_date: self.birthDate,
+                group_id: self.group
+              });
+          })
+          .then(() => {
+            this.close();
+          })
+          .catch(error => {
+            console.error("Error inserting document: ", error);
+          });
 
-        this.$store.dispatch('userSignUp', {
-                    email: this.email,
-                    password: 'temporario'
-                })
+        this.$store.dispatch("userSignUp", {
+          email: this.email,
+          password: "temporario"
+        });
       }
       this.refreshUsersMethod();
     },
     readGroups() {
       db.collection("groups")
         .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => { this.userGroups.push({
+        .then(querySnapshot => {
+          querySnapshot.forEach(doc => {
+            this.userGroups.push({
               name: doc.data().name,
               id: doc.id
-            })
+            });
           });
         })
-        .catch((error) => {
+        .catch(error => {
           console.log("Error getting documents: ", error);
         });
     }
   },
   mounted() {
-    this.readGroups()
+    this.readGroups();
   }
 };
 </script>
