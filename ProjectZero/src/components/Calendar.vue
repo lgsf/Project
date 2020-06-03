@@ -260,10 +260,10 @@ export default {
           color: this.color
         })
         this.getEvents()
-        this.name = '',
-        this.details = '',
-        this.start = '',
-        this.end = '',
+        this.name = ''
+        this.details = ''
+        this.start = ''
+        this.end = ''
         this.color = ''
       } else {
         alert('Você deve inserir o nome, início e fim do evento')
@@ -276,12 +276,12 @@ export default {
       await db.collection('calEvent').doc(this.currentlyEditing).update({
         details: ev.details
       })
-      this.selectedOpen = false,
+      this.selectedOpen = false
       this.currentlyEditing = null
     },
     async deleteEvent (ev) {
       await db.collection("calEvent").doc(ev).delete()
-      this.selectedOpen = false,
+      this.selectedOpen = false
       this.getEvents()
     },
     showEvent ({ nativeEvent, event }) {

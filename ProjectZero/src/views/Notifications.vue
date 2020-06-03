@@ -93,12 +93,12 @@ export default {
   },
    watch: {
     selected: function() {
-      this.showEdit = this.selected ? this.selected.length == 1 : false;
+      this.showEdit = this.selected ? this.selected.length == 1 : false
     }
   },
    methods: {
     readNotifications() {
-      this.desserts = [];
+      this.desserts = []
       db.collection("notifications")
         .get()
         .then(querySnapshot => {
@@ -109,26 +109,26 @@ export default {
               name: doc.data().name,
               detail: doc.data().detail,
               date: doc.data().date
-            });
-          });
+            })
+          })
         })
         .catch(error => {
-          console.log("Error getting documents: ", error);
+          console.log("Error getting documents: ", error)
         });
     },
     editNotification: function() {
-      let item = this.selected[0];
+      let item = this.selected[0]
       let dto = {
         id: item.id,
         title: item.title,
         name: item.name,
         detail: item.detail,
-        date: item.date,
+        date: item.date
       }
-      this.$refs.EditNotification.openEdit(dto);
+      this.$refs.EditNotification.openEdit(dto)
     },
     createNotification: function() {
-      this.$refs.EditNotification.openCreate();
+      this.$refs.EditNotification.openCreate()
     },
      createOrUpdateNotification: function(){
       if(this.showEdit){

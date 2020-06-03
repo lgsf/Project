@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import Alert from "@/components/shared/Alert";
+import Alert from "@/components/shared/Alert"
 
 export default {
     components: { Alert },
@@ -70,7 +70,7 @@ export default {
                     v.length >= 6 ||
                     'Password must be greater than 6 characters'
             ]
-        };
+        }
     },
     methods: {
         login() {

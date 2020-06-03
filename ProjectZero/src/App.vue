@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     isAuthenticated() {
-      return !!firebase.auth().currentUser;
+      return !!firebase.auth().currentUser
     }
   }
 }

@@ -108,10 +108,10 @@ router.beforeEach((to, from, next) => {
         path: '/'
       });
     } else {
-      next();
+      next()
     }
   } else {
-    next();
+    next()
   }
 });
 
