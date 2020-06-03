@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import { store } from '../store'
 import VueRouter from 'vue-router'
 import Login from '../views/Login.vue'
 import ResetPassword from '../views/ResetPassword.vue'
@@ -10,7 +11,6 @@ import Flux from '../views/Flux.vue'
 import Users from '../views/Users.vue'
 import Groups from '../views/Groups.vue'
 import Notifications from '../views/Notifications.vue'
-import { store } from '../store'
 
 Vue.use(VueRouter)
 

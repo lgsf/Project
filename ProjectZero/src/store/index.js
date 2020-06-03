@@ -4,11 +4,12 @@ import firebase from 'firebase'
 import router from '@/router'
 
 import groups from './modules/groups'
+import clients from './modules/clients'
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
-    modules: { groups },
+    modules: { groups, clients },
     state: {
         user: null,
         userObj: null,
