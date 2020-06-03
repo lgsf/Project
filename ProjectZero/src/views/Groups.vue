@@ -1,8 +1,7 @@
 <template>
   <div class="groups">
-    <v-container>
       <v-row justify="center">
-        <v-col cols="lg-6">
+
           <v-card class="mx-auto">
             <v-toolbar class="primary white--text" dark>
               <h3>{{ title }}</h3>
@@ -42,9 +41,7 @@
             </v-row>
             <EditGroup :refreshGroups="loadGroups" ref="EditGroup" />
           </v-card>
-        </v-col>
       </v-row>
-    </v-container>
   </div>
 </template>
 <script>

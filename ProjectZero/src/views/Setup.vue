@@ -1,8 +1,8 @@
 <template>
 <div class="setup">
-    <v-row justify="center" dark> 
+    <v-row justify="center">
         <v-card>
-        <v-toolbar class="primary white--text" dark>
+        <v-toolbar class="primary white--text" >
           <h3>
             {{ screenTitle }}
           </h3>

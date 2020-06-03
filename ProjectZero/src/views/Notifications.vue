@@ -1,6 +1,6 @@
 <template>
   <div class="notifications">
-    <v-row class="dark" justify="center">
+    <v-row justify="center">
       <v-card>
         <v-toolbar class="primary ">
           <h3 class="white--text">{{ screenTitle }}</h3>
