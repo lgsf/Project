@@ -1,1 +1,16 @@
 node_modules
+/ProjectZero/dist/.firebaserc
+/ProjectZero/dist/.gitignore
+/ProjectZero/dist/css/app.327017c6.css
+/ProjectZero/dist/css/chunk-vendors.37c11d3b.css
+/ProjectZero/dist/favicon.ico
+/ProjectZero/dist/firebase.json
+/ProjectZero/dist/fonts/MaterialIcons-Regular.0509ab09.woff2
+/ProjectZero/dist/fonts/MaterialIcons-Regular.29b882f0.woff
+/ProjectZero/dist/fonts/MaterialIcons-Regular.96c47680.eot
+/ProjectZero/dist/fonts/MaterialIcons-Regular.da4ea5cd.ttf
+/ProjectZero/dist/index.html
+/ProjectZero/dist/js/app.c1101447.js
+/ProjectZero/dist/js/app.c1101447.js.map
+/ProjectZero/dist/js/chunk-vendors.2be5279d.js
+/ProjectZero/dist/js/chunk-vendors.2be5279d.js.map
