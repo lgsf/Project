@@ -43,7 +43,7 @@
   </v-row>
 </template>
 <script>
-import { db } from "@/main";
+import { db } from "@/main"
 
 
 export default {
@@ -57,7 +57,7 @@ export default {
       detail: '',
       date:'',
 
-    };
+    }
   },
   methods: {
 
@@ -127,9 +127,9 @@ export default {
                 })
                 .catch((error) => {
                   console.error("Error inserting document: ", error)
-                });
+                })
       }
-      this.refreshNotificationsMethod();
+      this.refreshNotificationsMethod()
     },
     deleteNotification(){
         if(this.id){
@@ -137,11 +137,11 @@ export default {
                 .doc(this.id)
                 .delete()
                 .then(()=>{
-                  this.close();
+                  this.close()
                 })
                 .catch((error) => {
                   console.error("Error deleting: ", error)
-                });
+                })
         }
         this.refreshNotificationsMethod()
     }

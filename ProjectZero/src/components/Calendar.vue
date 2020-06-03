@@ -109,7 +109,6 @@
   v-model="selectedOpen"
   :close-on-content-click="false"
   :activator="selectedElement"
-  full-width
   offset-x
   >
   <v-card color="grey lighten-4" :width="350" flat>
@@ -261,10 +260,10 @@ export default {
           color: this.color
         })
         this.getEvents()
-        this.name = '',
-        this.details = '',
-        this.start = '',
-        this.end = '',
+        this.name = ''
+        this.details = ''
+        this.start = ''
+        this.end = ''
         this.color = ''
       } else {
         alert('Você deve inserir o nome, início e fim do evento')
@@ -277,12 +276,12 @@ export default {
       await db.collection('calEvent').doc(this.currentlyEditing).update({
         details: ev.details
       })
-      this.selectedOpen = false,
+      this.selectedOpen = false
       this.currentlyEditing = null
     },
     async deleteEvent (ev) {
       await db.collection("calEvent").doc(ev).delete()
-      this.selectedOpen = false,
+      this.selectedOpen = false
       this.getEvents()
     },
     showEvent ({ nativeEvent, event }) {

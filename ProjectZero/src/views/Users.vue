@@ -1,7 +1,6 @@
 <template>
-  <v-container>
+<div class="users">
     <v-row justify="center">
-      <v-col cols="lg-6">
         <v-card class="mx-auto">
           <v-toolbar color="primary" dark>
             <h3>{{ screenTitle }}</h3>
@@ -36,14 +35,14 @@
           </v-btn>
           <EditUser :refreshUsersMethod="readUsers" ref="EditUser" />
         </v-card>
-      </v-col>
     </v-row>
-  </v-container>
+</div>
 </template>
 
 <script>
 import { db } from "@/main";
 import EditUser from "./EditUser";
+
 
 export default {
   components: { EditUser },

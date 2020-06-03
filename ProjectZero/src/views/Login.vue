@@ -8,6 +8,7 @@
             <v-spacer></v-spacer>
           <v-icon right class="white--text">account_box</v-icon>
         </v-toolbar>
+        <Alert/>
           <v-card-text>
             <v-container>
               <v-form v-model="valid" > 
@@ -23,6 +24,7 @@
                 <v-text-field name="password"
                                 label="Password"
                                 type="password"
+                                autocomplete="on"
                                 v-model="password"
                                 :rules="passwordRules"
                                 required></v-text-field>
@@ -47,7 +49,10 @@
 </template>
 
 <script>
+import Alert from "@/components/shared/Alert"
+
 export default {
+    components: { Alert },
     name: 'Login',
     data() {
         return {
@@ -65,7 +70,7 @@ export default {
                     v.length >= 6 ||
                     'Password must be greater than 6 characters'
             ]
-        };
+        }
     },
     methods: {
         login() {

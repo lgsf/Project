@@ -103,15 +103,15 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.authRequired)) {
-    if (!store.state.isAuthenticated) {
+    if (!store.getters.isAuthenticated) {
       next({
         path: '/'
       });
     } else {
-      next();
+      next()
     }
   } else {
-    next();
+    next()
   }
 });
 
