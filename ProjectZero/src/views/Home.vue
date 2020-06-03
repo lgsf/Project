@@ -1,12 +1,10 @@
 <template>
   <div class="home">
   <v-subheader> <h3> Bem-vindo {{id}}! </h3></v-subheader>
-  <v-container  >
   <v-row >
     <NotificationTable/>
    <Calendar/>
    </v-row>
-  </v-container>
   </div>
 </template>
 
