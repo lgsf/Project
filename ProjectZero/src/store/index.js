@@ -47,12 +47,14 @@ export const store = new Vuex.Store({
     },
     actions: {
         userLogin({ commit, dispatch }, { email, password }) {
+            commit('setSuccessMessage', null)
+            commit('setErrorMessage', null)
             firebase
                 .auth()
                 .signInWithEmailAndPassword(email, password)
                 .then(user => {
-                    commit('setUser', user);
-                    commit('setIsAuthenticated', true);
+                    commit('setUser', user)
+                    commit('setIsAuthenticated', true)
                     return user
                 })
                 .then((user) => {
