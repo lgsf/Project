@@ -109,7 +109,6 @@
   v-model="selectedOpen"
   :close-on-content-click="false"
   :activator="selectedElement"
-  full-width
   offset-x
   >
   <v-card color="grey lighten-4" :width="350" flat>
