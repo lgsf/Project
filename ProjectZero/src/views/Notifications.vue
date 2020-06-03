@@ -72,8 +72,13 @@ export default {
           align: "start",
           value: "title"
         },
+        {
+          text: "Data",
+          align: "start",
+          value: "date"
+        },
           {
-          text: "Corpo",
+          text: "Mensagem",
           align: "start",
           value: "detail"
         }
