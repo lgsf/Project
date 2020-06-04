@@ -66,7 +66,7 @@ export default {
     name: 'Login',
     data() {
         return {
-            imgUrl:'',
+            imageUrl:'',
             valid: false,
             screenTitle: 'Login',
             screenCompany: 'O nome da sua empresa aqui',
@@ -96,7 +96,7 @@ export default {
         fileStorage.ref('logo').listAll()
         .then(result => {
           result.items[0].getDownloadURL()
-          .then((url) => { this.imageUrl = url });
+          .then((url) => { this.imageUrl = url })
         })
         .catch((error) => {
           console.log("Error getting logo image: ", error);
