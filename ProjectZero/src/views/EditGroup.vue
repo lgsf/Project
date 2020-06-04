@@ -10,12 +10,12 @@
           <v-container>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Grupo*" v-model="groupName" required></v-text-field>
+                <v-text-field label="Grupo*" v-model="groupName" :rules="[rules.required]"></v-text-field>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Email" v-model="groupEmail"></v-text-field>
+                <Email label="Email" v-model="groupEmail" ref="EmalCmp"></Email>  
               </v-col>
             </v-row>
             <v-row>
@@ -51,6 +51,7 @@
 </template>
 <script>
 import { db } from "@/main";
+import Email from "@/components/shared/Email";
 
 var menuItems = [];
 
@@ -109,6 +110,7 @@ function getMenuSelectedItems(self) {
 }
 
 function updateExistingGroup(self) {
+  if (!self.groupName || !self.$refs.EmalCmp.isValid()) return;
   let menu = getMenuSelectedItems(self);
   db.collection("groups")
     .doc(self.groupId)
@@ -128,6 +130,7 @@ function updateExistingGroup(self) {
 }
 
 export default {
+  components: { Email },
   props: ["refreshGroups"],
   data() {
     return {
@@ -136,7 +139,10 @@ export default {
       groupName: "",
       groupEmail: "",
       items: menuItems,
-      selection: []
+      selection: [],
+      rules: {
+        required: value => !!value || "Campo obrigatório."
+      }
     };
   },
   methods: {

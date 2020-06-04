@@ -10,12 +10,12 @@
       <v-btn
         v-for="link in links"
         :key="link"
-        color="grey--text"
         text
         rounded
         class="my-2"
       >
-        {{ link }}
+      <a style="text-decoration:none; color:black" target="_blank" :href="link.href">
+        {{ link.name }}</a>
       </v-btn>
       <v-col
         class="grey-3 py-4 text-center"
@@ -33,10 +33,10 @@
   export default {
     data: () => ({
       links: [
-        'Home',
-        'Services',
-        'Contact Us',
-      ],
+        {name:'Home', href: 'https://project42-saas.web.app/#/'},
+        {name: 'Sobre', href: 'https://project42-saas.web.app/#/about'},
+        {name:'Entre em contato', href: 'https://project42-saas.web.app/#/contact'}
+      ]
     }),
   }
 </script>

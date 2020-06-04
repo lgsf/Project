@@ -20,7 +20,7 @@
             </v-row>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Telefone" v-model="phone" @change="setPhone"></v-text-field>
+                <PhoneNumberInput v-model="phone" @change="setPhone"></PhoneNumberInput>
               </v-col>
             </v-row>
             <v-row>
@@ -61,9 +61,10 @@
 import { db } from "@/main";
 import firebase from "firebase";
 import DatePicker from "@/components/shared/DatePicker";
+import PhoneNumberInput from "@/components/shared/PhoneNumberInput";
 
 export default {
-  components: { DatePicker },
+  components: { DatePicker, PhoneNumberInput },
   props: ["refreshUsersMethod"],
   data() {
     return {
