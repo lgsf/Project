@@ -57,12 +57,8 @@ const computed = mapState("clients", {
   title: state => state.listTitle,
   search: state => state.search,
   searchLabel: state => state.searchLabel,
-  headers: function(state) {
-    return state.header;
-  },
-  clients: function(state) {
-    return state.clients;
-  },
+  headers: state => state.header,
+  clients: state => state.clients,
   enableEdit: state => !!state.selected
 });
 
