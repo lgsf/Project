@@ -2,7 +2,7 @@
 <div class="login" >
   <br>
  <v-row class="dark" justify="center">
-      <v-card>
+      <v-card class="mx-auto">
         <v-toolbar class="primary ">
           <h3 class="white--text">{{ screenTitle }}</h3>
             <v-spacer></v-spacer>
