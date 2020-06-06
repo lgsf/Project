@@ -6,11 +6,12 @@ import router from '@/router'
 import groups from './modules/groups'
 import clients from './modules/clients'
 import users from './modules/users'
+import erp from './modules/erp'
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
-    modules: { groups, clients, users },
+    modules: { groups, clients, users, erp },
     state: {
         user: null,
         userObj: null,

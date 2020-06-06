@@ -6,7 +6,7 @@ import ResetPassword from '../views/ResetPassword.vue'
 import Clients from '../views/Clients.vue'
 import Home from '../views/Home.vue'
 import Setup from '../views/Setup.vue'
-import Process from '../views/Process.vue'
+import Erp from '../views/Erp.vue'
 import Flux from '../views/Flux.vue'
 import Users from '../views/Users/Users.vue'
 import Groups from '../views/Groups.vue'
@@ -44,15 +44,15 @@ const routes = [
     }
   },
   {
-    path: '/process', //Processos
-    name: 'Process',
-    component: Process,
+    path: '/erp', //Tela gestão Erp
+    name: 'Erp',
+    component: Erp,
     meta: {
       authRequired: true
     }
   },
   {
-    path: '/clients', //Processos
+    path: '/clients', //Clientes
     name: 'Clients',
     component: Clients,
     meta: {
