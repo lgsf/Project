@@ -8,7 +8,7 @@ import Home from '../views/Home.vue'
 import Setup from '../views/Setup.vue'
 import Erp from '../views/Erp.vue'
 import Flux from '../views/Flux.vue'
-import Users from '../views/Users.vue'
+import Users from '../views/Users/Users.vue'
 import Groups from '../views/Groups.vue'
 import Notifications from '../views/Notifications.vue'
 

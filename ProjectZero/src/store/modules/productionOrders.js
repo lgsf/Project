@@ -100,9 +100,9 @@ const actions = {
             .get()
             .then(onProductionOrdersLoaded)
             .then(function (productionOrders) {
-                self.dispatch('clients/loadUsers').then(function () {
+                self.dispatch('users/readUsers').then(function () {
                     let userIds = getOrderUsersIds(productionOrders);
-                    let users = context.rootGetters['clients/filterUsersById'](userIds);
+                    let users = context.rootGetters['users/filterUsersById'](userIds);
                     completeOrdersWithUsersInformation(productionOrders, users);
                     context.commit('updateOrders', productionOrders);
                 })
