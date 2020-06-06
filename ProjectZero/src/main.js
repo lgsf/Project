@@ -22,6 +22,8 @@ firebase.initializeApp({
 
 export const db = firebase.firestore()
 export const fileStorage = firebase.storage()
+export const auth = firebase.auth()
+
 // To avoid some annoying warning
 // https://github.com/vuetifyjs/vuetify/issues/9999
 const ignoreWarnMessage = 'The .native modifier for v-on is only valid on components but it was used on <div>.'

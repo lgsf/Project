@@ -18,16 +18,6 @@
                 if(!this.isNumber(e.key)){
                     e.preventDefault();
                 }
-                else{
-                    // console.log(e.key)
-                    // console.log(this.inputNumber.length)
-                    if(this.inputNumber || this.inputNumber.length == 0){
-                        this.inputNumber = '(' + e.key + '_)'
-                    }
-                    else if(this.inputNumber.length == 4){
-                        this.inputNumber = this.inputNumber.substring(0,2) + e.key + ') '
-                    }
-                }
             },
             isNumber(n) { 
                 return !isNaN(parseFloat(n)) && !isNaN(n - 0) 
