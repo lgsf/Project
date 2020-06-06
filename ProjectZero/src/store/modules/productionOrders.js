@@ -4,7 +4,9 @@ import { db } from "@/main";
 const state = () => ({
     selected: undefined,
     search: '',
-    productionOrders: []
+    productionOrders: [],
+    statusList: ['Pendente', 'Em progresso', 'Finalizada'],
+    selectedOrderTasks: []
 });
 
 const mutations = {
@@ -17,6 +19,9 @@ const mutations = {
     updateOrders(state, payload) {
         state.productionOrders = payload
     },
+    updateSelectedOrderTasks(state, payload) {
+        state.selectedOrderTasks = payload
+    }
 };
 
 
@@ -106,6 +111,21 @@ const actions = {
                     completeOrdersWithUsersInformation(productionOrders, users);
                     context.commit('updateOrders', productionOrders);
                 })
+            });
+    },
+    loadTasksByOrder(context) {
+        db.collection("productionOrder").doc(context.state.selected)
+            .collection('tasks').onSnapshot(snapshot => {
+                let tasks = [];
+                snapshot.forEach(taskSnapshot => {
+                    let taskData = taskSnapshot.data();
+                    taskData.id = taskSnapshot.id;
+                    tasks.push(taskData);
+                });
+                let taskIds = tasks.map(t => t.id);
+                let unmodifiedTasks = context.state.selectedOrderTasks.filter(t => !taskIds.includes(t.id));
+                tasks = tasks.concat(unmodifiedTasks);
+                context.commit('updateSelectedOrderTasks', tasks);
             });
     }
 };

@@ -1,45 +1,47 @@
 <template>
   <div>
     <v-row justify="center">
-      <v-card class="mx-auto">
-        <v-toolbar class="primary white--text" dark>
-          <h3>Ordens de Produção</h3>
-          <v-spacer></v-spacer>
-          <v-icon right class="white--text">receipt</v-icon>
-        </v-toolbar>
-        <v-row justify="center">
-          <v-col cols="12">
-            <v-card-title>
-              <v-text-field
-                :value="search"
-                @input="searchFor"
-                append-icon="mdi-magnify"
-                label="Buscar"
-                single-line
-                hide-details
-              ></v-text-field>
-            </v-card-title>
-            <v-row>
-              <v-col cols="12">
-                <v-data-table
-                  :headers="header"
-                  :items="productionOrders"
-                  :search="search"
-                  show-select
-                  single-select
-                  item-key="id"
-                  :value="selected"
-                  @input="selectOrder"
-                ></v-data-table>
-              </v-col>
-            </v-row>
-            <v-btn color="error" dark fixed bottom right fab @click="editClient(true)">
-              <v-icon v-show="!enableEdit">mdi-plus</v-icon>
-              <v-icon v-show="enableEdit">mdi-pen</v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-card>
+      <v-col md="6">
+        <v-card class="mx-auto">
+          <v-toolbar class="primary white--text" dark>
+            <h3>Ordens de Produção</h3>
+            <v-spacer></v-spacer>
+            <v-icon right class="white--text">receipt</v-icon>
+          </v-toolbar>
+          <v-row justify="center">
+            <v-col cols="12">
+              <v-card-title>
+                <v-text-field
+                  :value="search"
+                  @input="searchFor"
+                  append-icon="mdi-magnify"
+                  label="Buscar"
+                  single-line
+                  hide-details
+                ></v-text-field>
+              </v-card-title>
+              <v-row>
+                <v-col cols="12">
+                  <v-data-table
+                    :headers="header"
+                    :items="productionOrders"
+                    :search="search"
+                    show-select
+                    single-select
+                    item-key="id"
+                    :value="selected"
+                    @input="selectOrder"
+                  ></v-data-table>
+                </v-col>
+              </v-row>
+              <v-btn color="error" dark fixed bottom right fab @click="editProductionOrder">
+                <v-icon v-show="!enableEdit">mdi-plus</v-icon>
+                <v-icon v-show="enableEdit">mdi-pen</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
     </v-row>
   </div>
 </template>
@@ -77,7 +79,12 @@ export default {
     };
   },
   computed,
-  methods,
+  methods: Object.assign({}, methods, {
+    editProductionOrder() {
+      if (this.selected)
+        this.$router.push({ path: `/EditProductionOrder/${this.selected.id}` });
+    }
+  }),
   mounted() {
     this.reloadOrders();
   }

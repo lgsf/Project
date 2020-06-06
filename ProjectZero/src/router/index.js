@@ -8,6 +8,7 @@ import Home from '../views/Home.vue'
 import Setup from '../views/Setup.vue'
 import Erp from '../views/Erp.vue'
 import Flux from '../views/Flux.vue'
+import EditProductionOrder from '../views/EditProductionOrder.vue'
 import Users from '../views/Users/Users.vue'
 import Groups from '../views/Groups.vue'
 import Notifications from '../views/Notifications.vue'
@@ -63,6 +64,15 @@ const routes = [
     path: '/flux', //Fluxos
     name: 'Flux',
     component: Flux,
+    meta: {
+      authRequired: true
+    }
+  },
+  {
+    path: '/EditProductionOrder/:id', //Fluxos
+    name: 'ProductionOrder',
+    component: EditProductionOrder,
+    props: true,
     meta: {
       authRequired: true
     }
