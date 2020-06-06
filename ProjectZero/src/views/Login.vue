@@ -1,6 +1,15 @@
 <template>
 <div class="login" >
   <br>
+  <v-banner>
+    <v-img
+    :src="imageUrl"
+  ></v-img>
+<template v-slot:actions>
+  <h3>{{screenCompany}}</h3>
+  </template>
+  </v-banner>
+  <br>
  <v-row class="dark" justify="center">
       <v-card class="mx-auto">
         <v-toolbar class="primary ">
@@ -50,14 +59,17 @@
 
 <script>
 import Alert from "@/components/shared/Alert"
+import { fileStorage } from '@/main'
 
 export default {
     components: { Alert },
     name: 'Login',
     data() {
         return {
+            imageUrl:'',
             valid: false,
             screenTitle: 'Login',
+            screenCompany: 'O nome da sua empresa aqui',
             email: '',
             password: '',
             emailRules: [
@@ -78,8 +90,23 @@ export default {
                     email: this.email,
                     password: this.password
                 })
-        }
+        },
+
+    readLogo() {
+        fileStorage.ref('logo').listAll()
+        .then(result => {
+          result.items[0].getDownloadURL()
+          .then((url) => { this.imageUrl = url })
+        })
+        .catch((error) => {
+          console.log("Error getting logo image: ", error);
+        });
     }
+        
+    },
+    mounted() {
+    this.readLogo();
+  }
 }
 </script>
 <style>

@@ -10,12 +10,13 @@
       <v-btn
         v-for="link in links"
         :key="link"
+        :href="link.href"
         text
         rounded
+        target="_blank"
         class="my-2"
       >
-      <a style="text-decoration:none; color:black" target="_blank" :href="link.href">
-        {{ link.name }}</a>
+        {{ link.name }}
       </v-btn>
       <v-col
         class="grey-3 py-4 text-center"
