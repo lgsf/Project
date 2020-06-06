@@ -25,6 +25,7 @@ const state = () => ({
             value: "email"
         }],
     clients: [],
+    users: [],
     editClient: false,
     editingName: '',
     editingCnpj: '',
@@ -56,6 +57,9 @@ const mutations = {
     },
     editCnpj(state, payload) {
         state.editingCnpj = payload;
+    },
+    updateUsers(state, payload) {
+        state.users = payload;
     }
 };
 
@@ -133,9 +137,26 @@ const actions = {
                 this.dispatch('clients/loadClients');
                 this.dispatch('clients/editClient');
             });
+    },
+    loadUsers(context) {
+        return db.collection("users")
+            .get()
+            .then(function (snapshots) {
+                let users = [];
+                snapshots.forEach(userSnapShot => {
+                    let userData = userSnapShot.data();
+                    userData.id = userSnapShot.id;
+                    users.push(userData);
+                });
+                context.commit('updateUsers', users);
+            });
     }
 };
-const getters = {};
+const getters = {
+    filterUsersById(state) {
+        return (ids) => state.users.filter(user => ids.includes(user.id));
+    }
+};
 
 export default {
     namespaced: true,
