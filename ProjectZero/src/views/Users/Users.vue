@@ -31,8 +31,8 @@
               </v-col>
             </v-row>
             <v-btn color="error" dark fixed bottom right fab @click="openEditUserModal">
-              <v-icon v-show="selected == null || selected.length == 0">mdi-plus</v-icon>
-              <v-icon v-show="selected !== null && selected.length > 0">mdi-pen</v-icon>
+              <v-icon v-show="selected.length == 0">mdi-plus</v-icon>
+              <v-icon v-show="selected.length > 0">mdi-pen</v-icon>
             </v-btn>
             <EditUser ref="EditUser" />
           </v-card>

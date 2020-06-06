@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="dialog" persistent max-width="600px">
+    <v-dialog :value="dialog" persistent max-width="600px">
       <v-card>
         <v-toolbar class="primary" dark>
           <v-toolbar-title>Usuario</v-toolbar-title>
@@ -20,7 +20,7 @@
             </v-row>
             <v-row>
               <v-col cols="12">
-                <PhoneNumberInput :value="phone" @input="setPhone"></PhoneNumberInput>
+                <PhoneNumberInput :inputNumber="phone" @input="setPhone"></PhoneNumberInput>
               </v-col>
             </v-row>
             <v-row>
@@ -38,7 +38,8 @@
                 <v-select
                   :items="userGroups"
                   label="Grupos"
-                  v-model="group"
+                  @input="setGroup"
+                  :value="group"
                   item-text="name"
                   item-value="id"
                 ></v-select>
@@ -50,7 +51,7 @@
         <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="close">Fechar</v-btn>
+          <v-btn color="blue darken-1" text @click="closeEditUserModal">Fechar</v-btn>
           <v-btn color="blue darken-1" text @click="save">Salvar</v-btn>
         </v-card-actions>
       </v-card>
@@ -64,10 +65,12 @@ import PhoneNumberInput from "@/components/shared/PhoneNumberInput";
 import { mapState, mapActions } from "vuex";
 
 const computed = mapState("users", {
-  name: state => state.selected.name,
-  email: state => state.selected.email,
-  phone: state => state.selected.phone,
-  group: state => state.selected.group,
+  dialog: state => state.showEditModal,
+  name: state => state.editUserName,
+  email:  state => state.editUserEmail,
+  phone:  state => state.editUserPhone,
+  group:  state => state.editUserGroup,
+  birth_date:  state => state.editUserBirthDate,
   userGroups: state => state.userGroups
 });
 
@@ -76,8 +79,9 @@ const methods = mapActions("users", [
   "setEmail",
   "setPhone",
   "setBirthDate",
+  "setGroup",
   "save",
-  "close",
+  "closeEditUserModal",
 ]);
 
 export default {

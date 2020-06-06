@@ -1,17 +1,22 @@
 <template>
-    <v-text-field maxlength="10" v-model="inputNumber" v-on:keydown="keyDownEvent" label="Telefone"></v-text-field>
+    <v-text-field 
+        maxlength="10" 
+        :value="inputNumber" 
+        v-on:keydown="keyDownEvent" 
+        v-on:input="$emit('input', $event)" 
+        label="Telefone"
+    ></v-text-field>
 </template>
 
 <script>
     export default {
+        props: ["inputNumber"],
         data () {
             return {
-                inputNumber: null
             }
         },
         methods: {
             keyDownEvent(e){
-                console.log(e)
                 if(e.code == "Backspace"){
                     return;
                 }

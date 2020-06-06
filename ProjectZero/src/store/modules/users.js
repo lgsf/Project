@@ -5,6 +5,11 @@ const state = () => ({
     search: "",
     showEditModal: false,
     selected: [],
+    editUserName: '',
+    editUserEmail: '',
+    editUserPhone: '',
+    editUserBirthDate: formatDate(new Date().toISOString().substr(0, 10)),
+    editUserGroup: '',
     userList: [],
     userGroups: []
 });
@@ -27,19 +32,22 @@ const mutations = {
     },
 
     setName(state, payload) {
-        state.selected.name = payload
+        state.editUserName = payload
     },
 
     setEmail(state, payload) {
-        state.selected.email = payload
+        state.editUserEmail = payload
     },
 
     setPhone(state, payload) {
-        state.selected.phone = payload
+        state.editUserPhone = payload
     },
 
     setBirthDate(state, payload) {
-        state.selected.birth_date = payload
+        state.editUserBirthDate = payload
+    },
+    setGroup(state, payload) {
+        state.editUserGroup = payload
     },
 
 };
@@ -75,13 +83,17 @@ const actions = {
     },
 
     onSelectedUser({ commit }, payload) {
-        var selected = !payload ? undefined : payload[0];
-        commit('setSelectedUser', selected)
+        commit('setSelectedUser', payload)
     },
 
     openEditUserModal({ state, commit }) {
-        if (!state.selected)
-            commit('setSelectedUser', { name: '', email: '', phone: '', birth_date: formatDate(new Date().toISOString().substr(0, 10)), group: { name: '', id: '' } })
+        if (state.selected.length > 0) {
+            state.editUserName = state.selected[0].name
+            state.editUserEmail = state.selected[0].email
+            state.editUserPhone = state.selected[0].phone
+            state.editUserBirthDate = state.selected[0].birth_date
+            state.editUserGroup = state.selected[0].group[0]
+        }
         commit('setShowEditModal', true)
     },
 
@@ -101,19 +113,64 @@ const actions = {
         commit('setBirthDate', payload)
     },
 
+    setGroup({ commit }, payload) {
+        commit('setGroup', payload)
+    },
+
     closeEditUserModal({ commit }) {
         commit('setShowEditModal', false)
     },
 
-    save({ state, commit, dispatch }) {
-        if (state.selected.id)
-            updateUser({ state, commit }, state.selected)
+    save({ state }) {
+        if (state.selected[0].id)
+            this.dispatch('users/updateUser')
         else
-            createUser({ state, commit }, state.selected)
+            this.dispatch('users/createUser')
+    },
 
-        dispatch('users/readUsers')
+    updateUser({ state }) {
+        db.collection("users")
+            .doc(state.selected[0].id)
+            .update({
+                name: state.editUserName,
+                email: state.editUserEmail,
+                phone: state.editUserPhone,
+                birth_date: state.editUserBirthDate,
+                group_id: state.editUserGroup.id
+            })
+            .then(() => { this.dispatch('users/readUsers') })
+            .then(() => { this.dispatch('users/closeEditUserModal') })
+            .catch(error => {
+                console.error("Error updating document: ", error);
+            });
+    },
+
+    createUser({ state }) { //Create auth module and move the create user in firebase
+        auth
+            .createUserWithEmailAndPassword(state.editUserEmail, "temporario")
+            .then(function (userRecord) {
+                let uid = userRecord.user.uid
+                return new Promise(function (resolve) {
+                    resolve(uid);
+                });
+            })
+            .then(function (uid) {
+                db.collection("users")
+                    .doc(uid)
+                    .set({
+                        name: state.editUserName,
+                        email: state.editUserEmail,
+                        phone: state.editUserPhone,
+                        birth_date: state.editUserBirthDate,
+                        group_id: state.editUserGroup
+                    });
+            })
+            .then(() => this.dispatch('users/readUsers'))
+            .then(() => this.dispatch('users/closeEditUserModal'))
+            .catch(error => {
+                console.error("Error inserting document: ", error);
+            });
     }
-
 };
 
 function onUsersLoaded(context, payload) {
@@ -125,57 +182,6 @@ function onUsersLoaded(context, payload) {
         users.push(userData);
     });
     context.commit('setUserList', users);
-}
-
-function createUser(context, payload) { //Create auth module and move the create user in firebase
-    auth
-        .createUserWithEmailAndPassword(this.email, "temporario")
-        .then(function (userRecord) {
-            let uid = userRecord.user.uid
-            return new Promise(function (resolve) {
-                resolve(uid);
-            });
-        })
-        .then(function (uid) {
-            db.collection("users")
-                .doc(uid)
-                .set({
-                    name: payload.name,
-                    email: payload.email,
-                    phone: payload.phone,
-                    birth_date: payload.birth_date,
-                    group_id: self.group
-                });
-        })
-        .then(() => {
-            context.commit('closeEditUserModal')
-        })
-        .catch(error => {
-            console.error("Error inserting document: ", error);
-        });
-
-    this.$store.dispatch("userSignUp", {
-        email: this.email,
-        password: "temporario"
-    });
-}
-
-function updateUser(context, payload) {
-    db.collection("users")
-        .doc(context.selected.id)
-        .update({
-            name: payload.name,
-            email: payload.email,
-            phone: payload.phone,
-            birth_date: payload.birthDate,
-            group_id: payload.group_id
-        })
-        .then(() => {
-            this.close();
-        })
-        .catch(error => {
-            console.error("Error updating document: ", error);
-        });
 }
 
 function formatDate(date) {
