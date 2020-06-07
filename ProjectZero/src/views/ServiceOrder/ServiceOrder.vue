@@ -82,7 +82,7 @@ export default {
   methods: Object.assign({}, methods, {
     editProductionOrder() {
       if (this.selected)
-        this.$router.push({ path: `/EditProductionOrder/${this.selected.id}` });
+        this.$router.push({ path: `/EditServiceOrder/${this.selected.id}` });
     }
   }),
   mounted() {

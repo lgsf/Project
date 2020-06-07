@@ -22,12 +22,14 @@
               :key="task.id"
               :task="task"
               class="mt-3 cursor-move"
+              v-on:click.native="showTaskDialog(task)"
             ></task-card>
             <!-- </transition-group> -->
           </draggable>
         </div>
       </v-col>
     </v-row>
+    <EditServiceOrderTask></EditServiceOrderTask>
   </div>
 </template>
 
@@ -35,94 +37,34 @@
 import { mapState, mapActions } from "vuex";
 import draggable from "vuedraggable";
 import TaskCard from "@/components/shared/TaskCard.vue";
+import EditServiceOrderTask from "./EditServiceOrderTask.vue"
 
 const computed = mapState("productionOrders", {
   selected: state => state.selected,
   statusList: state => state.statusList,
-  tasks(state) {
-    if (state.selectedOrderTasks.length) return state.selectedOrderTasks;
-    return [
-      {
-        id: 1,
-        name: "Tarefa 1",
-        creationDate: "04/06/2020",
-        status: "Pendente"
-      },
-      {
-        id: 1,
-        name: "Tarefa 2",
-        creationDate: "04/06/2020",
-        status: "Em progresso"
-      },
-      {
-        id: 1,
-        name: "Tarefa 3",
-        creationDate: "05/06/2020",
-        status: "Pendente"
-      },
-      {
-        id: 1,
-        name: "Tarefa 4",
-        creationDate: "05/06/2020",
-        status: "Finalizada"
-      },
-      {
-        id: 1,
-        name: "Tarefa 5",
-        creationDate: "05/06/2020",
-        status: "Pendente"
-      },
-      {
-        id: 1,
-        name: "Tarefa 6",
-        creationDate: "06/06/2020",
-        status: "Finalizada"
-      },
-      {
-        id: 1,
-        name: "Tarefa 7",
-        creationDate: "06/06/2020",
-        status: "Pendente"
-      },
-      {
-        id: 1,
-        name: "Tarefa 8",
-        creationDate: "06/06/2020",
-        status: "Em progresso"
-      }
-    ];
-  }
+  tasks: state => state.selectedOrderTasks,
+  columns: state => state.kanbanColumns
 });
 
 const methods = mapActions("productionOrders", [
   "selectOrder",
   "searchFor",
-  "reloadOrders"
+  "reloadOrders",
+  "showTaskDialog",
+  "loadTasksByOrder"
 ]);
 export default {
   props: ["id"],
   components: {
     TaskCard,
-    draggable
+    draggable,
+    EditServiceOrderTask
   },
   computed,
   methods,
-  data: () => ({
-    columns: []
-  }),
+  data: () => ({ }),
   mounted() {
-    console.log("this.selected");
-    console.log(this.selected);
-    console.log("this.statusList");
-    console.log(this.statusList);
-    console.log("this.tasks");
-    console.log(this.tasks);
-    this.columns = this.statusList.map(status => ({
-      title: status,
-      tasks: this.tasks.filter(task => task.status == status)
-    }));
-    console.log("this.columns");
-    console.log(this.columns);
+    this.loadTasksByOrder()
   }
 };
 </script>

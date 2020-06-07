@@ -1,4 +1,3 @@
-
 import { db } from "@/main";
 
 const state = () => ({
@@ -6,7 +5,10 @@ const state = () => ({
     search: '',
     productionOrders: [],
     statusList: ['Pendente', 'Em progresso', 'Finalizada'],
-    selectedOrderTasks: []
+    selectedOrderTasks: [],
+    kanbanColumns: [],
+    selectedTask: undefined,
+    showTaskDialog: false
 });
 
 const mutations = {
@@ -21,6 +23,18 @@ const mutations = {
     },
     updateSelectedOrderTasks(state, payload) {
         state.selectedOrderTasks = payload
+    },
+    updateShowTaskDialog(state, payload) {
+        state.showTaskDialog = payload
+    },
+    updateKanbanColumns(state) {
+        state.kanbanColumns = state.statusList.map(status => ({
+            title: status,
+            tasks: state.selectedOrderTasks.filter(task => task.status == status)
+        }));
+    },
+    updateSelectedTask(state, payload) {
+        state.selectedTask = payload
     }
 };
 
@@ -114,8 +128,8 @@ const actions = {
             });
     },
     loadTasksByOrder(context) {
-        db.collection("productionOrder").doc(context.state.selected)
-            .collection('tasks').onSnapshot(snapshot => {
+        db.collection("productionOrder").doc(context.state.selected.id)
+            .collection("tasks").get().then(snapshot => {
                 let tasks = [];
                 snapshot.forEach(taskSnapshot => {
                     let taskData = taskSnapshot.data();
@@ -125,8 +139,33 @@ const actions = {
                 let taskIds = tasks.map(t => t.id);
                 let unmodifiedTasks = context.state.selectedOrderTasks.filter(t => !taskIds.includes(t.id));
                 tasks = tasks.concat(unmodifiedTasks);
-                context.commit('updateSelectedOrderTasks', tasks);
+                this.dispatch('productionOrders/updateSelectedOrderTask', tasks).then(() => {
+                    context.commit('updateKanbanColumns')
+                });
             });
+    },
+    showTaskDialog(context, payload) {
+        let task = payload
+        task.items = []
+        db.collection("productionOrder").doc(context.state.selected.id)
+            .collection("tasks").doc(payload.id)
+            .collection("items").get().then(snapshot => {
+                snapshot.forEach(itemSnapshot => {
+                    let itemData = itemSnapshot.data();
+                    itemData.id = itemSnapshot.id;
+                    task.items.push(itemData);
+                });
+
+                this.dispatch('productionOrders/updateSelectedTask', task).then(() => {
+                    context.commit('updateShowTaskDialog', true)
+                });
+            });
+    },
+    updateSelectedOrderTask(context, payload) {
+        context.commit('updateSelectedOrderTasks', payload)
+    },
+    updateSelectedTask(context, payload) {
+        context.commit('updateSelectedTask', payload)
     }
 };
 const getters = {};
