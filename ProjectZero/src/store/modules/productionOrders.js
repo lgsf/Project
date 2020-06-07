@@ -41,6 +41,10 @@ const mutations = {
     },
     updateTaskEndDate(state, payload) {
         state.selectedTask.end_date = payload
+    },
+    editTaskItem(state, payload) {
+        console.log(state)
+        console.log(payload)
     }
 };
 
@@ -206,4 +210,3 @@ export default {
     actions,
     mutations
 }
-

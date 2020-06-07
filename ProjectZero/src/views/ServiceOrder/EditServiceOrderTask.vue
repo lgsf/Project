@@ -23,11 +23,18 @@
             </v-row>
             <ul>
                 <li v-for="item in selectedTask.items" :key="item">
-                    <v-checkbox 
-                        v-model="item.done" 
-                        class="mx-2" 
-                        :label="item.description"
-                    ></v-checkbox>
+                    <v-row style="height:50">
+                      <v-col align="center" cols="1">
+                        <v-btn color="primary" text @click="editTaskItem(item)"><v-icon>mdi-pen</v-icon></v-btn>
+                      </v-col>
+                      <v-col cols="11">
+                        <v-checkbox 
+                            v-model="item.done" 
+                            class="mx-2" 
+                            :label="item.description"
+                        ></v-checkbox>
+                      </v-col>
+                    </v-row>
                 </li>
             </ul>
           </v-container>
@@ -55,7 +62,8 @@ const methods = mapActions("productionOrders", [
   "closeEditServiceOrderTaskModal",
   "saveTask",
   "updateTaskName",
-  "updateTaskEndDate"
+  "updateTaskEndDate",
+  "editTaskItem"
 ]);
 
 export default {
