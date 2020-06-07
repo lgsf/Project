@@ -35,6 +35,12 @@ const mutations = {
     },
     updateSelectedTask(state, payload) {
         state.selectedTask = payload
+    },
+    updateTaskName(state, payload) {
+        state.selectedTask.name = payload
+    },
+    updateTaskEndDate(state, payload) {
+        state.selectedTask.end_date = payload
     }
 };
 
@@ -166,6 +172,29 @@ const actions = {
     },
     updateSelectedTask(context, payload) {
         context.commit('updateSelectedTask', payload)
+    },
+    closeEditServiceOrderTaskModal(context) {
+        context.commit('updateShowTaskDialog', false)
+    },
+    saveTask(context) {
+        db.collection("productionOrder")
+            .doc(context.state.selected.id)
+            .collection("tasks").doc(context.state.selectedTask.id)
+            .update({
+                name: context.state.selectedTask.name,
+                email: context.state.selectedTask.end_date
+            })
+            .then(() => { this.dispatch('productionOrders/loadTasksByOrder') })
+            .then(() => { this.dispatch('productionOrders/closeEditServiceOrderTaskModal') })
+            .catch(error => {
+                console.error("Error updating document: ", error);
+            });
+    },
+    updateTaskName(context, payload) {
+        context.commit('updateTaskName', payload)
+    },
+    updateTaskEndDate(context, payload) {
+        context.commit('updateTaskEndDate', payload)
     }
 };
 const getters = {};

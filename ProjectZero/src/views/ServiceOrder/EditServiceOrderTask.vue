@@ -10,7 +10,7 @@
           <v-container>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Nome: " :value="selectedTask.name"></v-text-field>
+                <v-text-field label="Nome: " :value="selectedTask.name" @input="updateTaskName"></v-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -18,7 +18,7 @@
                 <v-text-field label="Data de criação:" disabled :value="selectedTask.creation_date"></v-text-field>
               </v-col>
               <v-col cols="6">
-                <v-text-field label="Data de encerramento:" :value="selectedTask.end_date"></v-text-field>
+                <v-text-field label="Data de encerramento:" :value="selectedTask.end_date" @input="updateTaskEndDate"></v-text-field>
               </v-col>
             </v-row>
             <ul>
@@ -35,8 +35,8 @@
         <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="closeEditUserModal">Fechar</v-btn>
-          <v-btn color="blue darken-1" text @click="save">Salvar</v-btn>
+          <v-btn color="blue darken-1" text @click="closeEditServiceOrderTaskModal">Fechar</v-btn>
+          <v-btn color="blue darken-1" text @click="saveTask">Salvar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -51,7 +51,12 @@ const computed = mapState("productionOrders", {
     selectedTask: state => state.selectedTask
 });
 
-const methods = mapActions("productionOrders", []);
+const methods = mapActions("productionOrders", [
+  "closeEditServiceOrderTaskModal",
+  "saveTask",
+  "updateTaskName",
+  "updateTaskEndDate"
+]);
 
 export default {
     data() {
