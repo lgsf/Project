@@ -8,11 +8,13 @@ import clients from './modules/clients'
 import users from './modules/users'
 import erp from './modules/erp'
 import productionOrders from './modules/productionOrders'
+import createPersistedState from "vuex-persistedstate";
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
     modules: { groups, clients, users, erp, productionOrders },
+    plugins: [createPersistedState()],
     state: {
         user: null,
         userObj: null,
@@ -75,6 +77,7 @@ export const store = new Vuex.Store({
                     router.push('/')
                 })
         },
+
 
         userSignOut({ commit }) {
             firebase

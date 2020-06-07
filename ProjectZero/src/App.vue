@@ -11,7 +11,6 @@
 <script>
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import firebase from "firebase";
 
 export default {
   
@@ -24,7 +23,7 @@ export default {
   },
   methods: {
     isAuthenticated() {
-      return !!firebase.auth().currentUser
+      return this.$store.getters.isAuthenticated;
     }
   }
 }

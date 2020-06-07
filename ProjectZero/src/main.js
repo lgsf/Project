@@ -18,7 +18,8 @@ firebase.initializeApp({
   storageBucket: "gs://projectzero-9bff2.appspot.com",
   messagingSenderId: "793390803395",
   appId: "1:793390803395:web:6526a11dff48740bb03576"
-});
+})
+
 
 export const db = firebase.firestore()
 export const fileStorage = firebase.storage()
