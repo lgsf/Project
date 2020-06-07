@@ -20,13 +20,17 @@ const routes = [
     path: '/',
     name: 'Login',
     component: Login,
-
+    meta: {
+      hideForAuth: true
+    }
   },
   {
     path: '/resetpassword',
     name: 'ResetPassword',
     component: ResetPassword,
-
+    meta: {
+      hideForAuth: true
+    }
   },
   {
     path: '/home', //Home
@@ -123,6 +127,16 @@ router.beforeEach((to, from, next) => {
   } else {
     next()
   }
+
+  if (to.matched.some(record => record.meta.hideForAuth)) {
+    if (store.getters.isAuthenticated) {
+        next({ path: '/home' });
+    } else {
+        next();
+    }
+} else {
+    next();
+}
 });
 
 export default router
