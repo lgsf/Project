@@ -1,7 +1,8 @@
 import { db } from "@/main";
 
 const state = () => ({
-    selected: undefined,
+    client: undefined,
+    selected: [],
     search: '',
     productionOrders: [],
     statusList: ['Pendente', 'Em progresso', 'Finalizada'],
@@ -13,13 +14,18 @@ const state = () => ({
 
 const mutations = {
     selectOrder(state, payload) {
-        state.selected = payload
+        state.selected = payload;
+        if (payload)
+            state.client = payload.client;
     },
     searchFor(state, payload) {
         state.search = payload
     },
     updateOrders(state, payload) {
         state.productionOrders = payload
+    },
+    updateClient(state, payload) {
+        state.client = payload;
     },
     updateSelectedOrderTasks(state, payload) {
         state.selectedOrderTasks = payload
@@ -117,8 +123,7 @@ Array.prototype.unique = function () {
 
 const actions = {
     selectOrder(context, payload) {
-        var selected = !payload ? undefined : payload[0];
-        context.commit('selectOrder', selected)
+        context.commit('selectOrder', payload)
     },
     searchFor(context, payload) {
         context.commit('searchFor', payload)
@@ -138,7 +143,7 @@ const actions = {
             });
     },
     loadTasksByOrder(context) {
-        db.collection("productionOrder").doc(context.state.selected.id)
+        db.collection("productionOrder").doc(context.state.selected[0].id)
             .collection("tasks").get().then(snapshot => {
                 let tasks = [];
                 snapshot.forEach(taskSnapshot => {
@@ -154,10 +159,13 @@ const actions = {
                 });
             });
     },
+    updateClient(context, payload) {
+        context.commit("updateClient", payload);
+    },
     showTaskDialog(context, payload) {
         let task = payload
         task.items = []
-        db.collection("productionOrder").doc(context.state.selected.id)
+        db.collection("productionOrder").doc(context.state.selected[0].id)
             .collection("tasks").doc(payload.id)
             .collection("items").get().then(snapshot => {
                 snapshot.forEach(itemSnapshot => {
@@ -182,7 +190,40 @@ const actions = {
     },
     saveTask(context) {
         db.collection("productionOrder")
-            .doc(context.state.selected.id)
+            .doc(context.state.selected[0].id)
+            .collection("tasks").doc(context.state.selectedTask.id)
+            .update({
+                name: context.state.selectedTask.name,
+                email: context.state.selectedTask.end_date
+            })
+            .then(() => { this.dispatch('productionOrders/loadTasksByOrder') })
+            .then(() => { this.dispatch('productionOrders/closeEditServiceOrderTaskModal') })
+            .catch(error => {
+                console.error("Error updating document: ", error);
+            });
+    },
+    saveAllTasks(context) {
+        db.collection("productionOrder")
+            .doc(context.state.selected[0].id)
+            .collection("tasks").get()
+            .then(function (querySnapshot) {
+                let promises = [];
+                querySnapshot.forEach(function (doc) {
+                    let task = context.state.selectedOrderTasks.filter(m => m.id == doc.id)[0];
+                    promises.push(doc.ref.update({ status: task.status }));
+                });
+                return promises;
+            })
+            .then(() => { this.dispatch('productionOrders/loadTasksByOrder') })
+            .catch(error => {
+                console.error("Error updating document: ", error);
+            });
+
+
+
+
+        db.collection("productionOrder")
+            .doc(context.state.selected[0].id)
             .collection("tasks").doc(context.state.selectedTask.id)
             .update({
                 name: context.state.selectedTask.name,

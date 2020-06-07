@@ -52,7 +52,7 @@ const computed = mapState("productionOrders", {
   selected: state => state.selected,
   search: state => state.search,
   productionOrders: state => state.productionOrders,
-  enableEdit: state => !!state.selected
+  enableEdit: state => state.selected && state.selected.length
 });
 
 const methods = mapActions("productionOrders", [
@@ -82,7 +82,7 @@ export default {
   methods: Object.assign({}, methods, {
     editProductionOrder() {
       if (this.selected)
-        this.$router.push({ path: `/EditServiceOrder/${this.selected.id}` });
+        this.$router.push({ path: `/EditServiceOrder/${this.selected[0].id}` });
     }
   }),
   mounted() {
