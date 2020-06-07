@@ -203,23 +203,6 @@ const actions = {
                 console.error("Error updating document: ", error);
             });
     },
-    saveAllTasks(context) {
-        db.collection("productionOrder")
-            .doc(context.state.selected[0].id)
-            .collection("tasks").get()
-            .then(function (querySnapshot) {
-                let promises = [];
-                querySnapshot.forEach(function (doc) {
-                    let task = context.state.selectedOrderTasks.filter(m => m.id == doc.id)[0];
-                    promises.push(doc.ref.update({ status: task.status }));
-                });
-                return promises;
-            })
-            .then(() => { this.dispatch('productionOrders/loadTasksByOrder') })
-            .catch(error => {
-                console.error("Error updating document: ", error);
-            });
-    },
     updateTaskName(context, payload) {
         context.commit('updateTaskName', payload)
     },
