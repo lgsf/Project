@@ -61,6 +61,7 @@
                   ghost-class="ghost-card"
                   class="kanban-column"
                   group="status"
+                  @change="onTaskDrag($event, column.task)"
                 >
                   <!-- <transition-group> -->
                   <task-card
@@ -103,7 +104,7 @@ const orderMethods = mapActions("productionOrders", [
   "updateClient",
   "showTaskDialog",
   "loadTasksByOrder",
-  "saveAllTasks"
+  "onTaskDrag"
 ]);
 
 const clientMethods = mapActions("clients", ["loadClients"]);
@@ -116,16 +117,7 @@ export default {
     EditServiceOrderTask
   },
   computed,
-  methods: Object.assign({}, orderMethods, clientMethods, {
-    onMoveTask() {
-      this.columns.forEach(column => {
-        column.tasks.forEach(task => {
-          task.status = column.title;
-        });
-      });
-      this.saveAllTasks();
-    }
-  }),
+  methods: Object.assign({}, orderMethods, clientMethods),
   data: () => ({}),
   mounted() {
     this.loadTasksByOrder();

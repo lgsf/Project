@@ -194,7 +194,8 @@ const actions = {
             .collection("tasks").doc(context.state.selectedTask.id)
             .update({
                 name: context.state.selectedTask.name,
-                email: context.state.selectedTask.end_date
+                email: context.state.selectedTask.end_date,
+                status: context.state.selectedTask.status
             })
             .then(() => { this.dispatch('productionOrders/loadTasksByOrder') })
             .then(() => { this.dispatch('productionOrders/closeEditServiceOrderTaskModal') })
@@ -218,28 +219,26 @@ const actions = {
             .catch(error => {
                 console.error("Error updating document: ", error);
             });
-
-
-
-
-        db.collection("productionOrder")
-            .doc(context.state.selected[0].id)
-            .collection("tasks").doc(context.state.selectedTask.id)
-            .update({
-                name: context.state.selectedTask.name,
-                email: context.state.selectedTask.end_date
-            })
-            .then(() => { this.dispatch('productionOrders/loadTasksByOrder') })
-            .then(() => { this.dispatch('productionOrders/closeEditServiceOrderTaskModal') })
-            .catch(error => {
-                console.error("Error updating document: ", error);
-            });
     },
     updateTaskName(context, payload) {
         context.commit('updateTaskName', payload)
     },
     updateTaskEndDate(context, payload) {
         context.commit('updateTaskEndDate', payload)
+    },
+    onTaskDrag(context, payload) {
+        if (payload.added) {
+            context.state.kanbanColumns.forEach(column => {
+                column.tasks.forEach(task => {
+                    if (task.id == payload.added.element.id) {
+                        context.state.selectedTask = context.state.selectedOrderTasks.find(c => c.id == payload.added.element.id)
+                        context.state.selectedTask.status = column.title
+                    }
+                });
+            });
+            this.dispatch('productionOrders/saveTask')
+        }
+
     }
 };
 const getters = {};
