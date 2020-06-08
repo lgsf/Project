@@ -26,6 +26,10 @@ const mutations = {
     },
     updateClient(state, payload) {
         state.client = payload;
+        state.selected[0].client = payload;
+    },
+    updateOrderEndDate(state, payload) {
+        state.selected[0].end_date = payload;
     },
     updateSelectedOrderTasks(state, payload) {
         state.selectedOrderTasks = payload
@@ -143,6 +147,9 @@ const actions = {
     updateClient(context, payload) {
         context.commit("updateClient", payload);
     },
+    updateOrderEndDate(context, payload) {
+        context.commit('updateOrderEndDate', payload)
+    },
     showTaskDialog(context, payload) {
         let task = payload
         task.items = []
@@ -175,7 +182,7 @@ const actions = {
             .collection("tasks").doc(context.state.selectedTask.id)
             .update({
                 name: context.state.selectedTask.name,
-                email: context.state.selectedTask.end_date,
+                end_date: context.state.selectedTask.end_date,
                 status: context.state.selectedTask.status
             })
             .then(() => { this.dispatch('productionOrders/loadTasksByOrder') })
@@ -207,6 +214,26 @@ const actions = {
     saveTaskItems(context, payload) {
         console.log(context)
         console.log(payload)
+    },
+    saveServiceOrder(context) {
+        let serviceOrder = context.state.selected[0];
+        if (!serviceOrder)
+            return;
+        db.collection("productionOrder")
+            .doc(serviceOrder.id)
+            .update({
+                name: serviceOrder.name,
+                client: serviceOrder.client || '',
+                end_date: serviceOrder.end_date || ''
+            })
+            .then(() => {
+                this.dispatch('setSuccessMessage', 'Ordem de serviço salva com sucesso.');
+            }, () => {
+                this.dispatch('setSuccessMessage', 'Ordem de serviço salva com sucesso.');
+            })
+            .catch(error => {
+                console.error("Error updating document: ", error);
+            });
     }
 };
 const getters = {};

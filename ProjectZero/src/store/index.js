@@ -21,6 +21,7 @@ export const store = new Vuex.Store({
         userObj: null,
         isAuthenticated: false,
         loading: false,
+        loadingNavbar: false,
         successMessage: '',
         errorMessage: '',
         warningMessage: '',
@@ -34,6 +35,9 @@ export const store = new Vuex.Store({
         },
         setLoading(state, payload) {
             state.loading = payload
+        },
+        setLoadingNavbar(state, payload) {
+            state.loadingNavbar = payload
         },
         setUserObj(state, payload) {
             state.userObj = payload
@@ -84,7 +88,6 @@ export const store = new Vuex.Store({
                     router.push('/')
                 })
         },
-
 
         userSignOut({ commit }) {
             firebase
@@ -140,6 +143,14 @@ export const store = new Vuex.Store({
             commit('setLoading', false)
         },
 
+        isLoadingNavbar({ commit }) {
+            commit('setLoadingNavbar', true)
+        },
+
+        finishedLoadingNavbar({ commit }) {
+            commit('setLoadingNavbar', false)
+        },
+
         resetPassword({ commit }, { email }) {
             commit('setLoading', true)
             firebase
@@ -157,6 +168,21 @@ export const store = new Vuex.Store({
                     commit('setIsAuthenticated', false)
                     router.push('/')
                 })
+        },
+
+        setSuccessMessage(context, payload) {
+            context.commit("setSuccessMessage", payload);
+        },
+        setErrorMessage(context, payload) {
+            context.commit("setErrorMessage", payload);
+        }
+        ,
+        setWarningMessage(context, payload) {
+            context.commit("setWarningMessage", payload);
+        }
+        ,
+        setInfoMessage(context, payload) {
+            context.commit("setInfoMessage", payload);
         }
 
     },
@@ -166,6 +192,9 @@ export const store = new Vuex.Store({
         },
         loading(state) {
             return state.loading
+        },
+        loadingNavbar(state) {
+            return state.loadingNavbar
         },
         userObj(state) {
             return state.userObj
