@@ -151,7 +151,6 @@ export default {
 
         fileStorage.ref().listAll()
         .then(result => {
-          console.log(result.items[0])
           result.items[0].getDownloadURL()
           .then((url) => { this.imageUrl = url });
         })

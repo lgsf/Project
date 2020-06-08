@@ -28,3 +28,7 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus">
+  @import './styles/main'
+</style>

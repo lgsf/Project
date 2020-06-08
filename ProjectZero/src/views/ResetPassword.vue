@@ -25,9 +25,16 @@
                 > Limpar</v-btn>
                  <v-spacer></v-spacer>
               <v-btn @click="resetPassword"
+                  :loading="loading"
                   color="primary"
                   :disabled="!valid"
-                > Enviar senha</v-btn>
+                > Enviar senha
+                <template v-slot:loader>
+                  <span class='custom-loader'>
+                    <v-icon light>cached</v-icon>
+                  </span>
+                </template>
+                </v-btn>
                  </v-row>
                  </v-form>
           </v-container>
@@ -52,6 +59,11 @@ export default {
                 v => /.+@.+/.test(v) || 'E-mail must be valid'
             ]
         }
+    },
+    computed: {
+      loading(){
+        return this.$store.getters.loading
+      }
     },
     methods: {
         resetPassword() {

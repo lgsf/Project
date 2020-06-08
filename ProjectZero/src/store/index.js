@@ -19,6 +19,7 @@ export const store = new Vuex.Store({
         user: null,
         userObj: null,
         isAuthenticated: false,
+        loading: false,
         successMessage: '',
         errorMessage: '',
         warningMessage: '',
@@ -30,12 +31,15 @@ export const store = new Vuex.Store({
             if (!!payload && !!payload.user)
                 state.user.uid = payload.user.uid
         },
+        setLoading(state, payload){
+            state.loading = payload
+        },
         setUserObj(state, payload) {
             state.userObj = payload
         },
         setIsAuthenticated(state, payload) {
             state.isAuthenticated = payload
-        },
+        },   
         setSuccessMessage(state, payload) {
             state.successMessage = payload
         },
@@ -55,10 +59,12 @@ export const store = new Vuex.Store({
         userLogin({ commit, dispatch }, { email, password }) {
             commit('setSuccessMessage', null)
             commit('setErrorMessage', null)
+            commit('setLoading', true) 
             firebase
                 .auth()
                 .signInWithEmailAndPassword(email, password)
                 .then(user => {
+                    commit('setLoading', false) 
                     commit('setUser', user)
                     commit('setIsAuthenticated', true)
                     return user
@@ -70,10 +76,10 @@ export const store = new Vuex.Store({
                     router.push('/home')
                 })
                 .catch((error) => {
-                    console.log(error)
+                    commit('setLoading', false) 
                     commit('setUser', null)
                     commit('setIsAuthenticated', false)
-                    commit('setErrorMessage', 'Erro ao tentar fazer o login: ' + error.message)
+                    commit('setErrorMessage', 'Erro ao tentar fazer o login: ' + error.message )
                     router.push('/')
                 })
         },
@@ -97,12 +103,15 @@ export const store = new Vuex.Store({
         },
 
         userSignUp({ commit }, payload) {
+            commit('setLoading', true) 
             firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
                 .then(function (userRecord) {
+                    commit('setLoading', false) 
                     commit('setSuccessMessage', 'Usuario criado com sucesso: ' + userRecord.name)
                 })
                 .catch(function (error) {
-                    commit('setErrorMessage', 'Erro ao tentar criar o usuário: ' + error.message)
+                    commit('setLoading', false) 
+                    commit('setErrorMessage', 'Erro ao tentar criar o usuário: ' + error.gmessage)
                 })
         },
 
@@ -122,18 +131,29 @@ export const store = new Vuex.Store({
 
         },
 
+        isLoading({commit}){
+            commit('setLoading', true) 
+        },
+
+        finishedLoading({commit}){
+            commit('setLoading', false)
+        },
+
         resetPassword({ commit }, { email }) {
+            commit('setLoading', true) 
             firebase
                 .auth()
                 .sendPasswordResetEmail(email)
                 .then(() => {
-                    commit('setUser', null);
-                    commit('setIsAuthenticated', false);
+                    commit('setLoading', false) 
+                    commit('setUser', null)
+                    commit('setIsAuthenticated', false)
                     router.push('/')
                 })
                 .catch(() => {
+                    commit('setLoading', false) 
                     commit('setUser', null);
-                    commit('setIsAuthenticated', false);
+                    commit('setIsAuthenticated', false)
                     router.push('/')
                 })
         }
@@ -142,6 +162,9 @@ export const store = new Vuex.Store({
     getters: {
         isAuthenticated(state) {
             return state.user !== null && state.user !== undefined
+        },
+        loading(state){
+            return state.loading
         },
         userObj(state) {
             return state.userObj

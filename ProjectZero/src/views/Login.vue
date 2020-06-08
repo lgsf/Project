@@ -29,7 +29,8 @@
                                 v-model="email"
                                 :rules="emailRules"
                                 required></v-text-field>
-                </v-col><v-col cols="12">
+                </v-col>
+                <v-col cols="12">
                 <v-text-field name="password"
                                 label="Password"
                                 type="password"
@@ -41,12 +42,20 @@
                 <v-btn 
                   color="error"
                   router :to="{name: 'ResetPassword'}"
-                > Esqueci a senha</v-btn>
+                > Esqueci a senha
+                </v-btn>
                  <v-spacer></v-spacer>
-              <v-btn @click="login"
+                <v-btn @click="login"
+                  :loading="loading"
                   color="primary"
                   :disabled="!valid"
-                > Login</v-btn>
+                > Login
+                <template v-slot:loader>
+                  <span class='custom-loader'>
+                    <v-icon light>cached</v-icon>
+                  </span>
+                </template>
+                </v-btn>
                  </v-row>
                  </v-form>
           </v-container>
@@ -84,6 +93,11 @@ export default {
             ]
         }
     },
+    computed: { 
+        loading(){
+          return this.$store.getters.loading
+        }
+    },
     methods: {
         login() {
                 this.$store.dispatch('userLogin', {
@@ -109,6 +123,3 @@ export default {
   }
 }
 </script>
-<style>
-
-</style>

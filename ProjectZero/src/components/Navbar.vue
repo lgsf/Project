@@ -13,9 +13,20 @@
       </v-btn>
     </v-app-bar>
     <div v-if="drawer">
-      <v-navigation-drawer app v-model="drawer" class="grey-3">
+      <v-navigation-drawer app v-model="drawer"  class="grey-3">
         <v-card>
-          <v-list flat>
+          <div class="text-center" v-if="loading">
+            <br>
+            <br>
+          <v-progress-circular
+            indeterminate
+            color="primary"
+          ></v-progress-circular>
+          <br>
+          <br>
+          <br>
+          </div>
+          <v-list flat v-if="!loading">
             <v-subheader>Menu</v-subheader>
             <div v-for="(link, i) in links" :key="i">
               <v-list-item v-if="!link.children" :key="i" color="primary" router :to="link.route">
@@ -67,19 +78,22 @@ export default {
   },
   computed: {
     isAuthenticated() {
-      return this.$store.getters.isAuthenticated;
+      return this.$store.getters.isAuthenticated
+    },
+    loading() {
+      return this.$store.getters.loading
     },
     userObj() {
-      return this.$store.getters.userObj;
+      return this.$store.getters.userObj
     }
   },
   methods: {
     logout() {
-      this.$store.dispatch("userSignOut");
+      this.$store.dispatch("userSignOut")
     },
     loadMenu() {
+      this.$store.dispatch("isLoading")
       let groupId = "bmyiE5pvx66Ct7Wmj78b"
-      console.log(this.userObj)
       if(this.userObj && this.userObj.group_id)
         groupId = this.userObj.group_id
       if(groupId){
@@ -87,7 +101,8 @@ export default {
               .doc(groupId)
               .get()
               .then((snapshots) => {
-                this.onMenuLoaded(snapshots);
+                this.onMenuLoaded(snapshots)
+                this.$store.dispatch("finishedLoading")
         });
       }
     },

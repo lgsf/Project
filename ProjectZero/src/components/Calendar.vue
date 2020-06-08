@@ -1,7 +1,14 @@
 <template>
   
     <v-col class="xs-12 sm-6" justify="center">
-      <v-sheet height="64">
+       <div class="text-center">
+        <v-progress-circular
+          indeterminate
+          color="primary"
+          v-if="loading"
+        ></v-progress-circular>
+        </div>
+      <v-sheet height="64" v-if="!loading">
         <v-toolbar flat color="primary">
           <v-btn color="primary" class="mr-1 " small @click.stop="dialog = true">
             <v-icon>add</v-icon>
@@ -89,7 +96,7 @@
         </v-card>
       </v-dialog>
 
-<v-sheet height="400">
+<v-sheet height="400" v-if="!loading">
   <v-calendar
   ref="calendar"
   locale="pt"
@@ -182,6 +189,9 @@ export default {
     this.getEvents()
   },
   computed: {
+    loading() {
+      return this.$store.getters.loading
+    },
     title () {
       const { start, end } = this
       if (!start || !end) {
@@ -214,6 +224,7 @@ export default {
   },
   methods: {
     async getEvents () {
+      this.$store.dispatch("isLoading")
       let snapshot = await db.collection('calEvent').get()
       const events = []
       snapshot.forEach(doc => {
@@ -222,6 +233,7 @@ export default {
         events.push(appData)
       })
       this.events = events
+      this.$store.dispatch("finishedLoading")
     },
     close() {
       this.title = ''
