@@ -20,7 +20,7 @@ export const store = new Vuex.Store({
         userObj: null,
         isAuthenticated: false,
         loading: false,
-        loadingNavbar:false,
+        loadingNavbar: false,
         successMessage: '',
         errorMessage: '',
         warningMessage: '',
@@ -32,10 +32,10 @@ export const store = new Vuex.Store({
             if (!!payload && !!payload.user)
                 state.user.uid = payload.user.uid
         },
-        setLoading(state, payload){
+        setLoading(state, payload) {
             state.loading = payload
         },
-        setLoadingNavbar(state, payload){
+        setLoadingNavbar(state, payload) {
             state.loadingNavbar = payload
         },
         setUserObj(state, payload) {
@@ -43,7 +43,7 @@ export const store = new Vuex.Store({
         },
         setIsAuthenticated(state, payload) {
             state.isAuthenticated = payload
-        },   
+        },
         setSuccessMessage(state, payload) {
             state.successMessage = payload
         },
@@ -63,12 +63,12 @@ export const store = new Vuex.Store({
         userLogin({ commit, dispatch }, { email, password }) {
             commit('setSuccessMessage', null)
             commit('setErrorMessage', null)
-            commit('setLoading', true) 
+            commit('setLoading', true)
             firebase
                 .auth()
                 .signInWithEmailAndPassword(email, password)
                 .then(user => {
-                    commit('setLoading', false) 
+                    commit('setLoading', false)
                     commit('setUser', user)
                     commit('setIsAuthenticated', true)
                     return user
@@ -80,14 +80,13 @@ export const store = new Vuex.Store({
                     router.push('/home')
                 })
                 .catch((error) => {
-                    commit('setLoading', false) 
+                    commit('setLoading', false)
                     commit('setUser', null)
                     commit('setIsAuthenticated', false)
-                    commit('setErrorMessage', 'Erro ao tentar fazer o login: ' + error.message )
+                    commit('setErrorMessage', 'Erro ao tentar fazer o login: ' + error.message)
                     router.push('/')
                 })
         },
-
 
         userSignOut({ commit }) {
             firebase
@@ -107,14 +106,14 @@ export const store = new Vuex.Store({
         },
 
         userSignUp({ commit }, payload) {
-            commit('setLoading', true) 
+            commit('setLoading', true)
             firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
                 .then(function (userRecord) {
-                    commit('setLoading', false) 
+                    commit('setLoading', false)
                     commit('setSuccessMessage', 'Usuario criado com sucesso: ' + userRecord.name)
                 })
                 .catch(function (error) {
-                    commit('setLoading', false) 
+                    commit('setLoading', false)
                     commit('setErrorMessage', 'Erro ao tentar criar o usuário: ' + error.gmessage)
                 })
         },
@@ -135,39 +134,54 @@ export const store = new Vuex.Store({
 
         },
 
-        isLoading({ commit }){
-            commit('setLoading', true) 
+        isLoading({ commit }) {
+            commit('setLoading', true)
         },
 
-        finishedLoading({ commit }){
+        finishedLoading({ commit }) {
             commit('setLoading', false)
         },
 
-        isLoadingNavbar({ commit }){
-            commit('setLoadingNavbar', true) 
+        isLoadingNavbar({ commit }) {
+            commit('setLoadingNavbar', true)
         },
 
-        finishedLoadingNavbar({ commit }){
+        finishedLoadingNavbar({ commit }) {
             commit('setLoadingNavbar', false)
         },
 
         resetPassword({ commit }, { email }) {
-            commit('setLoading', true) 
+            commit('setLoading', true)
             firebase
                 .auth()
                 .sendPasswordResetEmail(email)
                 .then(() => {
-                    commit('setLoading', false) 
+                    commit('setLoading', false)
                     commit('setUser', null)
                     commit('setIsAuthenticated', false)
                     router.push('/')
                 })
                 .catch(() => {
-                    commit('setLoading', false) 
+                    commit('setLoading', false)
                     commit('setUser', null);
                     commit('setIsAuthenticated', false)
                     router.push('/')
                 })
+        },
+
+        setSuccessMessage(context, payload) {
+            context.commit("setSuccessMessage", payload);
+        },
+        setErrorMessage(context, payload) {
+            context.commit("setErrorMessage", payload);
+        }
+        ,
+        setWarningMessage(context, payload) {
+            context.commit("setWarningMessage", payload);
+        }
+        ,
+        setInfoMessage(context, payload) {
+            context.commit("setInfoMessage", payload);
         }
 
     },
@@ -175,10 +189,10 @@ export const store = new Vuex.Store({
         isAuthenticated(state) {
             return state.user !== null && state.user !== undefined
         },
-        loading(state){
+        loading(state) {
             return state.loading
         },
-        loadingNavbar(state){
+        loadingNavbar(state) {
             return state.loadingNavbar
         },
         userObj(state) {

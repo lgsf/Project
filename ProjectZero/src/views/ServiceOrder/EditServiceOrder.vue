@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Alert class="mt-2"></Alert>
     <v-row dense>
       <v-col cols="12">
         <v-card class="mx-auto mt-5">
@@ -11,7 +12,7 @@
           <v-row class="ml-5 mt-5 mr-5">
             <v-col cols="12">
               <v-autocomplete
-                :value="client"
+                :value="selected[0].client"
                 @input="updateClient"
                 :items="clientList"
                 color="primary"
@@ -38,7 +39,7 @@
                 dense
                 label="Data de encerramento:"
                 :value="selected[0].end_date"
-                @input="updateTaskEndDate"
+                @input="updateOrderEndDate"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -79,6 +80,10 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <v-btn color="info" dark fixed bottom right fab @click="saveServiceOrder">
+      <v-icon>mdi-content-save</v-icon>
+    </v-btn>
     <EditServiceOrderTask></EditServiceOrderTask>
   </div>
 </template>
@@ -86,6 +91,7 @@
 <script>
 import { mapState, mapActions } from "vuex";
 import draggable from "vuedraggable";
+import Alert from "@/components/shared/Alert";
 import TaskCard from "@/components/shared/TaskCard.vue";
 import EditServiceOrderTask from "./EditServiceOrderTask.vue";
 
@@ -102,9 +108,11 @@ const orderMethods = mapActions("productionOrders", [
   "searchFor",
   "reloadOrders",
   "updateClient",
+  "updateOrderEndDate",
   "showTaskDialog",
   "loadTasksByOrder",
-  "onTaskDrag"
+  "onTaskDrag",
+  "saveServiceOrder"
 ]);
 
 const clientMethods = mapActions("clients", ["loadClients"]);
@@ -112,6 +120,7 @@ const clientMethods = mapActions("clients", ["loadClients"]);
 export default {
   props: ["id"],
   components: {
+    Alert,
     TaskCard,
     draggable,
     EditServiceOrderTask

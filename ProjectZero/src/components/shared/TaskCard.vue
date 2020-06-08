@@ -1,7 +1,19 @@
 <template>
   <v-card class="pa-2" raised>
-    <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm">{{task.name}}</p>
-    <span class="text-sm text-gray-600">{{task.creation_date}}</span>
+    <div>
+      <span class="font-weight-medium">Tarefa:</span>
+      <span class="font-weight-regular">{{task.name}}</span>
+    </div>
+    <v-row>
+      <v-col cols="6 text-sm-left body-2">
+        <span class="font-weight-medium">Início:</span>
+        {{task.creation_date}}
+      </v-col>
+      <v-col v-if="!!task.end_date" cols="6 text-sm-right body-2">
+        <span class="font-weight-medium">Fim:</span>
+        {{task.end_date}}
+      </v-col>
+    </v-row>
   </v-card>
 </template>
 <script>
