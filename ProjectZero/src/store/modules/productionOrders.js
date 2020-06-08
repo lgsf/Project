@@ -90,25 +90,6 @@ function completeOrdersWithUsersInformation(productionOrders, users) {
     });
 }
 
-// function createNewClient(state) {
-//     return db.collection("clients")
-//         .add({
-//             name: state.editingName || "",
-//             email: state.editingEmail || "",
-//             cnpj: state.editingCnpj || ""
-//         });
-// }
-
-// function updateExistingClient(state) {
-//     return db.collection("clients")
-//         .doc(state.selected.id)
-//         .set({
-//             name: state.editingName || "",
-//             email: state.editingEmail || "",
-//             cnpj: state.editingCnpj || ""
-//         });
-// }
-
 Array.prototype.unique = function () {
     var a = this.concat();
     for (var i = 0; i < a.length; ++i) {
@@ -222,6 +203,10 @@ const actions = {
             this.dispatch('productionOrders/saveTask')
         }
 
+    },
+    saveTaskItems(context, payload) {
+        console.log(context)
+        console.log(payload)
     }
 };
 const getters = {};

@@ -27,20 +27,21 @@
             </v-row>
             <ul>
                 <li v-for="item in selectedTask.items" :key="item">
-                    <v-row style="height:50">
-                      <v-col align="center" cols="1">
-                        <v-btn color="primary" text @click="editTaskItem(item)"><v-icon>mdi-pen</v-icon></v-btn>
-                      </v-col>
-                      <v-col cols="11">
+                    <v-row>
+                      <v-col cols="12">
                         <v-checkbox 
                             v-model="item.done" 
                             class="mx-2" 
                             :label="item.description"
+                            v-if="!itemsInEditMode"
+                            v-on:click="itemsInEditMode = !itemsInEditMode"
                         ></v-checkbox>
+                        <v-text-field v-if="itemsInEditMode" :label="item.description" :value="item.done"></v-text-field>
                       </v-col>
                     </v-row>
                 </li>
             </ul>
+            <v-btn v-if="itemsInEditMode" relative bottom right fab color="success" justify="right" @click="editTaskItem"><v-icon></v-icon></v-btn>
           </v-container>
         </v-card-text>
         <v-divider></v-divider>
@@ -72,7 +73,9 @@ const methods = mapActions("productionOrders", [
 
 export default {
     data() {
-        return { }
+        return {
+          itemsInEditMode: false
+         }
     },
     methods,
     computed
