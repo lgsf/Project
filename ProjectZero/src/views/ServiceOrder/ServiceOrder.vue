@@ -2,7 +2,13 @@
   <div>
     <v-row justify="center">
       <v-col md="6">
-        <v-card class="mx-auto">
+        <div class="text-center screen-margin-top" v-if="isLoading">
+          <v-progress-circular
+            indeterminate
+            color="primary"
+          ></v-progress-circular>
+        </div>
+        <v-card v-if="!isLoading" class="mx-auto">
           <v-toolbar class="primary white--text" dark>
             <h3>Ordens de Produção</h3>
             <v-spacer></v-spacer>
@@ -48,17 +54,27 @@
 <script>
 import { mapState, mapActions } from "vuex";
 
+const computedProductionOrders = mapState("general", {
+  isLoading: state => state.isLoading,
+});
+
 const computed = mapState("productionOrders", {
   selected: state => state.selected,
   search: state => state.search,
   productionOrders: state => state.productionOrders,
   enableEdit: state => state.selected && state.selected.length
+  
 });
 
 const methods = mapActions("productionOrders", [
   "selectOrder",
   "searchFor",
   "reloadOrders"
+]);
+
+const generalMethods = mapActions("general", [
+  "setIsLoading", 
+  "resetIsLoading"
 ]);
 
 export default {
@@ -78,15 +94,18 @@ export default {
       ]
     };
   },
-  computed,
-  methods: Object.assign({}, methods, {
+  computed: Object.assign({}, computed, computedProductionOrders),
+  methods: Object.assign({}, methods, generalMethods, {
     editProductionOrder() {
       if (this.selected)
         this.$router.push({ path: `/EditServiceOrder/${this.selected[0].id}` });
     }
   }),
   mounted() {
-    this.reloadOrders();
+    this.setIsLoading()
+    console.log(this.isLoading)
+    this.reloadOrders().then(() => {this.resetIsLoading() });
+    console.log(this.isLoading)
   }
 };
 </script>

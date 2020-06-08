@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog :value="dialog" persistent max-width="600px">
+    <v-dialog :value="dialog" persistent scrollable max-width="600px">
       <v-card>
         <v-toolbar class="primary" dark>
           <v-toolbar-title>{{selectedTask.name}}</v-toolbar-title>
@@ -14,11 +14,15 @@
               </v-col>
             </v-row>
             <v-row>
+              <v-col cols="12">
+              <v-row>
               <v-col cols="6">
                 <v-text-field label="Data de criação:" disabled :value="selectedTask.creation_date"></v-text-field>
               </v-col>
               <v-col cols="6">
                 <v-text-field label="Data de encerramento:" :value="selectedTask.end_date" @input="updateTaskEndDate"></v-text-field>
+              </v-col>
+              </v-row>
               </v-col>
             </v-row>
             <ul>

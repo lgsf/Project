@@ -1,7 +1,7 @@
 <template>
 <div class="setup">
     <v-row justify="center">
-        <div class="text-center" v-if="loading">
+        <div class="text-center screen-margin-top" v-if="loading">
           <v-progress-circular
             indeterminate
             color="primary"
