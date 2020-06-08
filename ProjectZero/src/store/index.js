@@ -20,6 +20,7 @@ export const store = new Vuex.Store({
         userObj: null,
         isAuthenticated: false,
         loading: false,
+        loadingNavbar:false,
         successMessage: '',
         errorMessage: '',
         warningMessage: '',
@@ -33,6 +34,9 @@ export const store = new Vuex.Store({
         },
         setLoading(state, payload){
             state.loading = payload
+        },
+        setLoadingNavbar(state, payload){
+            state.loadingNavbar = payload
         },
         setUserObj(state, payload) {
             state.userObj = payload
@@ -131,12 +135,20 @@ export const store = new Vuex.Store({
 
         },
 
-        isLoading({commit}){
+        isLoading({ commit }){
             commit('setLoading', true) 
         },
 
-        finishedLoading({commit}){
+        finishedLoading({ commit }){
             commit('setLoading', false)
+        },
+
+        isLoadingNavbar({ commit }){
+            commit('setLoadingNavbar', true) 
+        },
+
+        finishedLoadingNavbar({ commit }){
+            commit('setLoadingNavbar', false)
         },
 
         resetPassword({ commit }, { email }) {
@@ -165,6 +177,9 @@ export const store = new Vuex.Store({
         },
         loading(state){
             return state.loading
+        },
+        loadingNavbar(state){
+            return state.loadingNavbar
         },
         userObj(state) {
             return state.userObj

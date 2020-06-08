@@ -1,7 +1,13 @@
 <template>
   <div class="notifications">
     <v-row justify="center">
-      <v-card class="mx-auto">
+        <div class="text-center" v-if="loading">
+          <v-progress-circular
+            indeterminate
+            color="primary"
+          ></v-progress-circular>
+        </div>
+      <v-card class="mx-auto" v-if="!loading">
         <v-toolbar class="primary ">
           <h3 class="white--text">{{ screenTitle }}</h3>
             <v-spacer></v-spacer>
@@ -23,7 +29,7 @@
             <v-col cols="12">
               <v-data-table
                 :headers="headers"
-                :items="desserts"
+                :items="notifications"
                 :search="search"
                 show-select
                 single-select
@@ -83,7 +89,7 @@ export default {
           value: "detail"
         }
         ],
-      desserts: [],
+      notifications: [],
       name: null,
       detail: null,
       date: null
@@ -98,12 +104,13 @@ export default {
   },
    methods: {
     readNotifications() {
-      this.desserts = []
+      this.$store.dispatch("isLoading")
+      this.notifications = []
       db.collection("notifications")
         .get()
         .then(querySnapshot => {
           querySnapshot.forEach(doc => {
-            this.desserts.push({
+            this.notifications.push({
               id: doc.id,
               title: doc.data().title,
               name: doc.data().name,
@@ -111,9 +118,11 @@ export default {
               date: doc.data().date
             })
           })
+          this.$store.dispatch("finishedLoading")
         })
         .catch(error => {
-          console.log("Error getting documents: ", error)
+          this.$store.dispatch("finishedLoading")
+          console.log("Erro ao adquirir documentos: ", error)
         });
     },
     editNotification: function() {
@@ -137,6 +146,11 @@ export default {
       else{
         this.createNotification()
       }
+    }
+   },
+   computed: {
+    loading() {
+      return this.$store.getters.loading
     }
    },
    mounted() {

@@ -81,7 +81,7 @@ export default {
       return this.$store.getters.isAuthenticated
     },
     loading() {
-      return this.$store.getters.loading
+      return this.$store.getters.loadingNavbar
     },
     userObj() {
       return this.$store.getters.userObj
@@ -92,7 +92,7 @@ export default {
       this.$store.dispatch("userSignOut")
     },
     loadMenu() {
-      this.$store.dispatch("isLoading")
+      this.$store.dispatch("isLoadingNavbar")
       let groupId = "bmyiE5pvx66Ct7Wmj78b"
       if(this.userObj && this.userObj.group_id)
         groupId = this.userObj.group_id
@@ -102,7 +102,7 @@ export default {
               .get()
               .then((snapshots) => {
                 this.onMenuLoaded(snapshots)
-                this.$store.dispatch("finishedLoading")
+                this.$store.dispatch("finishedLoadingNavbar")
         });
       }
     },

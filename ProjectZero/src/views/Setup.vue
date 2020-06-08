@@ -1,7 +1,13 @@
 <template>
 <div class="setup">
     <v-row justify="center">
-        <v-card>
+        <div class="text-center" v-if="loading">
+          <v-progress-circular
+            indeterminate
+            color="primary"
+          ></v-progress-circular>
+        </div>
+        <v-card v-if="!loading">
         <v-toolbar class="primary white--text" >
           <h3>
             {{ screenTitle }}
@@ -134,6 +140,7 @@ export default {
         this.image = inputFile
     },
     readConfiguration() {
+      this.$store.dispatch("isLoading")
       db.collection("systemConfiguration")
         .get()
         .then((querySnapshot) => {
@@ -143,9 +150,11 @@ export default {
             this.companyContact = doc.data().company_phone
             this.companyEmail = doc.data().company_email
             this.selectedTheme = doc.data().theme_code
-            });
+            })
+            this.$store.dispatch("finishedLoading")
         })
         .catch((error) => {
+          this.$store.dispatch("finishedLoading")
           console.log("Error getting documents: ", error);
         });
 
@@ -180,6 +189,11 @@ export default {
         });
     },
   },
+  computed: {
+    loading() {
+      return this.$store.getters.loading
+    }
+   },
   mounted() {
     this.readConfiguration();
   },

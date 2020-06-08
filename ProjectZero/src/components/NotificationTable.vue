@@ -1,11 +1,10 @@
 <template>
  
 <v-col class="xs-12 sm-6">
-  <div class="text-center">
+  <div class="text-center" v-if="loading">
     <v-progress-circular
       indeterminate
       color="primary"
-      v-if="loading"
     ></v-progress-circular>
   </div>
   <v-card v-if="!loading"
