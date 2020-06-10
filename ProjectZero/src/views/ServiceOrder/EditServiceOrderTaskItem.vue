@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center">
-    <v-dialog :value="dialog" persistent max-width="600px">
-      <v-text-field label="Descrição: " :value="description" @input="updateTaskName"></v-text-field>
+    <v-dialog :value="dialog" persistent max-width="100px">
+      <v-text-field label="Descrição: " :value="selectedTaskItem.description" @input="updateSelectedTaskItem"></v-text-field>
     </v-dialog>
   </v-row>
 </template>
@@ -10,11 +10,11 @@
 import { mapState, mapActions } from "vuex";
 
 const computed = mapState("productionOrders", {
-    selectedTask: state => state.selectedTask
+    selectedTaskItem: state => state.selectedTaskItem
 });
 
 const methods = mapActions("productionOrders", [
-  "updateTaskItemDescription"
+  "updateSelectedTaskItem"
 ]);
 
 export default {

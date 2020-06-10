@@ -9,7 +9,9 @@ const state = () => ({
     selectedOrderTasks: [],
     kanbanColumns: [],
     selectedTask: undefined,
-    showTaskDialog: false
+    showTaskDialog: false,
+    showTaskItemDialog: false,
+    selectedTaskItem: undefined
 });
 
 const mutations = {
@@ -52,9 +54,11 @@ const mutations = {
     updateTaskEndDate(state, payload) {
         state.selectedTask.end_date = payload
     },
-    editTaskItem(state, payload) {
-        console.log(state)
-        console.log(payload)
+    updateShowTaskItemDialog(state, payload) {
+        state.showTaskItemDialog = payload
+    },
+    updateSelectedTaskItem(state, payload) {
+        state.selectedTaskItem = payload
     }
 };
 
@@ -234,8 +238,17 @@ const actions = {
             .catch(error => {
                 console.error("Error updating document: ", error);
             });
+    },
+    showTaskItemDialog(context, payload) {
+        this.dispatch('productionOrders/updateSelectedTaskItem', payload).then(() => {
+            context.commit('updateShowTaskItemDialog', true)
+        })
+    },
+    updateSelectedTaskItem(context, payload) {
+        context.commit('updateTaskItem', payload)
     }
 };
+
 const getters = {};
 
 export default {
