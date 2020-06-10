@@ -2,23 +2,22 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import firebase from 'firebase'
 import router from '@/router'
-
 import groups from './modules/groups'
 import clients from './modules/clients'
 import users from './modules/users'
 import erp from './modules/erp'
 import productionOrders from './modules/productionOrders'
 import general from './modules/general'
+import notifications from './modules/notifications'
 import createPersistedState from "vuex-persistedstate";
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
-    modules: { groups, clients, users, erp, productionOrders, general },
+    modules: { groups, clients, users, erp, productionOrders, general, notifications },
     plugins: [createPersistedState()],
     state: {
         user: null,
-        userObj: null,
         isAuthenticated: false,
         loading: false,
         loadingNavbar: false,
