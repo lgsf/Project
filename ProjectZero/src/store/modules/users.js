@@ -72,9 +72,11 @@ const actions = {
     },
 
     readUsers({ state, commit }) {
+        console.log("Loading users...");
         return db.collection("users")
             .get()
             .then(function (snapshots) {
+                console.log("Readin users snapshot...");
                 onUsersLoaded({ state, commit }, snapshots)
             })
             .catch(error => {
@@ -181,6 +183,8 @@ function onUsersLoaded(context, payload) {
         userData.group = [context.state.userGroups.find(group => group.id == userSnapShot.data().group_id)]
         users.push(userData);
     });
+    console.log("Saving users... ");
+    console.log(users);
     context.commit('setUserList', users);
 }
 

@@ -3,24 +3,43 @@
     <v-dialog :value="dialog" persistent scrollable max-width="800px">
       <v-card>
         <v-toolbar class="primary" dark>
-          <v-toolbar-title>{{title}}</v-toolbar-title>
+          <v-toolbar-title>Ordem de Serviço ERP</v-toolbar-title>
         </v-toolbar>
         <v-divider></v-divider>
         <v-card-text>
           <v-container>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Nome" :value="name" @input="editName" required></v-text-field>
+                <v-text-field label="Nome" v-model="name" required></v-text-field>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Administrador" :value="task" @input="editTask" required></v-text-field>
+                <v-autocomplete
+                  v-model="administrator"
+                  :items="users"
+                  color="primary"
+                  item-text="name"
+                  label="Administrador"
+                  return-object
+                  dense
+                  required
+                ></v-autocomplete>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Usuários" :value="user" @input="editUser" required></v-text-field>
+                <v-autocomplete
+                  v-model="selectedUsers"
+                  :items="users"
+                  color="primary"
+                  item-text="name"
+                  label="Usuários"
+                  return-object
+                  dense
+                  multiple
+                  required
+                ></v-autocomplete>
               </v-col>
             </v-row>
             <v-row>
@@ -73,7 +92,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="editErp(false)">Fechar</v-btn>
-          <v-btn color="blue darken-1" text @click="saveErp">Salvar</v-btn>
+          <v-btn color="blue darken-1" text @click="saveOrder">Salvar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -82,27 +101,19 @@
 <script>
 import { mapState, mapActions } from "vuex";
 
-const computed = mapState("erp", {
-  selected: state => state.selected,
-  title: state => state.editTitle,
-  dialog: state => state.editErp,
-  name: state => state.editingName,
-  task: state => state.editingTask,
-  user: state => state.editingUser
+const computed = mapState({
+  selected: state => state.erp.selected,
+  dialog: state => state.erp.editErp,
+  users: state => state.users.userList
 });
 
-const methods = mapActions("erp", [
-  "editName",
-  "editTask",
-  "editUser",
-  "loadErp",
-  "editErp",
-  "saveErp"
-]);
+const userMethods = mapActions("users", ["readUsers"]);
+
+const erpMethods = mapActions("erp", ["saveErp", "editErp"]);
 
 export default {
   computed,
-  methods: Object.assign({}, methods, {
+  methods: Object.assign({}, erpMethods, userMethods, {
     addTask() {
       this.tasks.push({
         id: this.taskCounter++,
@@ -124,14 +135,48 @@ export default {
       this.tasks.forEach(element => {
         element.children = element.children.filter(m => m.id != item.id);
       });
+    },
+    saveOrder() {
+      this.selected.name = this.name;
+      this.selected.users = this.selectedUsers;
+      this.selected.administrator = this.administrator;
+      this.selected.tasks = this.tasks.map(element => ({
+        id: element.id,
+        name: element.name,
+        taskItems: element.children.map(m => m.name)
+      }));
+      console.log(this.selected);
+      this.$store.dispatch("erp/saveErp");
     }
   }),
   data() {
     return {
+      name: "",
+      administrator: "",
+      selectedUsers: [],
       taskCounter: 0,
-      activeTask: [],
       tasks: []
     };
+  },
+  mounted() {
+    this.readUsers();
+    let order = this.selected || { users: [], tasks: [] };
+    this.name = order.name;
+    this.administrator = order.administrator;
+    this.selectedUsers = order.users;
+
+    console.log(order.tasks);
+    order.tasks.forEach(element => {
+      this.tasks.push({
+        id: element.id,
+        key: this.taskCounter++,
+        name: element.name,
+        children: element.taskItems.map(m => ({
+          id: this.taskCounter++,
+          name: m
+        }))
+      });
+    });
   }
 };
 </script>

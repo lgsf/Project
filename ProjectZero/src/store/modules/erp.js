@@ -25,7 +25,7 @@ const state = () => ({
             value: "user"
         }
     ]
-        ,
+    ,
     erp: [],
     editErp: false,
     editingName: '',
@@ -85,9 +85,10 @@ function updateExistingErp(state) {
     return db.collection("erp")
         .doc(state.selected.id)
         .set({
-            name: state.editingName || "",
-            task: state.editingTask || "",
-            user: state.editingUser || ""
+            name: state.selected.name || "",
+            administrator: state.selected.administrator,
+            tasks: state.selected.tasks || [],
+            users: state.selected.users || []
         });
 }
 
