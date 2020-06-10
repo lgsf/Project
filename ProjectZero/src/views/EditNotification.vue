@@ -10,22 +10,22 @@
           <v-container>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Título*" v-model="title" @change="setTitle" required></v-text-field>
+                <v-text-field label="Título*" :value="title" @input="editTitle" required></v-text-field>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Nome" v-model="name"  @change="setName"></v-text-field>
+                <v-text-field label="Nome*" :value="name" @input="editName" required></v-text-field>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Detalhes" v-model="detail" @change="setDetail"></v-text-field>
+                <v-text-field label="Detalhes*" :value="detail" @input="editDetail" required></v-text-field>
               </v-col>
             </v-row>
                         <v-row>
               <v-col cols="12">
-                <v-text-field label="Data" v-model="date" @change="formatDate"></v-text-field>
+                <v-text-field label="Data" :value="date" @input="editDate"></v-text-field>
               </v-col>
             </v-row>
           </v-container>
@@ -35,119 +35,42 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn  color="blue darken-1" text @click="deleteNotification">Apagar</v-btn>
-          <v-btn color="blue darken-1" text @click="close">Fechar</v-btn>
-          <v-btn color="blue darken-1" text @click="save">Salvar</v-btn>
+          <v-btn color="blue darken-1" text @click="editNotification(false)">Fechar</v-btn>
+          <v-btn color="blue darken-1" text @click="saveNotification">Salvar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
   </v-row>
 </template>
 <script>
-import { db } from "@/main"
+import { mapState, mapActions } from "vuex";
 
+const computed = mapState("notifications", {
+  selected: state => state.selected,
+  title: state => state.editingTitle,
+  dialog: state => state.editNotification,
+  name: state => state.editingName,
+  detail: state => state.editingDetail,
+  date: state => state.editingDate
+});
+
+const methods = mapActions("notifications", [
+  "editTitle",
+  "editName",
+  "editDetail",
+  "editDate",
+  "loadNotifications",
+  "editNotification",
+  "saveNotification",
+  "deleteNotification"
+]);
 
 export default {
-  props: ['refreshNotificationsMethod'],
+  computed,
+  methods,
   data() {
-    return {
-      dialog: false,
-      menu1: false,
-      title: '',
-      name: '',
-      detail: '',
-      date:'',
-
-    }
-  },
-  methods: {
-
-    setTitle(value){
-      this.title = value
-    },
-    setName(value){
-      this.name = value
-    },
-    setDetail(value){
-      this.detail = value
-    },
-    formatDate (date) {
-        if (!date) return null
-
-        const [year, month, day] = date.split('-')
-        return `${month}/${day}/${year}`
-      },
-    openEdit(dto){
-      this.id = dto.id
-      this.title = dto.title
-      this.name = dto.name
-      this.detail = dto.detail
-      this.date = dto.date
-      this.show()
-    },
-    openCreate(){
-      this.show()
-    },
-    show() {
-      this.dialog = true
-    },
-    close() {
-      this.title = ''
-      this.name = ''
-      this.detail =''
-      this.date= ''
-      this.dialog = false
-    },
-    save(){
-      if(this.id){
-        db.collection("notifications")
-                .doc(this.id)
-                .update({
-                  title: this.title,
-                  name: this.name,
-                  detail: this.detail,
-                  date: this.date
-                })
-                .then(()=>{
-                  this.close()
-                })
-                .catch((error) => {
-                  console.error("Error updating document: ", error)
-                });
-      }
-      else{
-        db.collection("notifications")
-                .add({
-                  title: this.title,
-                  name: this.name,
-                  detail: this.detail,
-                  date: this.date
-                })
-                .then(()=>{
-                  this.close()
-                })
-                .catch((error) => {
-                  console.error("Error inserting document: ", error)
-                })
-      }
-      this.refreshNotificationsMethod()
-    },
-    deleteNotification(){
-        if(this.id){
-        db.collection("notifications")
-                .doc(this.id)
-                .delete()
-                .then(()=>{
-                  this.close()
-                })
-                .catch((error) => {
-                  console.error("Error deleting: ", error)
-                })
-        }
-        this.refreshNotificationsMethod()
-    }
+    return {};
   }
-
-  }
-
+};
 </script>
 <style lang="stylus"></style>

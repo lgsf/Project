@@ -1,13 +1,12 @@
-import { db } from "@/main"
+import { db } from "@/main";
 
 const state = () => ({
     label: '',
     listTitle: "Notícias",
-    editTitle: 'Notícia',
-    selected: undefined,
+    selected: [],
     search: '',
     searchLabel: 'Buscar',
-      headers: [
+    header: [
         {
           text: "Usuário",
           align: "start",
@@ -88,16 +87,16 @@ const state = () => ({
                 date: state.editingDate || ""
             })
     }
-    
+
     function updateExistingNotification(state) {
         return db.collection("notifications")
             .doc(state.selected.id)
             .set({
-                name: state.editingName || "",
                 title: state.editingTitle || "",
+                name: state.editingName || "",
                 detail: state.editingDetail || "",
                 date: state.editingDate || ""
-            })
+            });
     }
 
     const actions = {
@@ -107,7 +106,7 @@ const state = () => ({
             commit('selectNotification', selected)
         },
         searchFor({ state, commit }, payload) {
-            if (!state) console.log('Error, state is undifined.');
+            if (!state) console.log('Error, state is undifined.')
             commit('searchFor', payload)
         },
         loadNotifications({ state, commit }) {
@@ -118,38 +117,53 @@ const state = () => ({
                 });
         },
         editNotification({ state, commit }, payload) {
-            if (!state) console.log('Error, state is undifined.');
+            if (!state) console.log('Error, state is undifined.')
             commit('editNotification', payload)
         },
         editName({ state, commit }, payload) {
-            if (!state) console.log('Error, state is undifined.');
+            if (!state) console.log('Error, state is undifined.')
             commit('editName', payload)
         },
         editTitle({ state, commit }, payload) {
-            if (!state) console.log('Error, state is undifined.');
+            if (!state) console.log('Error, state is undifined.')
             commit('editTitle', payload)
         },
         editDetail({ state, commit }, payload) {
-            if (!state) console.log('Error, state is undifined.');
+            if (!state) console.log('Error, state is undifined.')
             commit('editDetail', payload)
         },
         editDate({ state, commit }, payload) {
-            if (!state) console.log('Error, state is undifined.');
+            if (!state) console.log('Error, state is undifined.')
             commit('editDate', payload)
         },
         saveNotification({ state }) {
             if (!state.selected)
                 createNewNotification(state).then(() => {
-                    this.dispatch('notifications/loadNotifications');
-                    this.dispatch('notifications/editNotification');
+                    this.dispatch('notifications/loadNotifications')
+                    this.dispatch('notifications/editNotification')
                 });
             else
                 updateExistingNotification(state).then(() => {
-                    this.dispatch('notifications/loadNotifications');
-                    this.dispatch('notifications/editNotification');
+                    this.dispatch('notifications/loadNotifications')
+                    this.dispatch('notifications/editNotification')
                 });
-        }
-    };
+        },
+        deleteNotification({ state }) {
+            db.collection("notifications")
+            .doc(state.selected.id)
+            .delete()
+            .then(()=>{
+                this.dispatch('notifications/loadNotifications')
+                this.dispatch('notifications/editNotification')
+            })
+            .catch((error) => {
+              console.error("Error deleting: ", error)
+            })
+    }
+
+    
+    
+}
     const getters = {
     };
     
