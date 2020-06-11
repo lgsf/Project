@@ -9,9 +9,10 @@ import erp from './modules/erp'
 import productionOrders from './modules/productionOrders'
 import general from './modules/general'
 import notifications from './modules/notifications'
-import createPersistedState from "vuex-persistedstate";
-import SecureLS from "secure-ls";
-var ls = new SecureLS({ isCompression: false });
+import createPersistedState from "vuex-persistedstate"
+import SecureLS from "secure-ls"
+
+var ls = new SecureLS({ isCompression: false })
 
 Vue.use(Vuex)
 
@@ -112,6 +113,7 @@ export const store = new Vuex.Store({
                 .catch(() => {
                     commit('setUser', null)
                     commit('setIsAuthenticated', false)
+                    localStorage.clear()
                     router.push('/')
                 })
         },

@@ -1,8 +1,8 @@
 <template>
   <v-app class="grey lighten-4">
-    <Navbar v-if="isAuthenticated()" />
+    <Navbar v-if="isAuthenticated" />
     <v-content class="mx-5 mb-5">
-      <ModalIdle v-if="isIdle" /> 
+      <ModalIdle v-if="isIdle && isAuthenticated" /> 
       <router-view ></router-view>
      </v-content>
      <Footer />
@@ -25,20 +25,17 @@ export default {
     return {};
   },
   methods: {
-    isAuthenticated() {
-      return this.$store.getters.isAuthenticated;
-    },
     logout() {
       this.$store.dispatch("userSignOut")
     }
   },
   computed: {
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated;
+    },
     isIdle(){
       return this.$store.state.idleVue.isIdle;
     }
-  },
-  beforeDestroy(){
-      this.logout()
   }
 }
 </script>

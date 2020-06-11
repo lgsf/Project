@@ -1,17 +1,17 @@
 import Vue from 'vue'
 import { store } from '../store'
 import VueRouter from 'vue-router'
-import Login from '../views/Login.vue'
-import ResetPassword from '../views/ResetPassword.vue'
-import Clients from '../views/Clients.vue'
+import Login from '../views/Auth/Login.vue'
+import ResetPassword from '../views/Auth/ResetPassword.vue'
+import Clients from '../views/Clients/Clients.vue'
 import Home from '../views/Home.vue'
 import Setup from '../views/Setup.vue'
 import Erp from '../views/Erp.vue'
 import ServiceOrder from '../views/ServiceOrder/ServiceOrder.vue'
 import EditServiceOrder from '../views/ServiceOrder/EditServiceOrder.vue'
 import Users from '../views/Users/Users.vue'
-import Groups from '../views/Groups.vue'
-import Notifications from '../views/Notifications.vue'
+import Groups from '../views/Groups/Groups.vue'
+import Notifications from '../views/Notifications/Notifications.vue'
 
 Vue.use(VueRouter)
 

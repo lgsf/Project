@@ -6,7 +6,7 @@ import firebase from "firebase";
 import VueTextareaAutosize from 'vue-textarea-autosize'
 import AlertCmp from './components/shared/Alert.vue'
 import { store } from './store'
-import IdleVue from "idle-vue";
+import IdleVue from "idle-vue"
 
 const eventsHub = new Vue()
 
