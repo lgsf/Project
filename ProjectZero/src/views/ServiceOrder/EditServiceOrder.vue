@@ -43,6 +43,11 @@
               ></v-text-field>
             </v-col>
           </v-row>
+          <v-row class="ml-5 mt-5 mr-5">
+            <v-col cols="12">
+              <v-btn color="success" dark @click="showTaskDialog({name: ''})" style='padding-left:8px'><v-icon>mdi-plus</v-icon> Nova task</v-btn>
+            </v-col>
+          </v-row>
           <v-row>
             <v-col
               cols="12"

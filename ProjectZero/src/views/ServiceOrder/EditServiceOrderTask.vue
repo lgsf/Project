@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog :value="dialog" persistent max-width="600px">
+    <v-dialog :value="dialog" persistent max-width="800px">
       <v-card>
         <v-toolbar class="primary" dark>
           <v-toolbar-title>{{selectedTask.name}}</v-toolbar-title>
@@ -25,23 +25,50 @@
                 </v-row>
               </v-col>
             </v-row>
-            <ul>
-                <li v-for="item in selectedTask.items" :key="item">
-                    <v-row>
-                      <v-col cols="12" style="height: 40px">
-                        <v-row>
-                            <v-btn color="primary" text @click="showTaskItemDialog(item)" style="margin-top: 12px"><v-icon>mdi-pen</v-icon></v-btn>
-                            <v-checkbox 
-                                v-model="item.done" 
-                                class="mx-2" 
-                                :label="item.description"
-                                @input="updateTaskItem"
-                            ></v-checkbox>
-                        </v-row>
-                      </v-col>
-                    </v-row>
-                </li>
-            </ul>
+            <v-row>
+              <v-col cols="12">
+                <v-autocomplete
+                  :value="selectedUsers"
+                  :items="users"
+                  color="primary"
+                  item-text="name"
+                  label="Usuários"
+                  return-object
+                  dense
+                  multiple
+                  required
+                  @input="updateTaskUsers"
+                ></v-autocomplete>
+              </v-col>
+            </v-row>
+            <v-treeview
+                v-model="activeTask"
+                :items="taskItemList"
+                dense
+                item-key="id"
+                selected-color="accent"
+                color="primary"
+              >
+                <template v-slot:label="{ item }">
+                  <v-checkbox 
+                      v-model="item.done" 
+                      class="mx-2" 
+                      :label="item.description"
+                      @input="updateTaskItem"
+                  ></v-checkbox>
+                </template>
+                <template v-slot:append="{ item }">
+                  <v-btn icon color="gray" @click="showTaskItemDialog(item)">
+                    <v-icon>mdi-pen</v-icon>
+                  </v-btn>
+                  <v-btn icon color="green" @click="showTaskItemDialog({description: '', id: undefined, done: false})">
+                    <v-icon>mdi-plus</v-icon>
+                  </v-btn>
+                  <v-btn icon color="red" @click="removeTaskItem(item)" :disabled="taskItemList.length <= 1">
+                    <v-icon>mdi-close</v-icon>
+                  </v-btn>
+                </template>
+            </v-treeview>
           </v-container>
         </v-card-text>
         <v-divider></v-divider>
@@ -60,10 +87,16 @@
 import { mapState, mapActions } from "vuex";
 import EditServiceOrderTaskItem from "./EditServiceOrderTaskItem.vue";
 
-const computed = mapState("productionOrders", {
-    dialog: state => state.showTaskDialog,
-    selectedTask: state => state.selectedTask
+const computed = mapState({
+    dialog: state => state.productionOrders.showTaskDialog,
+    selectedTask: state => state.productionOrders.selectedTask,
+    taskItemList: state => state.productionOrders.selectedTask.items,
+    users: state => state.users.userList,
+    treeviewRerenderTrigger: state => state.productionOrders.treeviewRerenderTrigger,
+    selectedUsers: state => state.productionOrders.selectedTask.users || []
 });
+
+const userMethods = mapActions("users", ["readUsers"]);
 
 const methods = mapActions("productionOrders", [
   "closeEditServiceOrderTaskModal",
@@ -71,7 +104,10 @@ const methods = mapActions("productionOrders", [
   "updateTaskName",
   "updateTaskEndDate",
   "updateTaskItem",
-  "showTaskItemDialog"
+  "showTaskItemDialog",
+  "appendTaskItem",
+  "removeTaskItem",
+  "updateTaskUsers"
 ]);
 
 export default {
@@ -79,8 +115,11 @@ export default {
         return { }
     },
     components: { EditServiceOrderTaskItem },
-    methods,
-    computed
+    methods:  Object.assign({}, methods, userMethods),
+    computed,
+    mounted() {
+      this.readUsers();
+    }
 }
 </script>
 

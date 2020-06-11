@@ -11,7 +11,7 @@ const state = () => ({
     selectedTask: undefined,
     showTaskDialog: false,
     showTaskItemDialog: false,
-    selectedTaskItem: undefined
+    selectedTaskItem: { description: '' }
 });
 
 const mutations = {
@@ -53,6 +53,9 @@ const mutations = {
     },
     updateTaskEndDate(state, payload) {
         state.selectedTask.end_date = payload
+    },
+    updateTaskUsers(state, payload) {
+        state.selectedTask.users = payload
     },
     updateShowTaskItemDialog(state, payload) {
         state.showTaskItemDialog = payload
@@ -98,6 +101,13 @@ function completeOrdersWithUsersInformation(productionOrders, users) {
     });
 }
 
+function formatDate(date) {
+    if (!date) return null;
+
+    const [year, month, day] = date.split("-");
+    return `${day}/${month}/${year}`;
+}
+
 Array.prototype.unique = function () {
     var a = this.concat();
     for (var i = 0; i < a.length; ++i) {
@@ -140,9 +150,6 @@ const actions = {
                     taskData.id = taskSnapshot.id;
                     tasks.push(taskData);
                 });
-                let taskIds = tasks.map(t => t.id);
-                let unmodifiedTasks = context.state.selectedOrderTasks.filter(t => !taskIds.includes(t.id));
-                tasks = tasks.concat(unmodifiedTasks);
                 this.dispatch('productionOrders/updateSelectedOrderTask', tasks).then(() => {
                     context.commit('updateKanbanColumns')
                 });
@@ -155,21 +162,40 @@ const actions = {
         context.commit('updateOrderEndDate', payload)
     },
     showTaskDialog(context, payload) {
-        let task = payload
+        let task = payload || context.state.selectedTask
         task.items = []
-        db.collection("productionOrder").doc(context.state.selected[0].id)
-            .collection("tasks").doc(payload.id)
-            .collection("items").get().then(snapshot => {
-                snapshot.forEach(itemSnapshot => {
-                    let itemData = itemSnapshot.data();
-                    itemData.id = itemSnapshot.id;
-                    task.items.push(itemData);
-                });
+        task.users = []
+        if (!task.id) {
+            task.creation_date = formatDate(new Date().toISOString().substr(0, 10))
+            task.items.push({ done: false, description: 'Item da tarefa (edite-me)' })
+        }
 
-                this.dispatch('productionOrders/updateSelectedTask', task).then(() => {
-                    context.commit('updateShowTaskDialog', true)
-                });
-            });
+        if (task.id)
+            db.collection("productionOrder").doc(context.state.selected[0].id)
+                .collection("tasks").doc(task.id)
+                .collection("items").get().then(snapshot => {
+                    snapshot.forEach(itemSnapshot => {
+                        let itemData = itemSnapshot.data();
+                        itemData.id = itemSnapshot.id;
+                        task.items.push(itemData);
+                    });
+
+                    db.collection("productionOrder").doc(context.state.selected[0].id)
+                        .collection("tasks").doc(task.id)
+                        .collection("users").get().then(snapshot => {
+                            snapshot.forEach(itemSnapshot => {
+                                let itemData = itemSnapshot.data();
+                                itemData.id = itemSnapshot.id;
+                                task.users.push(itemData);
+                            });
+
+                            this.dispatch('productionOrders/updateSelectedTask', task).then(() => {
+                                context.commit('updateShowTaskDialog', true)
+                            });
+                        });
+                })
+        else
+            this.dispatch('productionOrders/updateSelectedTask', task).then(() => { context.commit('updateShowTaskDialog', true) })
     },
     updateSelectedOrderTask(context, payload) {
         context.commit('updateSelectedOrderTasks', payload)
@@ -178,16 +204,75 @@ const actions = {
         context.commit('updateSelectedTask', payload)
     },
     closeEditServiceOrderTaskModal(context) {
+        context.commit('updateSelectedTask', { name: '', items: [], users: [] })
         context.commit('updateShowTaskDialog', false)
     },
     saveTask(context) {
+        if (context.state.selectedTask.id)
+            db.collection("productionOrder")
+                .doc(context.state.selected[0].id)
+                .collection("tasks").doc(context.state.selectedTask.id)
+                .update({
+                    name: context.state.selectedTask.name,
+                    end_date: context.state.selectedTask.end_date,
+                    status: context.state.selectedTask.status
+                })
+                .then(() => { this.dispatch('productionOrders/saveTaskUsers') })
+                .then(() => { this.dispatch('productionOrders/showTaskDialog') })
+                .then(() => { this.dispatch('productionOrders/closeEditServiceOrderTaskModal') })
+                .catch(error => {
+                    console.error("Error updating document: ", error);
+                });
+        else
+            db.collection("productionOrder")
+                .doc(context.state.selected[0].id)
+                .collection("tasks")
+                .add({
+                    name: context.state.selectedTask.name,
+                    end_date: context.state.selectedTask.end_date || '',
+                    status: 'Pendente',
+                    creation_date: context.state.selectedTask.creation_date
+                })
+                .then((recentAdded) => {
+                    let added = context.state.selectedTask;
+                    added.id = recentAdded.id;
+                    this.dispatch('productionOrders/updateSelectedTask', added)
+                })
+                .then(() => { this.dispatch('productionOrders/saveTaskUsers') })
+                .then(() => { this.dispatch('productionOrders/showTaskDialog') })
+                .then(() => { this.dispatch('productionOrders/closeEditServiceOrderTaskModal') })
+                .catch(error => {
+                    console.error("Error updating document: ", error);
+                });
+    },
+    saveTaskUsers(context) {
         db.collection("productionOrder")
             .doc(context.state.selected[0].id)
             .collection("tasks").doc(context.state.selectedTask.id)
-            .update({
-                name: context.state.selectedTask.name,
-                end_date: context.state.selectedTask.end_date,
-                status: context.state.selectedTask.status
+            .collection("users")
+            .get().then(snapshot => {
+                snapshot.forEach((item) => {
+                    db.collection("productionOrder")
+                        .doc(context.state.selected[0].id)
+                        .collection("tasks")
+                        .doc(context.state.selectedTask.id)
+                        .collection("users")
+                        .doc(item.id)
+                        .delete()
+                })
+            })
+            .then(() => {
+                context.state.selectedTask.users.forEach(user => {
+                    db.collection("productionOrder")
+                        .doc(context.state.selected[0].id)
+                        .collection("tasks").doc(context.state.selectedTask.id)
+                        .collection("users")
+                        .add({
+                            name: user.name,
+                            id: user.id,
+                            email: user.email
+                        })
+                })
             })
             .then(() => { this.dispatch('productionOrders/loadTasksByOrder') })
             .then(() => { this.dispatch('productionOrders/closeEditServiceOrderTaskModal') })
@@ -200,6 +285,9 @@ const actions = {
     },
     updateTaskEndDate(context, payload) {
         context.commit('updateTaskEndDate', payload)
+    },
+    updateTaskUsers(context, payload) {
+        context.commit('updateTaskUsers', payload)
     },
     onTaskDrag(context, payload) {
         if (payload.added) {
@@ -215,9 +303,44 @@ const actions = {
         }
 
     },
-    saveTaskItems(context, payload) {
-        console.log(context)
-        console.log(payload)
+    saveTaskBeforeSavingTaskItem(context) {
+        if (!context.state.selectedTask.id)
+            this.dispatch('productionOrders/saveTask')
+    },
+    saveTaskItem(context) {
+        this.dispatch('saveTaskBeforeSavingTaskItem').then(() => {
+            if (context.state.selectedTaskItem.id)
+                db.collection("productionOrder")
+                    .doc(context.state.selected[0].id)
+                    .collection("tasks")
+                    .doc(context.state.selectedTask.id)
+                    .collection("items")
+                    .doc(context.state.selectedTaskItem.id)
+                    .update({
+                        description: context.state.selectedTaskItem.description
+                    })
+                    .then(() => { this.dispatch('productionOrders/loadTasksByOrder') })
+                    .then(() => { this.dispatch('productionOrders/updateSelectedTask', context.state.selectedOrderTasks.find(t => t.id == context.state.selectedTask.id)) })
+                    .then(() => { this.dispatch('productionOrders/closeEditTaskItemModal') })
+                    .catch(error => {
+                        console.error("Error updating document: ", error);
+                    });
+            else
+                db.collection("productionOrder")
+                    .doc(context.state.selected[0].id)
+                    .collection("tasks")
+                    .doc(context.state.selectedTask.id)
+                    .collection("items")
+                    .add({
+                        description: context.state.selectedTaskItem.description,
+                        done: false
+                    })
+                    .then(() => { this.dispatch('productionOrders/loadTasksByOrder') })
+                    .then(() => { this.dispatch('productionOrders/closeEditTaskItemModal') })
+                    .catch(error => {
+                        console.error("Error updating document: ", error);
+                    });
+        })
     },
     saveServiceOrder(context) {
         let serviceOrder = context.state.selected[0];
@@ -240,12 +363,38 @@ const actions = {
             });
     },
     showTaskItemDialog(context, payload) {
+        console.log(payload)
         this.dispatch('productionOrders/updateSelectedTaskItem', payload).then(() => {
+            console.log(context.state.selectedTaskItem)
             context.commit('updateShowTaskItemDialog', true)
+            console.log(context.state.showTaskItemDialog)
         })
     },
     updateSelectedTaskItem(context, payload) {
-        context.commit('updateTaskItem', payload)
+        context.commit('updateSelectedTaskItem', payload)
+    },
+    closeEditTaskItemModal(context) {
+        context.commit('updateShowTaskItemDialog', false)
+    },
+    updateSelectedTaskItemDescription(context, payload) {
+        let obj = context.state.selectedTaskItem
+        obj.description = payload
+        context.commit('updateSelectedTaskItem', obj)
+    },
+    removeTaskItem(context, payload) {
+        db.collection("productionOrder")
+            .doc(context.state.selected[0].id)
+            .collection("tasks")
+            .doc(context.state.selectedTask.id)
+            .collection("items")
+            .doc(payload.id)
+            .delete()
+            .then(() => { this.dispatch('productionOrders/updateSelectedTask', context.state.selectedOrderTasks.find(t => t.id == context.state.selectedTask.id)) })
+            .then(() => { this.dispatch('productionOrders/showTaskDialog') })
+            .then(() => { this.dispatch('productionOrders/closeEditTaskItemModal') })
+            .catch(error => {
+                console.error("Error updating document: ", error);
+            });
     }
 };
 
