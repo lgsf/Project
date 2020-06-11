@@ -6,6 +6,16 @@ import firebase from "firebase";
 import VueTextareaAutosize from 'vue-textarea-autosize'
 import AlertCmp from './components/shared/Alert.vue'
 import { store } from './store'
+import IdleVue from "idle-vue";
+
+const eventsHub = new Vue()
+
+Vue.use(IdleVue, {
+  eventEmitter: eventsHub,
+  store,
+  idleTime: 20 * 60 * 1000,
+  startAtIdle: false
+})
 
 Vue.use(VueTextareaAutosize)
 Vue.config.productionTip = false

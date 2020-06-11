@@ -10,12 +10,22 @@ import productionOrders from './modules/productionOrders'
 import general from './modules/general'
 import notifications from './modules/notifications'
 import createPersistedState from "vuex-persistedstate";
+import SecureLS from "secure-ls";
+var ls = new SecureLS({ isCompression: false });
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
     modules: { groups, clients, users, erp, productionOrders, general, notifications },
-    plugins: [createPersistedState()],
+    plugins: [
+        createPersistedState({
+          storage: {
+            getItem: (key) => ls.get(key),
+            setItem: (key, value) => ls.set(key, value),
+            removeItem: (key) => ls.remove(key),
+          },
+        }),
+      ],
     state: {
         user: null,
         isAuthenticated: false,
@@ -96,6 +106,7 @@ export const store = new Vuex.Store({
                     commit('setUser', null)
                     commit('setIsAuthenticated', false)
                     commit('setSuccessMessage', 'Sessão encerrada com sucesso.')
+                    localStorage.clear()
                     router.push('/')
                 })
                 .catch(() => {
