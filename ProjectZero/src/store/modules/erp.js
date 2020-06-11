@@ -3,9 +3,9 @@ import { db } from "@/main";
 
 const state = () => ({
     label: '',
-    listTitle: "Ordem de Erp",
-    editTitle: 'Erp',
-    selected: undefined,
+    listTitle: "Ordem Erp",
+    selected: [],
+    selectedOrder: {},
     search: '',
     searchLabel: 'Buscar',
     header: [
@@ -26,115 +26,111 @@ const state = () => ({
         }
     ]
     ,
-    erp: [],
-    editErp: false,
-    editingName: '',
-    editingTask: '',
-    editingUser: ''
+    erpOrders: [],
+    editErp: false
 });
 
 const mutations = {
-    selectErp(state, payload) {
+    selectErpOrder(state, payload) {
         state.selected = payload
+        state.selectedOrder = state.selected.length ? state.selected[0] : { tasks: [] }
     },
     searchFor(state, payload) {
         state.search = payload
     },
-    updateErp(state, payload) {
-        state.erp = payload
+    updateErpOrders(state, payload) {
+        state.erpOrders = payload
     },
-    editErp(state, payload) {
+    editErpOrder(state, payload) {
         let anySelected = !!state.selected;
         state.editingName = anySelected ? state.selected.name : '';
         state.editingTask = anySelected ? state.selected.task : '';
         state.editingUser = anySelected ? state.selected.user : '';
         state.editErp = payload
-    },
-    editName(state, payload) {
-        state.editingName = payload;
-    },
-    editTask(state, payload) {
-        state.editingTask = payload;
-    },
-    editUser(state, payload) {
-        state.editingUser = payload;
     }
 };
 
 
-function onGroupsLoaded(context, payload) {
-    let erp = [];
+function onErpOrdersLoaded(context, payload) {
+    let erpOrders = [];
     payload.forEach(erpSnapShot => {
         let erpData = erpSnapShot.data();
         erpData.id = erpSnapShot.id;
-        erp.push(erpData);
+        erpOrders.push(erpData);
     });
-    context.commit('updateErp', erp);
+    context.commit('updateErpOrders', erpOrders);
 }
 
 function createNewErp(state) {
+    let admin = mapUser(state.selectedOrder.administrator);
+    let users = (state.selectedOrder.users || []).map(m => mapUser(m));
+
     return db.collection("erp")
         .add({
-            name: state.editingName || "",
-            task: state.editingTask || "",
-            user: state.editingUser || ""
+            name: state.selectedOrder.name || '',
+            administrator: admin,
+            tasks: state.selectedOrder.tasks || [],
+            users: users
         });
 }
 
+function mapUser(user) {
+    let userMapped = '';
+    if (!user)
+        return userMapped;
+    userMapped = {
+        id: user.id,
+        name: user.name,
+        group_id: user.group_id,
+        email: user.email
+    };
+    return userMapped;
+}
+
 function updateExistingErp(state) {
+    let admin = mapUser(state.selectedOrder.administrator);
+    let users = (state.selectedOrder.users || []).map(m => mapUser(m));
+
     return db.collection("erp")
-        .doc(state.selected.id)
+        .doc(state.selectedOrder.id)
         .set({
-            name: state.selected.name || "",
-            administrator: state.selected.administrator,
-            tasks: state.selected.tasks || [],
-            users: state.selected.users || []
+            name: state.selectedOrder.name || '',
+            administrator: admin,
+            tasks: state.selectedOrder.tasks || [],
+            users: users
         });
 }
 
 const actions = {
-    selectErp({ state, commit }, payload) {
-        if (!state) console.log('Error, state is undifined.');
-        var selected = !payload ? undefined : payload[0];
-        commit('selectErp', selected)
+    selectErpOrder({ commit }, payload) {
+        var selected = payload;
+        commit('selectErpOrder', selected);
     },
-    searchFor({ state, commit }, payload) {
-        if (!state) console.log('Error, state is undifined.');
-        commit('searchFor', payload)
+    searchFor({ commit }, payload) {
+        commit('searchFor', payload);
     },
-    loadErp({ state, commit }) {
+    loadErpOrders({ state, commit }) {
         db.collection("erp")
             .get()
             .then(function (snapshots) {
-                onGroupsLoaded({ state, commit }, snapshots)
+                onErpOrdersLoaded({ state, commit }, snapshots)
             });
     },
-    editErp({ state, commit }, payload) {
-        if (!state) console.log('Error, state is undifined.');
-        commit('editErp', payload)
+    editErpOrder({ commit }, payload) {
+        commit('editErpOrder', payload);
     },
-    editName({ state, commit }, payload) {
-        if (!state) console.log('Error, state is undifined.');
-        commit('editName', payload)
-    },
-    editTask({ state, commit }, payload) {
-        if (!state) console.log('Error, state is undifined.');
-        commit('editTask', payload)
-    },
-    editUser({ state, commit }, payload) {
-        if (!state) console.log('Error, state is undifined.');
-        commit('editUser', payload)
-    },
-    saveErp({ state }) {
-        if (!state.selected)
+    saveErpOrder({ commit, state }) {
+        if (!state.selectedOrder.id)
             createNewErp(state).then(() => {
-                this.dispatch('erp/loadErp');
-                this.dispatch('erp/editErp');
+                commit("selectErpOrder", []);
+                this.dispatch('erp/loadErpOrders');
+                this.dispatch('erp/editErpOrder');
             });
         else
             updateExistingErp(state).then(() => {
-                this.dispatch('erp/loadErp');
-                this.dispatch('erp/editErp');
+                commit("selectErpOrder", []);
+                this.dispatch('erp/loadErpOrders');
+                this.dispatch('erp/editErpOrder');
             });
     }
 };
@@ -147,3 +143,4 @@ export default {
     actions,
     mutations
 }
+

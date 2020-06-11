@@ -10,13 +10,13 @@
           <v-container>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Nome" v-model="name" required></v-text-field>
+                <v-text-field label="Nome" v-model="selected.name" required></v-text-field>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12">
                 <v-autocomplete
-                  v-model="administrator"
+                  v-model="selected.administrator"
                   :items="users"
                   color="primary"
                   item-text="name"
@@ -30,7 +30,7 @@
             <v-row>
               <v-col cols="12">
                 <v-autocomplete
-                  v-model="selectedUsers"
+                  v-model="selected.users"
                   :items="users"
                   color="primary"
                   item-text="name"
@@ -50,9 +50,8 @@
             <v-row>
               <v-col cols="12">
                 <v-treeview
-                  v-model="activeTask"
-                  :items="tasks"
-                  :counter="taskCounter"
+                  :items="selected.tasks"
+                  item-children="taskItems"
                   dense
                   item-key="id"
                   selected-color="accent"
@@ -91,8 +90,8 @@
         <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="editErp(false)">Fechar</v-btn>
-          <v-btn color="blue darken-1" text @click="saveOrder">Salvar</v-btn>
+          <v-btn color="blue darken-1" text @click="editErpOrder(false)">Fechar</v-btn>
+          <v-btn color="blue darken-1" text @click="saveErpOrder">Salvar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -102,81 +101,55 @@
 import { mapState, mapActions } from "vuex";
 
 const computed = mapState({
-  selected: state => state.erp.selected,
+  selected: state => state.erp.selectedOrder,
   dialog: state => state.erp.editErp,
   users: state => state.users.userList
 });
 
 const userMethods = mapActions("users", ["readUsers"]);
 
-const erpMethods = mapActions("erp", ["saveErp", "editErp"]);
+const erpMethods = mapActions("erp", ["saveErpOrder", "editErpOrder"]);
 
 export default {
   computed,
   methods: Object.assign({}, erpMethods, userMethods, {
     addTask() {
-      this.tasks.push({
-        id: this.taskCounter++,
+      //if (!this.selected.tasks) this.selected.tasks = [];
+      let length = this.selected.tasks.length;
+      let currentCount = !length
+        ? 0
+        : this.selected.tasks[length - 1].id + 5000;
+      this.selected.tasks.push({
+        id: currentCount,
         name: this.newTask,
-        children: []
+        taskItems: []
       });
       this.newTask = "";
-      console.log("counter: " + this.taskCounter);
+      console.log("counter: " + currentCount);
     },
     editNewTask(payload) {
       this.newTask = payload;
     },
     appendTaskItem(item) {
-      item.children.push({ id: this.taskCounter++, name: "" });
-      console.log("counter: " + this.taskCounter);
+      let currentCount = item.id + item.taskItems.length + 1;
+      item.taskItems.push({ id: currentCount, name: "" });
+      console.log("counter: " + currentCount);
     },
     removeTaskOrItem(item) {
-      this.tasks = this.tasks.filter(m => m.id != item.id);
-      this.tasks.forEach(element => {
-        element.children = element.children.filter(m => m.id != item.id);
+      this.selected.tasks = this.selected.tasks.filter(m => m.id != item.id);
+      this.selected.tasks.forEach(element => {
+        element.taskItems = element.taskItems.filter(m => m.id != item.id);
       });
-    },
-    saveOrder() {
-      this.selected.name = this.name;
-      this.selected.users = this.selectedUsers;
-      this.selected.administrator = this.administrator;
-      this.selected.tasks = this.tasks.map(element => ({
-        id: element.id,
-        name: element.name,
-        taskItems: element.children.map(m => m.name)
-      }));
-      console.log(this.selected);
-      this.$store.dispatch("erp/saveErp");
     }
   }),
   data() {
     return {
-      name: "",
-      administrator: "",
-      selectedUsers: [],
-      taskCounter: 0,
-      tasks: []
+      newTask: "",
+      taskCounter: 0
     };
   },
   mounted() {
     this.readUsers();
-    let order = this.selected || { users: [], tasks: [] };
-    this.name = order.name;
-    this.administrator = order.administrator;
-    this.selectedUsers = order.users;
-
-    console.log(order.tasks);
-    order.tasks.forEach(element => {
-      this.tasks.push({
-        id: element.id,
-        key: this.taskCounter++,
-        name: element.name,
-        children: element.taskItems.map(m => ({
-          id: this.taskCounter++,
-          name: m
-        }))
-      });
-    });
   }
 };
 </script>

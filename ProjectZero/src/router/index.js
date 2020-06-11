@@ -6,7 +6,7 @@ import ResetPassword from '../views/Auth/ResetPassword.vue'
 import Clients from '../views/Clients/Clients.vue'
 import Home from '../views/Home.vue'
 import Setup from '../views/Setup.vue'
-import Erp from '../views/Erp.vue'
+import Erp from '../views/ErpOrder/Erp.vue'
 import ServiceOrder from '../views/ServiceOrder/ServiceOrder.vue'
 import EditServiceOrder from '../views/ServiceOrder/EditServiceOrder.vue'
 import Users from '../views/Users/Users.vue'
@@ -130,13 +130,13 @@ router.beforeEach((to, from, next) => {
 
   if (to.matched.some(record => record.meta.hideForAuth)) {
     if (store.getters.isAuthenticated) {
-        next({ path: '/home' });
+      next({ path: '/home' });
     } else {
-        next();
+      next();
     }
-} else {
+  } else {
     next();
-}
+  }
 });
 
 export default router
