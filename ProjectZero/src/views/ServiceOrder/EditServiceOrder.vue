@@ -101,14 +101,14 @@ import TaskCard from "@/components/shared/TaskCard.vue";
 import EditServiceOrderTask from "./EditServiceOrderTask.vue";
 
 const computed = mapState({
-  selected: state => state.productionOrders.selected || [{}],
-  statusList: state => state.productionOrders.statusList,
-  tasks: state => state.productionOrders.selectedOrderTasks,
-  columns: state => state.productionOrders.kanbanColumns,
+  selected: state => state.serviceOrders.selected || [{}],
+  statusList: state => state.serviceOrders.statusList,
+  tasks: state => state.serviceOrders.selectedOrderTasks,
+  columns: state => state.serviceOrders.kanbanColumns,
   clientList: state => state.clients.clients.map(m => m.name)
 });
 
-const orderMethods = mapActions("productionOrders", [
+const orderMethods = mapActions("serviceOrders", [
   "selectOrder",
   "searchFor",
   "reloadOrders",

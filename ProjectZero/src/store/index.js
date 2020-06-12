@@ -6,7 +6,7 @@ import groups from './modules/groups'
 import clients from './modules/clients'
 import users from './modules/users'
 import erp from './modules/erp'
-import productionOrders from './modules/productionOrders'
+import serviceOrders from './modules/serviceOrders'
 import general from './modules/general'
 import notifications from './modules/notifications'
 import createPersistedState from "vuex-persistedstate"
@@ -17,16 +17,16 @@ var ls = new SecureLS({ isCompression: false })
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
-    modules: { groups, clients, users, erp, productionOrders, general, notifications },
+    modules: { groups, clients, users, erp, serviceOrders, general, notifications },
     plugins: [
         createPersistedState({
-          storage: {
-            getItem: (key) => ls.get(key),
-            setItem: (key, value) => ls.set(key, value),
-            removeItem: (key) => ls.remove(key),
-          },
+            storage: {
+                getItem: (key) => ls.get(key),
+                setItem: (key, value) => ls.set(key, value),
+                removeItem: (key) => ls.remove(key),
+            },
         }),
-      ],
+    ],
     state: {
         user: null,
         isAuthenticated: false,

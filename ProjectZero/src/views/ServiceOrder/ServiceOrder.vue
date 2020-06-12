@@ -30,7 +30,7 @@
                 <v-col cols="12">
                   <v-data-table
                     :headers="header"
-                    :items="productionOrders"
+                    :items="serviceOrders"
                     :search="search"
                     show-select
                     single-select
@@ -40,7 +40,7 @@
                   ></v-data-table>
                 </v-col>
               </v-row>
-              <v-btn color="error" dark fixed bottom right fab @click="editProductionOrder">
+              <v-btn color="error" dark fixed bottom right fab @click="editServiceOrder">
                 <v-icon v-show="!enableEdit">mdi-plus</v-icon>
                 <v-icon v-show="enableEdit">mdi-pen</v-icon>
               </v-btn>
@@ -54,19 +54,19 @@
 <script>
 import { mapState, mapActions } from "vuex";
 
-const computedProductionOrders = mapState("general", {
+const computedServiceOrders = mapState("general", {
   isLoading: state => state.isLoading,
 });
 
-const computed = mapState("productionOrders", {
+const computed = mapState("serviceOrders", {
   selected: state => state.selected,
   search: state => state.search,
-  productionOrders: state => state.productionOrders,
+  serviceOrders: state => state.serviceOrders,
   enableEdit: state => state.selected && state.selected.length
   
 });
 
-const methods = mapActions("productionOrders", [
+const methods = mapActions("serviceOrders", [
   "selectOrder",
   "searchFor",
   "reloadOrders"
@@ -94,18 +94,16 @@ export default {
       ]
     };
   },
-  computed: Object.assign({}, computed, computedProductionOrders),
+  computed: Object.assign({}, computed, computedServiceOrders),
   methods: Object.assign({}, methods, generalMethods, {
-    editProductionOrder() {
-      if (this.selected)
+    editServiceOrder() {
+      if (this.selected.length > 0)
         this.$router.push({ path: `/EditServiceOrder/${this.selected[0].id}` });
     }
   }),
   mounted() {
     this.setIsLoading()
-    console.log(this.isLoading)
     this.reloadOrders().then(() => {this.resetIsLoading() });
-    console.log(this.isLoading)
   }
 };
 </script>
