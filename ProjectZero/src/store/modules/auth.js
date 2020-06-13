@@ -81,7 +81,7 @@ const actions = {
             })
     }
 
-    
+
 }
 
 const getters = {

@@ -8,8 +8,9 @@ const state = () => ({
     statusList: ['Pendente', 'Em progresso', 'Finalizada'],
     selectedOrderTasks: [],
     kanbanColumns: [],
-    selectedTask: undefined,
-    showTaskDialog: false
+    selectedTask: { name: '' },
+    showTaskDialog: false,
+    taskDialogInEditMode: false
 });
 
 const mutations = {
@@ -45,6 +46,9 @@ const mutations = {
     },
     updateSelectedTask(state, payload) {
         state.selectedTask = payload
+    },
+    updateTaskDialogInEditMode(state, payload) {
+        state.taskDialogInEditMode = payload
     }
 };
 
@@ -77,13 +81,24 @@ function getOrderUsersIds(serviceOrders) {
 function completeOrdersWithUsersInformation(serviceOrders, users) {
     serviceOrders.forEach(order => {
         order.administratorName = users.filter(u => u.id == order.administrator)[0]?.name;
-        order.usersList = !order.users ? [] : order.users.map(u => ({
+        order.usersList = order?.users?.map(u => ({
             id: u,
             name: users.filter(m => m.id == u)[0].name
-        }));
+        })) || [];
     });
 }
 
+function getOrderFromDatabase(serviceOrderId) {
+    return db.collection("serviceOrder")
+        .doc(serviceOrderId)
+}
+
+function getTaskFromDatabase(serviceOrderId, taskId) {
+    return db.collection("serviceOrder")
+        .doc(serviceOrderId)
+        .collection("tasks")
+        .doc(taskId)
+}
 function formatDate(date) {
     if (!date) return null;
 
@@ -125,18 +140,19 @@ const actions = {
             });
     },
     loadTasksByOrder(context) {
-        db.collection("serviceOrder").doc(context.state.selected[0].id)
-            .collection("tasks").get().then(snapshot => {
-                let tasks = [];
-                snapshot.forEach(taskSnapshot => {
-                    let taskData = taskSnapshot.data();
-                    taskData.id = taskSnapshot.id;
-                    tasks.push(taskData);
+        if (context.state.selected[0])
+            db.collection("serviceOrder").doc(context.state.selected[0].id)
+                .collection("tasks").get().then(snapshot => {
+                    let tasks = [];
+                    snapshot.forEach(taskSnapshot => {
+                        let taskData = taskSnapshot.data();
+                        taskData.id = taskSnapshot.id;
+                        tasks.push(taskData);
+                    });
+                    this.dispatch('serviceOrders/updateSelectedOrderTask', tasks).then(() => {
+                        context.commit('updateKanbanColumns')
+                    });
                 });
-                this.dispatch('serviceOrders/updateSelectedOrderTask', tasks).then(() => {
-                    context.commit('updateKanbanColumns')
-                });
-            });
     },
     updateClient(context, payload) {
         context.commit("updateClient", payload);
@@ -144,46 +160,19 @@ const actions = {
     updateOrderEndDate(context, payload) {
         context.commit('updateOrderEndDate', payload)
     },
-    fetchTaskItemsAndUsers(context, payload) {
-        payload = payload || context.state.selectedTask;
-        payload.items = [];
-        payload.users = [];
-        db.collection("serviceOrder").doc(context.state.selected[0].id)
-            .collection("tasks").doc(payload.id)
-            .collection("items").get().then(snapshot => {
-                snapshot.forEach(itemSnapshot => {
-                    let itemData = itemSnapshot.data();
-                    itemData.id = itemSnapshot.id;
-                    payload.items.push(itemData);
-                });
-
-                db.collection("serviceOrder").doc(context.state.selected[0].id)
-                    .collection("tasks").doc(payload.id)
-                    .collection("users").get().then(snapshot => {
-                        snapshot.forEach(itemSnapshot => {
-                            let itemData = itemSnapshot.data();
-                            itemData.id = itemSnapshot.id;
-                            payload.users.push(itemData);
-                        });
-
-                        this.dispatch('serviceOrders/updateSelectedTask', payload)
-                    });
-            })
-    },
     showTaskDialog(context, payload) {
-        let task = payload || context.state.selectedTask
-        task.items = []
-        task.users = []
-        if (!task.id) {
-            task.creation_date = formatDate(new Date().toISOString().substr(0, 10))
-            task.items.push({ done: false, description: 'Item da tarefa (edite-me)' })
+        if (!payload.id) {
+            payload.items = []
+            payload.users = []
+            payload.creation_date = formatDate(new Date().toISOString().substr(0, 10))
+            payload.items.push({ done: false, description: 'Item da tarefa (edite-me)' })
+            context.commit('updateTaskDialogInEditMode', true)
         }
 
-        if (task.id)
-            this.dispatch('serviceOrders/fetchTaskItemsAndUsers', task)
-        else
-            this.dispatch('serviceOrders/updateSelectedTask', task)
+        context.commit('updateSelectedTask', payload)
         context.commit('updateShowTaskDialog', true)
+
+
     },
     updateSelectedOrderTask(context, payload) {
         context.commit('updateSelectedOrderTasks', payload)
@@ -192,87 +181,76 @@ const actions = {
         context.commit('updateSelectedTask', payload)
     },
     closeTaskModal(context) {
-        context.commit('updateSelectedTask', { name: '', items: [], users: [] })
         context.commit('updateShowTaskDialog', false)
     },
     saveTask(context) {
         if (context.state.selectedTask.id)
-            db.collection("serviceOrder")
-                .doc(context.state.selected[0].id)
-                .collection("tasks").doc(context.state.selectedTask.id)
-                .update({
+            getTaskFromDatabase(context.state.selected[0].id, context.state.selectedTask.id)
+                .set({
                     name: context.state.selectedTask.name,
+                    creation_date: context.state.selectedTask.creation_date,
                     end_date: context.state.selectedTask.end_date,
-                    status: context.state.selectedTask.status
+                    status: context.state.selectedTask.status,
+                    items: context.state.selectedTask.items.map((obj) => {
+                        if (!obj.done)
+                            return Object.assign({}, obj, { done: false });
+                        return Object.assign({}, obj)
+                    }) || [],
+                    users: context.state.selectedTask.users.map((obj) => { return Object.assign({}, obj) }) || []
                 })
                 .then(() => {
-                    this.dispatch('serviceOrders/saveTaskUsers')
-                        .then(() => { this.dispatch('serviceOrders/fetchTaskItemsAndUsers') })
+                    this.dispatch('serviceOrders/loadTasksByOrder')
+                })
+                .then(() => {
+                    this.dispatch('serviceOrders/closeTaskModal')
                 })
                 .catch(error => {
                     console.error("Error updating document: ", error);
                 });
         else
-            db.collection("serviceOrder")
-                .doc(context.state.selected[0].id)
-                .collection("tasks")
-                .add({
-                    name: context.state.selectedTask.name,
-                    end_date: context.state.selectedTask.end_date || '',
-                    status: 'Pendente',
-                    creation_date: context.state.selectedTask.creation_date
+            getOrderFromDatabase(context.state.selected[0].id).collection("tasks")
+                .add(
+                    {
+                        name: context.state.selectedTask.name,
+                        creation_date: context.state.selectedTask.creation_date,
+                        end_date: context.state.selectedTask.end_date || '',
+                        status: 'Pendente',
+                        items: context.state.selectedTask.items.map((obj) => {
+                            if (!obj.done)
+                                return Object.assign({}, obj, { done: false });
+                            return Object.assign({}, obj)
+                        }) || [],
+                        users: context.state.selectedTask.users.map((obj) => { return Object.assign({}, obj) }) || []
+                    }
+                )
+                .then(() => {
+                    this.dispatch('serviceOrders/loadTasksByOrder')
                 })
-                .then((recentAdded) => {
-                    let added = context.state.selectedTask;
-                    added.id = recentAdded.id;
-                    this.dispatch('serviceOrders/updateSelectedTask', added)
-                        .then(() => {
-                            this.dispatch('serviceOrders/saveTaskUsers')
-                                .then(() => {
-                                    this.dispatch('serviceOrders/saveTaskItem')
-                                        .then(() => {
-                                            this.dispatch('serviceOrders/fetchTaskItemsAndUsers')
-                                        });
-                                });
-                        })
+                .then(() => {
+                    this.dispatch('serviceOrders/closeTaskModal')
                 })
                 .catch(error => {
                     console.error("Error updating document: ", error);
                 });
+
+        context.commit('updateTaskDialogInEditMode', false)
     },
-    saveTaskUsers(context) {
-        db.collection("serviceOrder")
-            .doc(context.state.selected[0].id)
-            .collection("tasks").doc(context.state.selectedTask.id)
-            .collection("users")
-            .get().then(snapshot => {
-                snapshot.forEach((item) => {
-                    db.collection("serviceOrder")
-                        .doc(context.state.selected[0].id)
-                        .collection("tasks")
-                        .doc(context.state.selectedTask.id)
-                        .collection("users")
-                        .doc(item.id)
-                        .delete()
+    deleteTask(context) {
+        if (context.state.selectedTask.id) {
+            getTaskFromDatabase(context.state.selected[0].id, context.state.selectedTask.id).delete()
+                .then(() => {
+                    this.dispatch('serviceOrders/loadTasksByOrder')
                 })
-            })
-            .then(() => {
-                context.state.selectedTask.users.forEach(user => {
-                    db.collection("serviceOrder")
-                        .doc(context.state.selected[0].id)
-                        .collection("tasks").doc(context.state.selectedTask.id)
-                        .collection("users")
-                        .add({
-                            name: user.name,
-                            id: user.id,
-                            email: user.email
-                        })
+                .then(() => {
+                    this.dispatch('serviceOrders/closeTaskModal')
                 })
-            })
-            .then(() => { this.dispatch('serviceOrders/fetchTaskItemsAndUsers') })
-            .catch(error => {
-                console.error("Error updating document: ", error);
-            });
+        }
+        else {
+            this.dispatch('serviceOrders/loadTasksByOrder')
+                .then(() => {
+                    this.dispatch('serviceOrders/closeTaskModal')
+                })
+        }
     },
     onTaskDrag(context, payload) {
         if (payload.added) {
@@ -281,49 +259,17 @@ const actions = {
                     if (task.id == payload.added.element.id) {
                         context.state.selectedTask = context.state.selectedOrderTasks.find(c => c.id == payload.added.element.id)
                         context.state.selectedTask.status = column.title
+
+                        if (column.title == "Finalizada")
+                            context.state.selectedTask.end_date = formatDate(new Date().toISOString().substr(0, 10))
+                        else
+                            context.state.selectedTask.end_date = ''
                     }
                 });
             });
             this.dispatch('serviceOrders/saveTask')
         }
 
-    },
-    saveTaskItem(context) {
-        this.dispatch('serviceOrders/saveTaskBeforeSavingTaskItem').then(() => {
-            if (context.state.selectedTaskItem.id)
-                db.collection("serviceOrder")
-                    .doc(context.state.selected[0].id)
-                    .collection("tasks")
-                    .doc(context.state.selectedTask.id)
-                    .collection("items")
-                    .doc(context.state.selectedTaskItem.id)
-                    .update({
-                        description: context.state.selectedTaskItem.description
-                    })
-                    .then(() => {
-                        this.dispatch('serviceOrders/closeEditTaskItemModal')
-                    })
-                    .catch(error => {
-                        console.error("Error updating document: ", error);
-                    });
-            else
-                db.collection("serviceOrder")
-                    .doc(context.state.selected[0].id)
-                    .collection("tasks")
-                    .doc(context.state.selectedTask.id)
-                    .collection("items")
-                    .add({
-                        description: context.state.selectedTaskItem.description,
-                        done: false
-                    })
-                    .then(() => {
-                        this.dispatch('serviceOrders/fetchTaskItemsAndUsers')
-                            .then(() => { this.dispatch('serviceOrders/closeEditTaskItemModal') })
-                    })
-                    .catch(error => {
-                        console.error("Error updating document: ", error);
-                    });
-        })
     },
     saveServiceOrder(context) {
         let serviceOrder = context.state.selected[0];
@@ -345,6 +291,9 @@ const actions = {
                 console.error("Error updating document: ", error);
             });
     },
+    setOrUnsetEditMode(context) {
+        context.commit('updateTaskDialogInEditMode', !context.state.taskDialogInEditMode)
+    }
 };
 
 const getters = {};

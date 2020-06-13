@@ -10,7 +10,7 @@
         </div>
         <v-card v-if="!isLoading" class="mx-auto">
           <v-toolbar class="primary white--text" dark>
-            <h3>Ordens de Produção</h3>
+            <h3>Ordens de Serviço</h3>
             <v-spacer></v-spacer>
             <v-icon right class="white--text">receipt</v-icon>
           </v-toolbar>

@@ -20,10 +20,10 @@
                     <v-text-field label="Data de criação:" disabled v-model="selectedTask.creation_date"></v-text-field>
                   </v-col>
                   <v-col cols="5" class="no-top-bottom-padding">
-                    <v-text-field label="Data de encerramento:" :disabled="!isInEditMode" v-model="selectedTask.end_date"></v-text-field>
+                    <v-text-field label="Data de encerramento:" disabled v-model="selectedTask.end_date"></v-text-field>
                   </v-col>
                   <v-col cols="2" class="no-top-bottom-padding">
-                    <v-btn color="gray" @click="isInEditMode = !isInEditMode">Edit</v-btn>
+                    <v-btn color="gray" @click="setOrUnsetEditMode">Edit</v-btn>
                   </v-col>
                 </v-row>
               </v-col>
@@ -38,7 +38,7 @@
                   label="Usuários"
                   return-object
                   dense
-                  multiple
+                  single
                   required
                 ></v-autocomplete>
               </v-col>
@@ -57,42 +57,41 @@
                       v-model="item.done" 
                       class="mx-2" 
                       :label="item.description"
-                      @input="updateTaskItem"
                   ></v-checkbox>
                 </template>
             </v-treeview>
-                <v-treeview
-                  v-if="isInEditMode"
-                  :items="[selectedTask]"
-                  item-children="taskItems"
-                  dense
-                  item-key="id"
-                  selected-color="accent"
-                  color="primary"
-                >
-                  <template v-slot:prepend="{ leaf }">
-                    <v-icon v-if="!leaf">mdi-calendar-today</v-icon>
-                    <v-icon v-if="leaf">mdi-chevron-right</v-icon>
-                  </template>
-                  <template v-slot:label="{ item }">
-                    <v-text-field v-model="item.name" />
-                  </template>
-                  <template v-slot:append="{ item, leaf }">
-                    <v-btn v-if="!leaf" icon color="green" @click="appendTaskItem(item)">
-                      <v-icon>mdi-plus</v-icon>
-                    </v-btn>
-                    <v-btn icon color="red" @click="removeTaskOrItem(item)">
-                      <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                  </template>
-                </v-treeview>
+            <v-treeview
+              v-if="isInEditMode"
+              :items="selectedTask.items"
+              dense
+              item-key="id"
+              selected-color="accent"
+              color="primary"
+            >
+              <template v-slot:prepend="{ leaf }">
+                <v-icon v-if="!leaf">mdi-calendar-today</v-icon>
+                <v-icon v-if="leaf">mdi-chevron-right</v-icon>
+              </template>
+              <template v-slot:label="{ item }">
+                <v-text-field v-model="item.description" />
+              </template>
+              <template v-slot:append="{ item }">
+                <v-btn icon color="green" @click="appendTaskItem(item)">
+                  <v-icon>mdi-plus</v-icon>
+                </v-btn>
+                <v-btn icon color="red" @click="removeTaskOrItem(item)">
+                  <v-icon>mdi-close</v-icon>
+                </v-btn>
+              </template>
+            </v-treeview>
           </v-container>
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
+          <v-btn color="error" text @click="deleteTask">Deletar</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="closeTaskModal">Fechar</v-btn>
-          <v-btn color="blue darken-1" text @click="saveTask" :disabled="isInEditMode">Salvar</v-btn>
+          <v-btn color="blue darken-1" text @click="saveTask">Salvar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -106,7 +105,8 @@ const computed = mapState({
     dialog: state => state.serviceOrders.showTaskDialog,
     selectedTask: state => state.serviceOrders.selectedTask,
     users: state => state.users.userList,
-    selectedUsers: state => state.serviceOrders.selectedTask.users || []
+    selectedUsers: state => state.serviceOrders.selectedTask.users,
+    isInEditMode: state => state.serviceOrders.taskDialogInEditMode
 });
 
 const userMethods = mapActions("users", ["readUsers"]);
@@ -114,19 +114,21 @@ const userMethods = mapActions("users", ["readUsers"]);
 const methods = mapActions("serviceOrders", [
   "closeTaskModal",
   "saveTask",
+  "setOrUnsetEditMode",
+  "deleteTask"
 ]);
 
 export default {
     data() {
         return {
-          isInEditMode: false
+          counter: this.selectedTask?.items?.length || []
          }
     },
     methods:  Object.assign({}, methods, userMethods, {
           appendTaskItem(item) {
-            let currentCount = item.id + item.taskItems.length + 1;
-            item.taskItems.push({ id: currentCount, name: "" });
-            console.log("counter: " + currentCount);
+            this.counter = this.counter + 1;
+            this.selectedTask.items.push({description: item.description });
+            console.log("counter: " + this.counter);
           },
           removeTaskOrItem(item) {
             this.selected.tasks = this.selected.tasks.filter(m => m.id != item.id);
@@ -137,7 +139,7 @@ export default {
     }),
     computed,
     mounted() {
-      this.readUsers();
+      this.readUsers()
     }
 }
 </script>
