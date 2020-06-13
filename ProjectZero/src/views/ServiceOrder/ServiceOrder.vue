@@ -49,10 +49,12 @@
         </v-card>
       </v-col>
     </v-row>
+    <CreateServiceOrder></CreateServiceOrder>
   </div>
 </template>
 <script>
 import { mapState, mapActions } from "vuex";
+import CreateServiceOrder from "./CreateServiceOrder.vue";
 
 const computedServiceOrders = mapState("general", {
   isLoading: state => state.isLoading,
@@ -69,7 +71,8 @@ const computed = mapState("serviceOrders", {
 const methods = mapActions("serviceOrders", [
   "selectOrder",
   "searchFor",
-  "reloadOrders"
+  "reloadOrders",
+  "openCreateOrderModal"
 ]);
 
 const generalMethods = mapActions("general", [
@@ -94,11 +97,16 @@ export default {
       ]
     };
   },
+  components: {
+    CreateServiceOrder
+  },
   computed: Object.assign({}, computed, computedServiceOrders),
   methods: Object.assign({}, methods, generalMethods, {
     editServiceOrder() {
       if (this.selected.length > 0)
         this.$router.push({ path: `/EditServiceOrder/${this.selected[0].id}` });
+      else
+        this.openCreateOrderModal()
     }
   }),
   mounted() {

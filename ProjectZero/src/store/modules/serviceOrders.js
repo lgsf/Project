@@ -10,10 +10,15 @@ const state = () => ({
     kanbanColumns: [],
     selectedTask: { name: '' },
     showTaskDialog: false,
-    taskDialogInEditMode: false
+    taskDialogInEditMode: false,
+    showCreateOrderDialog: false,
+    newOrder: { name: '', creation_date: formatDate(new Date().toISOString().substr(0, 10)), end_date: '', users: [], userGroups: [] }
 });
 
 const mutations = {
+    updateShowCreateOrderDialog(state, payload) {
+        state.showCreateOrderDialog = payload;
+    },
     selectOrder(state, payload) {
         state.selected = payload;
         if (payload)
@@ -83,7 +88,7 @@ function completeOrdersWithUsersInformation(serviceOrders, users) {
         order.administratorName = users.filter(u => u.id == order.administrator)[0]?.name;
         order.usersList = order?.users?.map(u => ({
             id: u,
-            name: users.filter(m => m.id == u)[0].name
+            name: u.name
         })) || [];
     });
 }
@@ -119,6 +124,31 @@ Array.prototype.unique = function () {
 };
 
 const actions = {
+    openCreateOrderModal(context) {
+        context.commit('updateShowCreateOrderDialog', true)
+    },
+    closeCreateOrderModal(context) {
+        context.commit('updateShowCreateOrderDialog', false)
+    },
+    saveNewOrder(context) {
+        let tasks = [];
+        if (context.state.newOrder.template) {
+            tasks = context.state.newOrder.template.tasks.map((obj) => { return Object.assign({}, obj, { creation_date: formatDate(new Date().toISOString().substr(0, 10)) }) }) || [];
+        }
+
+        db.collection("serviceOrder").add({
+            name: context.state.newOrder.name,
+            client: context.state.newOrder.client,
+            creation_date: context.state.newOrder.creation_date,
+            end_date: context.state.newOrder.end_date,
+            users: context.state.newOrder.users.map((obj) => { return Object.assign({}, obj) }) || [],
+            userGroups: context.state.newOrder.userGroups.map((obj) => { return Object.assign({}, obj) }) || [],
+            tasks: tasks
+        })
+            .then(() => {
+                this.dispatch('serviceOrders/reloadOrders').then(() => { context.commit('updateShowCreateOrderDialog', false) })
+            })
+    },
     selectOrder(context, payload) {
         context.commit('selectOrder', payload)
     },
@@ -141,15 +171,9 @@ const actions = {
     },
     loadTasksByOrder(context) {
         if (context.state.selected[0])
-            db.collection("serviceOrder").doc(context.state.selected[0].id)
-                .collection("tasks").get().then(snapshot => {
-                    let tasks = [];
-                    snapshot.forEach(taskSnapshot => {
-                        let taskData = taskSnapshot.data();
-                        taskData.id = taskSnapshot.id;
-                        tasks.push(taskData);
-                    });
-                    this.dispatch('serviceOrders/updateSelectedOrderTask', tasks).then(() => {
+            getOrderFromDatabase(context.state.selected[0].id).get()
+                .then(snapshot => {
+                    this.dispatch('serviceOrders/updateSelectedOrderTask', snapshot.data().tasks).then(() => {
                         context.commit('updateKanbanColumns')
                     });
                 });

@@ -12,7 +12,7 @@
           <v-row class="ml-5 mt-5 mr-5">
             <v-col cols="12">
               <v-autocomplete
-                :value="selected[0].client"
+                :value="selected[0].client.name"
                 @input="updateClient"
                 :items="clientList"
                 color="primary"

@@ -51,7 +51,7 @@
               <v-col cols="12">
                 <v-treeview
                   :items="selected.tasks"
-                  item-children="taskItems"
+                  item-children="items"
                   dense
                   item-key="id"
                   selected-color="accent"
@@ -114,7 +114,7 @@ export default {
   computed,
   methods: Object.assign({}, erpMethods, userMethods, {
     addTask() {
-      //if (!this.selected.tasks) this.selected.tasks = [];
+      if (!this.selected.tasks) this.selected.tasks = [];
       let length = this.selected.tasks.length
       let currentCount = !length
         ? 0
@@ -122,23 +122,24 @@ export default {
       this.selected.tasks.push({
         id: currentCount,
         name: this.newTask,
-        taskItems: []
+        items: [],
+        status: 'Pendente'
       })
       this.newTask = ""
-      console.log("counter: " + currentCount)
     },
     editNewTask(payload) {
       this.newTask = payload
     },
     appendTaskItem(item) {
-      let currentCount = item.id + item.taskItems.length + 1
-      item.taskItems.push({ id: currentCount, name: "" })
-      console.log("counter: " + currentCount)
+        console.log("teste")
+        let currentCount = item.id + item.items.length + 1
+        item.items.push({ id: currentCount, name: '', description: "", done: false })
+        console.log(item.items)
     },
     removeTaskOrItem(item) {
       this.selected.tasks = this.selected.tasks.filter(m => m.id != item.id)
       this.selected.tasks.forEach(element => {
-        element.taskItems = element.taskItems.filter(m => m.id != item.id)
+        element.items = element.items.filter(m => m.id != item.id)
       })
     }
   }),

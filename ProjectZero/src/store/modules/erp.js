@@ -65,6 +65,18 @@ function createNewErp(state) {
     let admin = mapUser(state.selectedOrder.administrator);
     let users = (state.selectedOrder.users || []).map(m => mapUser(m));
 
+    if (state.selectedOrder.tasks) {
+        let newTaskList = []
+        state.selectedOrder.tasks.forEach(task => {
+            task.items.forEach(item => {
+                item.description = item.name
+            })
+            newTaskList.push(task)
+        })
+
+        state.selectedOrder.tasks = newTaskList
+    }
+
     return db.collection("erp")
         .add({
             name: state.selectedOrder.name || '',
@@ -132,6 +144,11 @@ const actions = {
                 this.dispatch('erp/loadErpOrders');
                 this.dispatch('erp/editErpOrder');
             });
+    },
+    getErpOrder(context, payload) {
+        console.log(context)
+        return db.collection("erp")
+            .doc(payload.id)
     }
 };
 const getters = {};
