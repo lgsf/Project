@@ -53,7 +53,7 @@
             <v-row justify='center'>
               <v-col class='ms-6 me-6'>
                 <div style="text-align: center;">
-                  <img :src="imageUrl" height="150"/>
+                  <img :src="imageUrl" height="50"/>
                 </div>
               </v-col>
             </v-row>
@@ -161,7 +161,7 @@ export default {
           console.log("Error getting documents: ", error)
         })
 
-        fileStorage.ref().listAll()
+        fileStorage.ref('logo').listAll()
         .then(result => {
           result.items[0].getDownloadURL()
           .then((url) => { this.imageUrl = url })

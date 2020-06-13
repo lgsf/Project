@@ -64,6 +64,7 @@
 import Alert from "@/components/shared/Alert"
 import { mapActions  } from "vuex"
 import { fileStorage } from "@/main"
+import { db } from "@/main"
 
 
 
@@ -76,7 +77,7 @@ export default {
       imageUrl: "",
       valid: false,
       screenTitle: "Login",
-      screenCompany: "O nome da sua empresa aqui",
+      screenCompany: "",
       email: "",
       password: "",
       emailRules: [
@@ -114,6 +115,21 @@ export default {
         .catch(error => {
           console.log("Error getting logo image: ", error)
         })
+    },
+
+    readCompanyName(){
+      db.collection("systemConfiguration")
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            this.screenCompany = doc.data().company_name
+            })
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error)
+        })
+
+      
     }
   },
   computed: {
@@ -123,6 +139,7 @@ export default {
   },
   mounted() {
     this.readLogo()
+    this.readCompanyName()
   }
 };
 </script>
