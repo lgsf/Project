@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-  <v-subheader> <h3> Bem-vindo {{id}}! </h3></v-subheader>
+  <v-subheader> <h3> Bem-vindo {{this.$store.state.auth.userName}}! </h3></v-subheader>
   <v-row >
     <NotificationTable/>
    <Calendar/>
@@ -19,10 +19,11 @@ export default {
    components: { Calendar,  NotificationTable },
   data(){
     return {
-            id: 'usuário'
+
     }
-  },
- 
+  }
+
 }
+
 
 </script>

@@ -1,9 +1,12 @@
 import firebase from 'firebase'
 import router from '@/router'
+import { db } from "@/main"
 
 const state = () => ({
     user: null,
-    isAuthenticated: false
+    isAuthenticated: false,
+    userName: ''
+
 })
 
 const mutations = {
@@ -14,6 +17,9 @@ const mutations = {
     },
     setIsAuthenticated(state, payload) {
         state.isAuthenticated = payload
+    },
+    setUserName(state, payload){
+        state.userName = payload
     }
 }
 
@@ -28,6 +34,13 @@ const actions = {
             .then(user => {
                 commit('setUser', user)
                 commit('setIsAuthenticated', true)
+                db.collection("users")
+                .doc(user.uid)
+                .get()
+                .then((snapshots) => {
+                    let currentUser = snapshots.data()
+                    commit('setUserName', currentUser.name)
+        })
                 this.dispatch('general/resetIsLoading')
             })
             .then(() => {
@@ -88,6 +101,7 @@ const getters = {
     isAuthenticated(state) {
         return state.user !== null && state.user !== undefined
     }
+    
 }
 
 export default {

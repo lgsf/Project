@@ -2,9 +2,8 @@
   <nav>
     <v-app-bar app flat>
       <v-app-bar-nav-icon @click="drawer = !drawer" class></v-app-bar-nav-icon>
-      <v-toolbar-title class="text-uppercase">
-        <span class="font-weight-light">Logo</span>
-        <span>Aqui</span>
+      <v-toolbar-title >
+        <v-img :src="imageUrl" ></v-img>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn @click="logout" color="grey-2">
@@ -69,6 +68,7 @@
 <script>
 import { db } from "@/main"
 import { mapActions  } from "vuex"
+import { fileStorage } from '@/main'
 
 
 const authMethods = mapActions("auth", ["userSignOut"])
@@ -78,8 +78,9 @@ export default {
   data() {
     return {
       drawer: true,
-      links: []
-    };
+      links: [],
+      imageUrl: ""
+    }
   },
   computed: Object.assign({}, loadingMethods, authMethods, {
   isLoading(){
@@ -91,12 +92,22 @@ export default {
     logout() {
       this.userSignOut
     },
-
-
+    readLogo() {
+      fileStorage
+        .ref("logo")
+        .listAll()
+        .then(result => {
+          result.items[0].getDownloadURL().then(url => {
+            this.imageUrl = url
+          })
+        })
+        .catch(error => {
+          console.log("Error getting logo image: ", error)
+        })
+    },
     loadMenu() {
       this.setLoadingNavbar
       let groupId = "bmyiE5pvx66Ct7Wmj78b"
-      if(groupId){
           db.collection("groups")
               .doc(groupId)
               .get()
@@ -104,7 +115,7 @@ export default {
                 this.onMenuLoaded(snapshots)
                 this.stopLoadingNavbar
         })
-      }
+      
     },
     onMenuLoaded(groupSnapshot) {
       let groupData = groupSnapshot.data()
@@ -115,6 +126,7 @@ export default {
   },
   mounted() {
     this.loadMenu()
+    this.readLogo()
   }
 }
 </script>

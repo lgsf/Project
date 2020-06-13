@@ -9,7 +9,7 @@
         ></v-progress-circular>
         </div>
       <v-sheet height="64" v-if="!isLoading">
-        <v-toolbar flat color="primary">
+        <v-toolbar  color="primary">
           <v-btn color="primary" class="mr-1 " small @click.stop="dialog = true">
             <v-icon>add</v-icon>
           </v-btn>
@@ -118,7 +118,7 @@
   :activator="selectedElement"
   offset-x
   >
-  <v-card color="grey lighten-4" :width="350" flat>
+  <v-card color="grey lighten-4" :width="350" >
     <v-toolbar :color="selectedEvent.color" dark>
       <v-btn @click="deleteEvent(selectedEvent.id)" icon>
         <v-icon>delete</v-icon>
