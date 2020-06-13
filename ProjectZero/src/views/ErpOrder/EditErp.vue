@@ -98,7 +98,7 @@
   </v-container>
 </template>
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions } from "vuex"
 
 const computed = mapState({
   selected: state => state.erp.selectedOrder,
@@ -106,51 +106,51 @@ const computed = mapState({
   users: state => state.users.userList
 });
 
-const userMethods = mapActions("users", ["readUsers"]);
+const userMethods = mapActions("users", ["readUsers"])
 
-const erpMethods = mapActions("erp", ["saveErpOrder", "editErpOrder"]);
+const erpMethods = mapActions("erp", ["saveErpOrder", "editErpOrder"])
 
 export default {
   computed,
   methods: Object.assign({}, erpMethods, userMethods, {
     addTask() {
       //if (!this.selected.tasks) this.selected.tasks = [];
-      let length = this.selected.tasks.length;
+      let length = this.selected.tasks.length
       let currentCount = !length
         ? 0
-        : this.selected.tasks[length - 1].id + 5000;
+        : this.selected.tasks[length - 1].id + 5000
       this.selected.tasks.push({
         id: currentCount,
         name: this.newTask,
         taskItems: []
-      });
-      this.newTask = "";
-      console.log("counter: " + currentCount);
+      })
+      this.newTask = ""
+      console.log("counter: " + currentCount)
     },
     editNewTask(payload) {
-      this.newTask = payload;
+      this.newTask = payload
     },
     appendTaskItem(item) {
-      let currentCount = item.id + item.taskItems.length + 1;
-      item.taskItems.push({ id: currentCount, name: "" });
-      console.log("counter: " + currentCount);
+      let currentCount = item.id + item.taskItems.length + 1
+      item.taskItems.push({ id: currentCount, name: "" })
+      console.log("counter: " + currentCount)
     },
     removeTaskOrItem(item) {
-      this.selected.tasks = this.selected.tasks.filter(m => m.id != item.id);
+      this.selected.tasks = this.selected.tasks.filter(m => m.id != item.id)
       this.selected.tasks.forEach(element => {
-        element.taskItems = element.taskItems.filter(m => m.id != item.id);
-      });
+        element.taskItems = element.taskItems.filter(m => m.id != item.id)
+      })
     }
   }),
   data() {
     return {
       newTask: "",
       taskCounter: 0
-    };
+    }
   },
   mounted() {
-    this.readUsers();
+    this.readUsers()
   }
-};
+}
 </script>
 <style lang="stylus"></style>

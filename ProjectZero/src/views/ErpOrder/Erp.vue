@@ -45,8 +45,8 @@
   </div>
 </template>
 <script>
-import { mapState, mapActions } from "vuex";
-import EditErp from "./EditErp";
+import { mapState, mapActions } from "vuex"
+import EditErp from "./EditErp"
 
 const computed = mapState("erp", {
   selected: state => state.selected,
@@ -56,24 +56,24 @@ const computed = mapState("erp", {
   headers: state => state.header,
   erp: state => state.erpOrders,
   enableEdit: state => state.selected && state.selected.length
-});
+})
 
 const methods = mapActions("erp", [
   "selectErpOrder",
   "searchFor",
   "loadErpOrders",
   "editErpOrder"
-]);
+])
 
 export default {
   components: { EditErp },
   data() {
-    return {};
+    return {}
   },
   computed,
   methods,
   mounted() {
-    this.loadErpOrders();
+    this.loadErpOrders()
   }
 };
 </script>

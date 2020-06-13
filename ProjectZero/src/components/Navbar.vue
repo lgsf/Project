@@ -70,6 +70,10 @@
 import { db } from "@/main"
 import { mapActions  } from "vuex"
 
+
+const authMethods = mapActions("auth", ["userSignOut"])
+const loadingMethods = mapActions("general", ["setLoadingNavbar", "stopLoadingNavbar"])
+
 export default {
   data() {
     return {
@@ -77,14 +81,11 @@ export default {
       links: []
     };
   },
-  computed: {
-     ...mapActions("auth", ["userSignOut"]),
-     
+  computed: Object.assign({}, loadingMethods, authMethods, {
   isLoading(){
     return this.$store.state.general.loadingNavbar
-  },
-     ...mapActions("general", ["setLoadingNavbar", "stopLoadingNavbar"])
-  },
+  }
+  }),
 
   methods: {
     logout() {
@@ -115,7 +116,7 @@ export default {
   mounted() {
     this.loadMenu()
   }
-};
+}
 </script>
 
 <style>

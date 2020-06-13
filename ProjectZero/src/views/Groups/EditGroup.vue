@@ -50,36 +50,36 @@
   </v-row>
 </template>
 <script>
-import { db } from "@/main";
-import Email from "@/components/shared/Email";
+import { db } from "@/main"
+import Email from "@/components/shared/Email"
 
-var menuItems = [];
+var menuItems = []
 
 function loadMeunuOptions() {
-  menuItems.splice(0, menuItems.length);
+  menuItems.splice(0, menuItems.length)
   db.collection("menuItems")
     .get()
-    .then(onMenuOptionsLoaded);
+    .then(onMenuOptionsLoaded)
 }
 
 function onMenuOptionsLoaded(snapshot) {
   snapshot.forEach(config => {
-    let appData = config.data();
-    menuItems.push(appData);
-  });
+    let appData = config.data()
+    menuItems.push(appData)
+  })
 }
 
 function fillGroupData(model, dataObj) {
-  model.groupId = dataObj.id;
-  model.groupName = dataObj.name;
+  model.groupId = dataObj.id
+  model.groupName = dataObj.name
   model.groupEmail = dataObj.email;
   (dataObj.menu || []).forEach(menuItem => {
-    model.selection.push(menuItem.id);
-    if (!menuItem.children) return;
+    model.selection.push(menuItem.id)
+    if (!menuItem.children) return
     menuItem.children.forEach(menuSubItem =>
       model.selection.push(menuSubItem.id)
-    );
-  });
+    )
+  })
 }
 
 function createNewGroup(self) {
@@ -91,13 +91,13 @@ function createNewGroup(self) {
       menu: menu || []
     })
     .then(function() {
-      self.close();
-      if (!self.refreshGroups) return;
-      self.refreshGroups();
+      self.close()
+      if (!self.refreshGroups) return
+      self.refreshGroups()
     })
     .catch(function(error) {
-      console.error("Error writing document: ", error);
-    });
+      console.error("Error writing document: ", error)
+    })
 }
 
 function getMenuSelectedItems(self) {
@@ -106,12 +106,12 @@ function getMenuSelectedItems(self) {
       self.selection.includes(m.id) ||
       (!!m.children &&
         m.children.filter(n => self.selection.includes(n.id)).length > 0)
-  );
+  )
 }
 
 function updateExistingGroup(self) {
-  if (!self.groupName || !self.$refs.EmalCmp.isValid()) return;
-  let menu = getMenuSelectedItems(self);
+  if (!self.groupName || !self.$refs.EmalCmp.isValid()) return
+  let menu = getMenuSelectedItems(self)
   db.collection("groups")
     .doc(self.groupId)
     .set({
@@ -120,13 +120,13 @@ function updateExistingGroup(self) {
       menu: menu || []
     })
     .then(function() {
-      self.close();
-      if (!self.refreshGroups) return;
-      self.refreshGroups();
+      self.close()
+      if (!self.refreshGroups) return
+      self.refreshGroups()
     })
     .catch(function(error) {
-      console.error("Error writing document: ", error);
-    });
+      console.error("Error writing document: ", error)
+    })
 }
 
 export default {
@@ -143,28 +143,28 @@ export default {
       rules: {
         required: value => !!value || "Campo obrigatório."
       }
-    };
+    }
   },
   methods: {
     show(obj) {
-      fillGroupData(this, obj);
-      this.dialog = true;
+      fillGroupData(this, obj)
+      this.dialog = true
     },
     close() {
-      this.groupName = "";
-      this.groupEmail = "";
-      this.dialog = false;
-      this.selection.splice(0, this.selection.length);
+      this.groupName = ""
+      this.groupEmail = ""
+      this.dialog = false
+      this.selection.splice(0, this.selection.length)
     },
     save() {
-      let self = this;
-      if (!self.groupId) createNewGroup(self);
-      else updateExistingGroup(self);
+      let self = this
+      if (!self.groupId) createNewGroup(self)
+      else updateExistingGroup(self)
     }
   },
   mounted() {
-    loadMeunuOptions();
+    loadMeunuOptions()
   }
-};
+}
 </script>
 <style lang="stylus"></style>

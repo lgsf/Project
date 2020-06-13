@@ -1,13 +1,13 @@
 <template>
 <div class="setup">
     <v-row justify="center">
-        <div class="text-center screen-margin-top" v-if="loading">
+        <div class="text-center screen-margin-top" v-if="isLoading">
           <v-progress-circular
             indeterminate
             color="primary"
           ></v-progress-circular>
         </div>
-        <v-card v-if="!loading">
+        <v-card v-if="!isLoading">
         <v-toolbar class="primary white--text" >
           <h3>
             {{ screenTitle }}
@@ -100,6 +100,9 @@
 <script>
 import { db } from '@/main'
 import { fileStorage } from '@/main'
+import { mapActions  } from "vuex"
+
+
 export default {
   data() {
     return {
@@ -119,28 +122,28 @@ export default {
       companyEmail: '',
       image: null,
       imageUrl: ''
-};    
+    } 
   },
   methods: {
     uploadLogoButtonClick(){
-        this.$refs.uploadLogo.click();
+        this.$refs.uploadLogo.click()
       },
     setSelectedTheme(value) {
-        this.$vuetify.theme.light = value == 'Light';
-        this.$vuetify.theme.dark = value == 'Dark';
+        this.$vuetify.theme.light = value == 'Light'
+        this.$vuetify.theme.dark = value == 'Dark'
       },
     onFilePicked (event){
         const inputFile = event.target.files[0];
-        const fileReader = new FileReader();
+        const fileReader = new FileReader()
         fileReader.onload = (e) => {
-          this.imageUrl = e.target.result;
+          this.imageUrl = e.target.result
         };
 
-        fileReader.readAsDataURL(inputFile);
+        fileReader.readAsDataURL(inputFile)
         this.image = inputFile
     },
     readConfiguration() {
-      this.$store.dispatch("isLoading")
+      this.setIsLoading
       db.collection("systemConfiguration")
         .get()
         .then((querySnapshot) => {
@@ -151,21 +154,21 @@ export default {
             this.companyEmail = doc.data().company_email
             this.selectedTheme = doc.data().theme_code
             })
-            this.$store.dispatch("finishedLoading")
+            this.resetIsLoading
         })
         .catch((error) => {
-          this.$store.dispatch("finishedLoading")
-          console.log("Error getting documents: ", error);
-        });
+          this.resetIsLoading
+          console.log("Error getting documents: ", error)
+        })
 
         fileStorage.ref().listAll()
         .then(result => {
           result.items[0].getDownloadURL()
-          .then((url) => { this.imageUrl = url });
+          .then((url) => { this.imageUrl = url })
         })
         .catch((error) => {
-          console.log("Error getting logo image: ", error);
-        });
+          console.log("Error getting logo image: ", error)
+        })
     },
     saveConfiguration() {
       db.collection("systemConfiguration")
@@ -182,22 +185,23 @@ export default {
           storageRef.put(this.image)
         })
         .then(()=>{
-          this.readConfiguration();
+          this.readConfiguration()
         })
         .catch((error) => {
-          console.error("Error updating document: ", error);
-        });
+          console.error("Error updating document: ", error)
+        })
     },
   },
   computed: {
-    loading() {
-      return this.$store.getters.loading
-    }
+    isLoading() {
+       return this.$store.state.general.isLoading
+    },
+    ...mapActions("general", ["setIsLoading", "resetIsLoading"]),
    },
   mounted() {
-    this.readConfiguration();
-  },
-};
+    this.readConfiguration()
+  }
+}
 </script>
 
 <style>

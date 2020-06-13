@@ -20,6 +20,7 @@ const mutations = {
 
 const actions = {
     userLogin({ commit }, { email, password }) {
+        sessionStorage.clear()
         this.dispatch('general/setIsLoading')
         firebase
             .auth()
@@ -48,13 +49,13 @@ const actions = {
             .then(() => {
                 commit('setUser', null)
                 commit('setIsAuthenticated', false)
-                localStorage.clear()
+                sessionStorage.clear()
                 router.push('/')
             })
             .catch(() => {
                 commit('setUser', null)
                 commit('setIsAuthenticated', false)
-                localStorage.clear()
+                sessionStorage.clear()
                 router.push('/')
             })
     },
@@ -68,12 +69,14 @@ const actions = {
                 commit('setUser', null)
                 commit('setIsAuthenticated', false)
                 this.dispatch('general/resetIsLoading')
+                sessionStorage.clear()
                 router.push('/')
             })
             .catch(() => {
                 commit('setUser', null);
                 commit('setIsAuthenticated', false)
                 this.dispatch('general/resetIsLoading')
+                sessionStorage.clear()
                 router.push('/')
             })
     }

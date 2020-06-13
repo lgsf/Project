@@ -50,13 +50,13 @@ export default {
 	created() {
     let timerId = setInterval(() => {
       this.time -= 1000;
-      if (!this.$store.state.idleVue.isIdle) clearInterval(timerId);
+      if (!this.$store.state.idleVue.isIdle) clearInterval(timerId)
 
       if (this.time < 1) {
-        clearInterval(timerId);
+        clearInterval(timerId)
         this.logout()
       }
-    }, 1000);
+    }, 1000)
   }
 };
 </script>

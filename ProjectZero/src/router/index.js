@@ -74,7 +74,7 @@ const routes = [
   },
   {
     path: '/EditServiceOrder/:id', //Ordem de serviço
-    name: 'ServiceOrder',
+    name: 'EditServiceOrder',
     component: EditServiceOrder,
     props: true,
     meta: {

@@ -77,14 +77,14 @@ const methods = mapActions("notifications", [
 export default {
   components: { EditNotification },
   data() {
-    return {};
+    return {}
   },
   computed,
   methods,
   mounted() {
-    this.loadNotifications();
+    this.loadNotifications()
   }
-};
+}
 </script>
 <style>
 </style>

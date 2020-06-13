@@ -43,7 +43,7 @@
   </v-row>
 </template>
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions } from "vuex"
 
 const computed = mapState("notifications", {
   selected: state => state.selected,
