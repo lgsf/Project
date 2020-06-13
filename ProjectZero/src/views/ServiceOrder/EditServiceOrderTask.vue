@@ -10,17 +10,20 @@
           <v-container>
             <v-row>
               <v-col cols="12" style="padding-bottom: 0px">
-                <v-text-field label="Nome: " :value="selectedTask.name" @input="updateTaskName"></v-text-field>
+                <v-text-field label="Nome: " :disabled="!isInEditMode" v-model="selectedTask.name"></v-text-field>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12" class="no-top-bottom-padding">
                 <v-row>
-                  <v-col cols="6" class="no-top-bottom-padding">
-                    <v-text-field label="Data de criação:" disabled :value="selectedTask.creation_date"></v-text-field>
+                  <v-col cols="5" class="no-top-bottom-padding">
+                    <v-text-field label="Data de criação:" disabled v-model="selectedTask.creation_date"></v-text-field>
                   </v-col>
-                  <v-col cols="6" class="no-top-bottom-padding">
-                    <v-text-field label="Data de encerramento:" :value="selectedTask.end_date" @input="updateTaskEndDate"></v-text-field>
+                  <v-col cols="5" class="no-top-bottom-padding">
+                    <v-text-field label="Data de encerramento:" :disabled="!isInEditMode" v-model="selectedTask.end_date"></v-text-field>
+                  </v-col>
+                  <v-col cols="2" class="no-top-bottom-padding">
+                    <v-btn color="gray" @click="isInEditMode = !isInEditMode">Edit</v-btn>
                   </v-col>
                 </v-row>
               </v-col>
@@ -28,7 +31,7 @@
             <v-row>
               <v-col cols="12">
                 <v-autocomplete
-                  :value="selectedUsers"
+                  v-model="selectedTask.users"
                   :items="users"
                   color="primary"
                   item-text="name"
@@ -37,13 +40,13 @@
                   dense
                   multiple
                   required
-                  @input="updateTaskUsers"
                 ></v-autocomplete>
               </v-col>
             </v-row>
             <v-treeview
+                v-if="!isInEditMode"
                 v-model="activeTask"
-                :items="taskItemList"
+                :items="selectedTask.items"
                 dense
                 item-key="id"
                 selected-color="accent"
@@ -57,65 +60,81 @@
                       @input="updateTaskItem"
                   ></v-checkbox>
                 </template>
-                <template v-slot:append="{ item }">
-                  <v-btn icon color="gray" @click="showTaskItemDialog(item)">
-                    <v-icon>mdi-pen</v-icon>
-                  </v-btn>
-                  <v-btn icon color="green" @click="showTaskItemDialog({description: '', id: undefined, done: false})">
-                    <v-icon>mdi-plus</v-icon>
-                  </v-btn>
-                  <v-btn icon color="red" @click="removeTaskItem(item)" :disabled="taskItemList.length <= 1">
-                    <v-icon>mdi-close</v-icon>
-                  </v-btn>
-                </template>
             </v-treeview>
+                <v-treeview
+                  v-if="isInEditMode"
+                  :items="[selectedTask]"
+                  item-children="taskItems"
+                  dense
+                  item-key="id"
+                  selected-color="accent"
+                  color="primary"
+                >
+                  <template v-slot:prepend="{ leaf }">
+                    <v-icon v-if="!leaf">mdi-calendar-today</v-icon>
+                    <v-icon v-if="leaf">mdi-chevron-right</v-icon>
+                  </template>
+                  <template v-slot:label="{ item }">
+                    <v-text-field v-model="item.name" />
+                  </template>
+                  <template v-slot:append="{ item, leaf }">
+                    <v-btn v-if="!leaf" icon color="green" @click="appendTaskItem(item)">
+                      <v-icon>mdi-plus</v-icon>
+                    </v-btn>
+                    <v-btn icon color="red" @click="removeTaskOrItem(item)">
+                      <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                  </template>
+                </v-treeview>
           </v-container>
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="closeEditServiceOrderTaskModal">Fechar</v-btn>
-          <v-btn color="blue darken-1" text @click="saveTask">Salvar</v-btn>
+          <v-btn color="blue darken-1" text @click="closeTaskModal">Fechar</v-btn>
+          <v-btn color="blue darken-1" text @click="saveTask" :disabled="isInEditMode">Salvar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <EditServiceOrderTaskItem></EditServiceOrderTaskItem>
   </v-row>
 </template>
 
 <script>
 import { mapState, mapActions } from "vuex";
-import EditServiceOrderTaskItem from "./EditServiceOrderTaskItem.vue";
 
 const computed = mapState({
-    dialog: state => state.productionOrders.showTaskDialog,
-    selectedTask: state => state.productionOrders.selectedTask,
-    taskItemList: state => state.productionOrders.selectedTask.items,
+    dialog: state => state.serviceOrders.showTaskDialog,
+    selectedTask: state => state.serviceOrders.selectedTask,
     users: state => state.users.userList,
-    treeviewRerenderTrigger: state => state.productionOrders.treeviewRerenderTrigger,
-    selectedUsers: state => state.productionOrders.selectedTask.users || []
+    selectedUsers: state => state.serviceOrders.selectedTask.users || []
 });
 
 const userMethods = mapActions("users", ["readUsers"]);
 
-const methods = mapActions("productionOrders", [
-  "closeEditServiceOrderTaskModal",
+const methods = mapActions("serviceOrders", [
+  "closeTaskModal",
   "saveTask",
-  "updateTaskName",
-  "updateTaskEndDate",
-  "updateTaskItem",
-  "showTaskItemDialog",
-  "appendTaskItem",
-  "removeTaskItem",
-  "updateTaskUsers"
 ]);
 
 export default {
     data() {
-        return { }
+        return {
+          isInEditMode: false
+         }
     },
-    components: { EditServiceOrderTaskItem },
-    methods:  Object.assign({}, methods, userMethods),
+    methods:  Object.assign({}, methods, userMethods, {
+          appendTaskItem(item) {
+            let currentCount = item.id + item.taskItems.length + 1;
+            item.taskItems.push({ id: currentCount, name: "" });
+            console.log("counter: " + currentCount);
+          },
+          removeTaskOrItem(item) {
+            this.selected.tasks = this.selected.tasks.filter(m => m.id != item.id);
+            this.selected.tasks.forEach(element => {
+              element.taskItems = element.taskItems.filter(m => m.id != item.id);
+            });
+    }
+    }),
     computed,
     mounted() {
       this.readUsers();
