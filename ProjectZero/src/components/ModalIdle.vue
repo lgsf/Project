@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import { mapActions  } from "vuex"
+
 export default {
 	data() {
 		return {
@@ -36,10 +38,11 @@ export default {
     },
      methods: {
     logout() {
-      this.$store.dispatch("userSignOut")
+      this.userSignOut
         }
      },
      computed: {
+      ...mapActions("auth", ["userSignOut"]),
     isIdle(){
       return this.$store.state.idleVue.isIdle;
     }
