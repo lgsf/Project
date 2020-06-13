@@ -22,19 +22,14 @@ export default {
   name: "App",
 
   data() {
-    return {};
-  },
-  methods: {
-    logout() {
-      this.$store.dispatch("userSignOut")
-    }
+    return {}
   },
   computed: {
     isAuthenticated() {
-      return this.$store.getters.isAuthenticated;
+      return this.$store.state.auth.isAuthenticated
     },
     isIdle(){
-      return this.$store.state.idleVue.isIdle;
+      return this.$store.state.idleVue.isIdle
     }
   }
 }

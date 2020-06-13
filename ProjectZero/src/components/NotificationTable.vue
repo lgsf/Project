@@ -1,13 +1,13 @@
 <template>
  
 <v-col class="xs-12 sm-6">
-  <div class="text-center" v-if="loading">
+  <div class="text-center" v-if="isLoading">
     <v-progress-circular
       indeterminate
       color="primary"
     ></v-progress-circular>
   </div>
-  <v-card v-if="!loading"
+  <v-card v-if="!isLoading"
   >
         <v-toolbar class="primary ">
           <h3 class="white--text">{{ screenTitle }}</h3>
@@ -37,7 +37,8 @@
 
 <script>
 // @ is an alias to /src
-import { db } from "@/main";
+import { db } from "@/main"
+import { mapActions  } from "vuex"
 
 
 export default {
@@ -55,13 +56,14 @@ export default {
     }
   },
    computed: {
-    loading() {
-      return this.$store.getters.loading
-    }
+    isLoading() {
+     return this.$store.state.general.isLoading;
+    },
+    ...mapActions("general", ["setIsLoading", "resetIsLoading"]),
    },
    methods: {
     readNotifications() {
-      this.$store.dispatch("isLoading")
+      this.setIsLoading
       this.notifications = [];
       db.collection("notifications")
         .get()
@@ -74,11 +76,11 @@ export default {
               detail: doc.data().detail,
               date: doc.data().date
             })
-            this.$store.dispatch("finishedLoading")
           })
+        this.resetIsLoading
         })
         .catch(error => {
-          this.$store.dispatch("finishedLoading")
+       
           console.log("Error getting documents: ", error)
         })
     },

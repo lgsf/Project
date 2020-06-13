@@ -1,4 +1,4 @@
-import { db } from "@/main";
+import { db } from "@/main"
 
 const state = () => ({
     label: '',
@@ -47,35 +47,35 @@ const state = () => ({
             state.notifications = payload
         },
         editNotification(state, payload) {
-            let anySelected = !!state.selected;
-            state.editingName = anySelected ? state.selected.name : '';
-            state.editingTitle = anySelected ? state.selected.title : '';
-            state.editingDetail = anySelected ? state.selected.detail : '';
-            state.editingDate = anySelected ? state.selected.date : '';
+            let anySelected = !!state.selected
+            state.editingName = anySelected ? state.selected.name : ''
+            state.editingTitle = anySelected ? state.selected.title : ''
+            state.editingDetail = anySelected ? state.selected.detail : ''
+            state.editingDate = anySelected ? state.selected.date : ''
             state.editNotification = payload
         },
         editName(state, payload) {
-            state.editingName = payload;
+            state.editingName = payload
         },
         editTitle(state, payload) {
-            state.editingTitle = payload;
+            state.editingTitle = payload
         },
         editDetail(state, payload) {
-            state.editingDetail = payload;
+            state.editingDetail = payload
         },
         editDate(state, payload) {
-            state.editingDate = payload;
+            state.editingDate = payload
         }
     };
 
     function onGroupsLoaded(context, payload) {
-        let notifications = [];
+        let notifications = []
         payload.forEach(notificationSnapShot => {
-            let notificationData = notificationSnapShot.data();
-            notificationData.id = notificationSnapShot.id;
-            notifications.push(notificationData);
-        });
-        context.commit('updateNotifications', notifications);
+            let notificationData = notificationSnapShot.data()
+            notificationData.id = notificationSnapShot.id
+            notifications.push(notificationData)
+        })
+        context.commit('updateNotifications', notifications)
     }
 
     function createNewNotification(state) {
@@ -96,13 +96,13 @@ const state = () => ({
                 name: state.editingName || "",
                 detail: state.editingDetail || "",
                 date: state.editingDate || ""
-            });
+            })
     }
 
     const actions = {
         selectNotification({ state, commit }, payload) {
-            if (!state) console.log('Error, state is undifined.');
-            var selected = !payload ? undefined : payload[0];
+            if (!state) console.log('Error, state is undifined.')
+            var selected = !payload ? undefined : payload[0]
             commit('selectNotification', selected)
         },
         searchFor({ state, commit }, payload) {
@@ -165,7 +165,7 @@ const state = () => ({
     
 }
     const getters = {
-    };
+    }
     
     export default {
         namespaced: true,

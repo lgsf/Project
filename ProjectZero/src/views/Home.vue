@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-  <v-subheader> <h3> Bem-vindo {{id}}! </h3></v-subheader>
+  <v-subheader> <h3> Bem-vindo {{whoIs}}! </h3></v-subheader>
   <v-row >
     <NotificationTable/>
    <Calendar/>
@@ -22,9 +22,10 @@ export default {
             id: 'usuário'
     }
   },
-  methods: {
-  
-  }
-
+  computed: {
+    whoIs() {
+      return this.$store.state.auth.user['name']
+    }
+}
 }
 </script>

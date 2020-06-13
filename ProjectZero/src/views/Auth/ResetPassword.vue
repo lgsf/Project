@@ -24,8 +24,8 @@
                   color="success"
                 > Limpar</v-btn>
                  <v-spacer></v-spacer>
-              <v-btn @click="resetPassword"
-                  :loading="loading"
+              <v-btn @click="go"
+                  :loading="isLoading"
                   color="primary"
                   :disabled="!valid"
                 > Enviar senha
@@ -46,6 +46,7 @@
 </template>
 
 <script>
+import { mapActions  } from "vuex"
 
 export default {
     name: 'ResetPassword',
@@ -61,13 +62,15 @@ export default {
         }
     },
     computed: {
-      loading(){
-        return this.$store.getters.loading
+      isLoading(){
+        return this.$store.state.general.isLoading
       }
     },
     methods: {
-        resetPassword() {
-                this.$store.dispatch('resetPassword', {
+
+      ...mapActions("auth", ["resetPassword"]),
+        go() {
+                this.resetPassword({
                     email: this.email
                 })
         },

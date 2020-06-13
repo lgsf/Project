@@ -117,7 +117,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.authRequired)) {
-    if (!store.getters.isAuthenticated) {
+    if (!store.state.auth.isAuthenticated) {
       next({
         path: '/'
       });
@@ -129,13 +129,13 @@ router.beforeEach((to, from, next) => {
   }
 
   if (to.matched.some(record => record.meta.hideForAuth)) {
-    if (store.getters.isAuthenticated) {
-      next({ path: '/home' });
+    if (store.state.auth.isAuthenticated) {
+      next({ path: '/home' })
     } else {
-      next();
+      next()
     }
   } else {
-    next();
+    next()
   }
 });
 

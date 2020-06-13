@@ -15,7 +15,7 @@
     <div v-if="drawer">
       <v-navigation-drawer app v-model="drawer"  class="grey-3">
         <v-card>
-          <div class="text-center" v-if="loading">
+          <div class="text-center" v-if="isLoading">
             <br>
             <br>
           <v-progress-circular
@@ -26,7 +26,7 @@
           <br>
           <br>
           </div>
-          <v-list flat v-if="!loading">
+          <v-list flat v-if="!isLoading">
             <v-subheader>Menu</v-subheader>
             <div v-for="(link, i) in links" :key="i">
               <v-list-item v-if="!link.children" :key="i" color="primary" router :to="link.route">
@@ -67,7 +67,8 @@
 </template>
 
 <script>
-import { db } from "@/main";
+import { db } from "@/main"
+import { mapActions  } from "vuex"
 
 export default {
   data() {
@@ -77,44 +78,42 @@ export default {
     };
   },
   computed: {
-    isAuthenticated() {
-      return this.$store.getters.isAuthenticated
-    },
-    loading() {
-      return this.$store.getters.loadingNavbar
-    },
-    userObj() {
-      return this.$store.getters.userObj
-    }
+     ...mapActions("auth", ["userSignOut"]),
+     
+  isLoading(){
+    return this.$store.state.general.loadingNavbar
   },
+     ...mapActions("general", ["setLoadingNavbar", "stopLoadingNavbar"])
+  },
+
   methods: {
     logout() {
-      this.$store.dispatch("userSignOut")
+      this.userSignOut
     },
+
+
     loadMenu() {
-      this.$store.dispatch("isLoadingNavbar")
+      this.setLoadingNavbar
       let groupId = "bmyiE5pvx66Ct7Wmj78b"
-      if(this.userObj && this.userObj.group_id)
-        groupId = this.userObj.group_id
       if(groupId){
           db.collection("groups")
               .doc(groupId)
               .get()
               .then((snapshots) => {
                 this.onMenuLoaded(snapshots)
-                this.$store.dispatch("finishedLoadingNavbar")
-        });
+                this.stopLoadingNavbar
+        })
       }
     },
     onMenuLoaded(groupSnapshot) {
-      let groupData = groupSnapshot.data();
+      let groupData = groupSnapshot.data()
       this.links = groupData.menu.sort(function(a, b) {
-        return a.id < b.id ? -1 : 1;
-      });
+        return a.id < b.id ? -1 : 1
+      })
     }
   },
   mounted() {
-    this.loadMenu();
+    this.loadMenu()
   }
 };
 </script>

@@ -43,7 +43,7 @@
                 </v-col>
                 <v-btn color="error" router :to="{name: 'ResetPassword'}">Esqueci a senha</v-btn>
                 <v-spacer></v-spacer>
-                <v-btn @click="login" :loading="loading" color="primary" :disabled="!valid">
+                <v-btn @click="login" :loading="isLoading" color="primary" :disabled="!valid">
                   Login
                   <template v-slot:loader>
                     <span class="custom-loader">
@@ -61,8 +61,12 @@
 </template>
 
 <script>
-import Alert from "@/components/shared/Alert";
-import { fileStorage } from "@/main";
+import Alert from "@/components/shared/Alert"
+import { mapActions  } from "vuex"
+import { fileStorage } from "@/main"
+
+
+
 
 export default {
   components: { Alert },
@@ -85,17 +89,17 @@ export default {
       ]
     };
   },
-  computed: {
-    loading() {
-      return this.$store.getters.loading;
-    }
-  },
+
+
   methods: {
+
+    ...mapActions("auth", ["userLogin"]),
+
     login() {
-      this.$store.dispatch("userLogin", {
+      this.userLogin( {
         email: this.email,
         password: this.password
-      });
+      })
     },
 
     readLogo() {
@@ -104,16 +108,21 @@ export default {
         .listAll()
         .then(result => {
           result.items[0].getDownloadURL().then(url => {
-            this.imageUrl = url;
-          });
+            this.imageUrl = url
+          })
         })
         .catch(error => {
-          console.log("Error getting logo image: ", error);
-        });
+          console.log("Error getting logo image: ", error)
+        })
+    }
+  },
+  computed: {
+    isLoading() {
+      return this.$store.state.general.isLoading
     }
   },
   mounted() {
-    this.readLogo();
+    this.readLogo()
   }
 };
 </script>
