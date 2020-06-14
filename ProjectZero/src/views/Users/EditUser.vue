@@ -3,7 +3,7 @@
     <v-dialog :value="dialog" persistent max-width="600px">
       <v-card>
         <v-toolbar class="primary" dark>
-          <v-toolbar-title>Usuario</v-toolbar-title>
+          <v-toolbar-title>Usuário</v-toolbar-title>
         </v-toolbar>
         <v-divider></v-divider>
         <v-card-text>
@@ -15,7 +15,7 @@
             </v-row>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Email" :value="email" @input="setEmail"></v-text-field>
+                <v-text-field label="Email*" :value="email" @input="setEmail" required></v-text-field>
               </v-col>
             </v-row>
             <v-row>

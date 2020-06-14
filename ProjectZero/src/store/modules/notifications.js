@@ -100,10 +100,9 @@ const state = () => ({
     }
 
     const actions = {
-        selectNotification({ state, commit }, payload) {
-            if (!state) console.log('Error, state is undifined.')
-            var selected = !payload ? undefined : payload[0]
-            commit('selectNotification', selected)
+        selectNotification({ commit }, payload) {
+            
+            commit('selectNotification', payload)
         },
         searchFor({ state, commit }, payload) {
             if (!state) console.log('Error, state is undifined.')
@@ -137,7 +136,7 @@ const state = () => ({
             commit('editDate', payload)
         },
         saveNotification({ state }) {
-            if (!state.selected)
+            if (state.selected.lenght == 0)
                 createNewNotification(state).then(() => {
                     this.dispatch('notifications/loadNotifications')
                     this.dispatch('notifications/editNotification')

@@ -62,8 +62,8 @@ const actions = {
                     userGroups.push({
                         name: doc.data().name,
                         id: doc.id
-                    });
-                });
+                    })
+                })
                 commit('setUserGroups', userGroups)
             })
             .catch(error => {

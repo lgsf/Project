@@ -40,8 +40,8 @@
                   </v-col>
                 </v-row>
                 <v-btn color="error" dark fixed bottom right fab @click="editNotification(true)">
-                  <v-icon v-show="!enableEdit">mdi-plus</v-icon>
-                  <v-icon v-show="enableEdit">mdi-pen</v-icon>
+                      <v-icon v-show="selected.length == 0">mdi-plus</v-icon>
+                      <v-icon v-show="selected.length > 0">mdi-pen</v-icon>
                 </v-btn>
               </v-col>
             </v-row>
@@ -64,7 +64,6 @@ const computed = mapState("notifications", {
   searchLabel: state => state.searchLabel,
   headers: state => state.header,
   notifications: state => state.notifications,
-  enableEdit: state => !!state.selected
 })
 
 const methods = mapActions("notifications", [
