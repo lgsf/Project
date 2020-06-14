@@ -72,6 +72,7 @@ const actions = {
     },
 
     readUsers({ state, commit }) {
+        this.dispatch('users/readGroups').then(() => {
             db.collection("users")
                 .get()
                 .then(function (snapshots) {
@@ -80,6 +81,7 @@ const actions = {
                 .catch(error => {
                     console.log("Error getting documents: ", error);
                 })
+        })
 
     },
 
@@ -124,18 +126,18 @@ const actions = {
 
     save({ state }) {
         if (state.selected.length == 0)
-        createUser(state).then(() => {
-            this.dispatch('users/readUsers')
-            this.dispatch('users/closeEditUserModal')
-        })
+            createUser(state).then(() => {
+                this.dispatch('users/readUsers')
+                this.dispatch('users/closeEditUserModal')
+            })
         else
-        updateUser(state).then(() => {
-            this.dispatch('users/readUsers')
-            this.dispatch('users/closeEditUserModal')
-        })
-            
+            updateUser(state).then(() => {
+                this.dispatch('users/readUsers')
+                this.dispatch('users/closeEditUserModal')
+            })
+
     }
-    
+
 }
 
 function onUsersLoaded(context, payload) {
@@ -156,38 +158,38 @@ function formatDate(date) {
     return `${day}/${month}/${year}`;
 }
 
-function createUser(state){
+function createUser(state) {
     return auth.createUserWithEmailAndPassword(state.editUserEmail, "temporario")
-            .then(user => {
-                db.collection("users")
-                    .doc(user.user.uid)
-                    .set({
-                        name: state.editUserName,
-                        email: state.editUserEmail,
-                        phone: state.editUserPhone,
-                        birth_date: state.editUserBirthDate,
-                        group_id: state.editUserGroup
-                    })
-            })
-            .catch(error => {
-                console.error("Error inserting document: ", error);
-            });
-    }
-    
-   function updateUser( state ) {
+        .then(user => {
+            db.collection("users")
+                .doc(user.user.uid)
+                .set({
+                    name: state.editUserName,
+                    email: state.editUserEmail,
+                    phone: state.editUserPhone,
+                    birth_date: state.editUserBirthDate,
+                    group_id: state.editUserGroup
+                })
+        })
+        .catch(error => {
+            console.error("Error inserting document: ", error);
+        });
+}
+
+function updateUser(state) {
     return db.collection("users")
-            .doc(state.selected[0].id)
-            .update({
-                name: state.editUserName,
-                email: state.editUserEmail,
-                phone: state.editUserPhone,
-                birth_date: state.editUserBirthDate,
-                group_id: state.editUserGroup,
-            })
-            .catch(error => {
-                console.error("Error updating document: ", error);
-            });
-    }
+        .doc(state.selected[0].id)
+        .update({
+            name: state.editUserName,
+            email: state.editUserEmail,
+            phone: state.editUserPhone,
+            birth_date: state.editUserBirthDate,
+            group_id: state.editUserGroup,
+        })
+        .catch(error => {
+            console.error("Error updating document: ", error);
+        });
+}
 
 
 
