@@ -149,6 +149,12 @@ const actions = {
         console.log(context)
         return db.collection("erp")
             .doc(payload.id)
+    },
+    deleteErp(context) {
+        if (context.state.selectedOrder.id)
+            db.collection("erp").doc(context.state.selectedOrder.id).delete().then(() => { this.dispatch('erp/editErpOrder').then(() => { this.dispatch('erp/loadErpOrders') }) })
+        else
+            this.dispatch('erp/editErpOrder')
     }
 };
 const getters = {};

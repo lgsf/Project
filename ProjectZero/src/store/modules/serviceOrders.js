@@ -1,4 +1,5 @@
 import { db } from "@/main";
+import router from '@/router'
 
 const state = () => ({
     client: undefined,
@@ -46,7 +47,7 @@ const mutations = {
     updateKanbanColumns(state) {
         state.kanbanColumns = state.statusList.map(status => ({
             title: status,
-            tasks: state.selectedOrderTasks.filter(task => task.status == status)
+            tasks: state.selectedOrderTasks?.filter(task => task.status == status) || []
         }));
     },
     updateSelectedTask(state, payload) {
@@ -209,21 +210,16 @@ const actions = {
     },
     saveTask(context) {
         if (context.state.selectedTask.id)
-            getTaskFromDatabase(context.state.selected[0].id, context.state.selectedTask.id)
-                .set({
-                    name: context.state.selectedTask.name,
-                    creation_date: context.state.selectedTask.creation_date,
-                    end_date: context.state.selectedTask.end_date,
-                    status: context.state.selectedTask.status,
-                    items: context.state.selectedTask.items.map((obj) => {
-                        if (!obj.done)
-                            return Object.assign({}, obj, { done: false });
-                        return Object.assign({}, obj)
-                    }) || [],
-                    users: context.state.selectedTask.users.map((obj) => { return Object.assign({}, obj) }) || []
-                })
-                .then(() => {
-                    this.dispatch('serviceOrders/loadTasksByOrder')
+            getOrderFromDatabase(context.state.selected[0].id).get()
+                .then((order) => {
+                    let orderData = order.data()
+
+                    var index = orderData.tasks.indexOf(orderData.tasks.find(t => t.id == context.state.selectedTask.id));
+                    orderData.tasks[index] = context.state.selectedTask
+
+                    getOrderFromDatabase(context.state.selected[0].id).update({ tasks: orderData.tasks }).then(() => {
+                        this.dispatch('serviceOrders/loadTasksByOrder')
+                    })
                 })
                 .then(() => {
                     this.dispatch('serviceOrders/closeTaskModal')
@@ -232,23 +228,19 @@ const actions = {
                     console.error("Error updating document: ", error);
                 });
         else
-            getOrderFromDatabase(context.state.selected[0].id).collection("tasks")
-                .add(
-                    {
-                        name: context.state.selectedTask.name,
-                        creation_date: context.state.selectedTask.creation_date,
-                        end_date: context.state.selectedTask.end_date || '',
-                        status: 'Pendente',
-                        items: context.state.selectedTask.items.map((obj) => {
-                            if (!obj.done)
-                                return Object.assign({}, obj, { done: false });
-                            return Object.assign({}, obj)
-                        }) || [],
-                        users: context.state.selectedTask.users.map((obj) => { return Object.assign({}, obj) }) || []
-                    }
-                )
-                .then(() => {
-                    this.dispatch('serviceOrders/loadTasksByOrder')
+            getOrderFromDatabase(context.state.selected[0].id).get()
+                .then((order) => {
+                    context.state.selectedTask.status = "Pendente";
+                    let orderData = order.data()
+
+                    context.state.selectedTask.id = orderData.tasks.length + 1;
+                    orderData.tasks.push(context.state.selectedTask)
+
+                    getOrderFromDatabase(context.state.selected[0].id)
+                        .update({ tasks: orderData.tasks })
+                        .then(() => {
+                            this.dispatch('serviceOrders/loadTasksByOrder')
+                        });
                 })
                 .then(() => {
                     this.dispatch('serviceOrders/closeTaskModal')
@@ -317,6 +309,14 @@ const actions = {
     },
     setOrUnsetEditMode(context) {
         context.commit('updateTaskDialogInEditMode', !context.state.taskDialogInEditMode)
+    },
+    deleteOrder(context) {
+        db.collection("serviceOrder").doc(context.state.selected[0].id)
+            .delete()
+            .then(() => {
+                this.dispatch('serviceOrders/reloadOrders')
+                    .then(() => { router.push({ path: "/serviceOrder" }); })
+            })
     }
 };
 

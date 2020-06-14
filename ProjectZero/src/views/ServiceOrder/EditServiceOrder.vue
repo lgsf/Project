@@ -24,7 +24,7 @@
             </v-col>
           </v-row>
           <v-row class="ml-5 mr-5">
-            <v-col cols="6">
+            <v-col cols="5">
               <v-text-field
                 prepend-icon="event"
                 label="Data de criação:"
@@ -33,7 +33,7 @@
                 :value="selected[0].creation_date"
               ></v-text-field>
             </v-col>
-            <v-col cols="6">
+            <v-col cols="5">
               <v-text-field
                 prepend-icon="event"
                 dense
@@ -41,6 +41,9 @@
                 :value="selected[0].end_date"
                 @input="updateOrderEndDate"
               ></v-text-field>
+            </v-col>
+            <v-col cols="2">
+              <v-btn color="error" text @click="deleteOrder">Deletar</v-btn>
             </v-col>
           </v-row>
           <v-row class="ml-5 mt-5 mr-5">
@@ -117,7 +120,8 @@ const orderMethods = mapActions("serviceOrders", [
   "showTaskDialog",
   "loadTasksByOrder",
   "onTaskDrag",
-  "saveServiceOrder"
+  "saveServiceOrder",
+  "deleteOrder"
 ]);
 
 const clientMethods = mapActions("clients", ["loadClients"]);
