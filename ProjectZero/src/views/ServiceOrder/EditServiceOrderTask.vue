@@ -132,21 +132,20 @@ const methods = mapActions("serviceOrders", [
 export default {
     data() {
         return {
-          counter: this.selectedTask?.items?.length || []
+          counter: this.selectedTask?.items?.length || 0
          }
     },
     methods:  Object.assign({}, methods, userMethods, {
           appendTaskItem(item) {
             this.counter = this.counter + 1;
-            this.selectedTask.items.push({description: item.description });
-            console.log("counter: " + this.counter);
+            this.selectedTask.items.push({description: item.description, id: this.counter });
           },
           removeTaskOrItem(item) {
-            this.selected.tasks = this.selected.tasks.filter(m => m.id != item.id);
-            this.selected.tasks.forEach(element => {
-              element.taskItems = element.taskItems.filter(m => m.id != item.id);
-            });
-    }
+            console.log(this.selectedTask.items)
+            console.log(this. selectedTask.items.filter(m => m.id != item.id))
+            console.log(this. selectedTask.items.filter(m => m.id == item.id))
+            this.selectedTask.items = this. selectedTask.items.filter(m => m.id != item.id);
+          }
     }),
     computed,
     mounted() {

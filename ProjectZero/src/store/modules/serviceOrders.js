@@ -99,12 +99,6 @@ function getOrderFromDatabase(serviceOrderId) {
         .doc(serviceOrderId)
 }
 
-function getTaskFromDatabase(serviceOrderId, taskId) {
-    return db.collection("serviceOrder")
-        .doc(serviceOrderId)
-        .collection("tasks")
-        .doc(taskId)
-}
 function formatDate(date) {
     if (!date) return null;
 
@@ -190,7 +184,7 @@ const actions = {
             payload.items = []
             payload.users = []
             payload.creation_date = formatDate(new Date().toISOString().substr(0, 10))
-            payload.items.push({ done: false, description: 'Item da tarefa (edite-me)' })
+            payload.items.push({ done: false, description: 'Item da tarefa (edite-me)', id: 0 })
             context.commit('updateTaskDialogInEditMode', true)
         }
 
@@ -253,12 +247,16 @@ const actions = {
     },
     deleteTask(context) {
         if (context.state.selectedTask.id) {
-            getTaskFromDatabase(context.state.selected[0].id, context.state.selectedTask.id).delete()
-                .then(() => {
-                    this.dispatch('serviceOrders/loadTasksByOrder')
-                })
-                .then(() => {
-                    this.dispatch('serviceOrders/closeTaskModal')
+            getOrderFromDatabase(context.state.selected[0].id).get()
+                .then((order) => {
+                    let orderData = order.data()
+
+                    orderData.tasks = orderData.tasks.filter(t => t.id != context.state.selectedTask.id)
+                    getOrderFromDatabase(context.state.selected[0].id).update({ tasks: orderData.tasks }).then(() => {
+                        this.dispatch('serviceOrders/loadTasksByOrder').then(() => {
+                            this.dispatch('serviceOrders/closeTaskModal')
+                        })
+                    })
                 })
         }
         else {
