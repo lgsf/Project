@@ -276,10 +276,18 @@ const actions = {
                         context.state.selectedTask = context.state.selectedOrderTasks.find(c => c.id == payload.added.element.id)
                         context.state.selectedTask.status = column.title
 
-                        if (column.title == "Finalizada")
+                        if (column.title == "Finalizada") {
                             context.state.selectedTask.end_date = formatDate(new Date().toISOString().substr(0, 10))
-                        else
+                        }
+                        else {
+                            if (column.title == "Em progresso") {
+                                context.state.selectedTask.started_date = formatDate(new Date().toISOString().substr(0, 10))
+                            }
+                            else {
+                                context.state.selectedTask.started_date = ''
+                            }
                             context.state.selectedTask.end_date = ''
+                        }
                     }
                 });
             });

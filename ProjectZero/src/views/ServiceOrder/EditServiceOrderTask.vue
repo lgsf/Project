@@ -9,21 +9,24 @@
         <v-card-text>
           <v-container>
             <v-row>
-              <v-col cols="12" style="padding-bottom: 0px">
+              <v-col cols="10" style="padding-bottom: 0px">
                 <v-text-field label="Nome: " :disabled="!isInEditMode" v-model="selectedTask.name"></v-text-field>
+              </v-col>
+              <v-col cols="2" class="no-top-bottom-padding">
+                <v-btn color="gray" @click="setOrUnsetEditMode">Edit</v-btn>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12" class="no-top-bottom-padding">
                 <v-row>
-                  <v-col cols="5" class="no-top-bottom-padding">
+                  <v-col cols="4" class="no-top-bottom-padding">
                     <v-text-field label="Data de criação:" disabled v-model="selectedTask.creation_date"></v-text-field>
                   </v-col>
-                  <v-col cols="5" class="no-top-bottom-padding">
-                    <v-text-field label="Data de encerramento:" disabled v-model="selectedTask.end_date"></v-text-field>
+                  <v-col cols="4" class="no-top-bottom-padding">
+                    <v-text-field label="Data de início:" disabled v-model="selectedTask.started_date"></v-text-field>
                   </v-col>
-                  <v-col cols="2" class="no-top-bottom-padding">
-                    <v-btn color="gray" @click="setOrUnsetEditMode">Edit</v-btn>
+                  <v-col cols="4" class="no-top-bottom-padding">
+                    <v-text-field label="Data de encerramento:" disabled v-model="selectedTask.end_date"></v-text-field>
                   </v-col>
                 </v-row>
               </v-col>
@@ -41,6 +44,14 @@
                   single
                   required
                 ></v-autocomplete>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12">
+                <v-textarea
+                  v-model="selectedTask.comments"
+                  label="Comentários"
+                ></v-textarea>
               </v-col>
             </v-row>
             <v-treeview
