@@ -72,7 +72,6 @@ const actions = {
     },
 
     readUsers({ state, commit }) {
-        this.dispatch('users/readGroups').then(() => {
             db.collection("users")
                 .get()
                 .then(function (snapshots) {
@@ -80,8 +79,8 @@ const actions = {
                 })
                 .catch(error => {
                     console.log("Error getting documents: ", error);
-                });
-        })
+                })
+
     },
 
     onSelectedUser({ commit }, payload) {
@@ -124,56 +123,20 @@ const actions = {
     },
 
     save({ state }) {
-        if (state.selected[0].id)
-            this.dispatch('users/updateUser')
+        if (state.selected.length == 0)
+        createUser(state).then(() => {
+            this.dispatch('users/readUsers')
+            this.dispatch('users/closeEditUserModal')
+        })
         else
-            this.dispatch('users/createUser')
-    },
-
-    updateUser({ state }) {
-        db.collection("users")
-            .doc(state.selected[0].id)
-            .update({
-                name: state.editUserName,
-                email: state.editUserEmail,
-                phone: state.editUserPhone,
-                birth_date: state.editUserBirthDate,
-                group_id: state.editUserGroup.id
-            })
-            .then(() => { this.dispatch('users/readUsers') })
-            .then(() => { this.dispatch('users/closeEditUserModal') })
-            .catch(error => {
-                console.error("Error updating document: ", error);
-            });
-    },
-
-    createUser({ state }) { //Create auth module and move the create user in firebase
-        auth
-            .createUserWithEmailAndPassword(state.editUserEmail, "temporario")
-            .then(function (userRecord) {
-                let uid = userRecord.user.uid
-                return new Promise(function (resolve) {
-                    resolve(uid);
-                });
-            })
-            .then(function (uid) {
-                db.collection("users")
-                    .doc(uid)
-                    .set({
-                        name: state.editUserName,
-                        email: state.editUserEmail,
-                        phone: state.editUserPhone,
-                        birth_date: state.editUserBirthDate,
-                        group_id: state.editUserGroup
-                    });
-            })
-            .then(() => this.dispatch('users/readUsers'))
-            .then(() => this.dispatch('users/closeEditUserModal'))
-            .catch(error => {
-                console.error("Error inserting document: ", error);
-            });
+        updateUser(state).then(() => {
+            this.dispatch('users/readUsers')
+            this.dispatch('users/closeEditUserModal')
+        })
+            
     }
-};
+    
+}
 
 function onUsersLoaded(context, payload) {
     let users = [];
@@ -192,6 +155,41 @@ function formatDate(date) {
     const [year, month, day] = date.split("-");
     return `${day}/${month}/${year}`;
 }
+
+function createUser(state){
+    return auth.createUserWithEmailAndPassword(state.editUserEmail, "temporario")
+            .then(user => {
+                db.collection("users")
+                    .doc(user.user.uid)
+                    .set({
+                        name: state.editUserName,
+                        email: state.editUserEmail,
+                        phone: state.editUserPhone,
+                        birth_date: state.editUserBirthDate,
+                        group_id: state.editUserGroup
+                    })
+            })
+            .catch(error => {
+                console.error("Error inserting document: ", error);
+            });
+    }
+    
+   function updateUser( state ) {
+    return db.collection("users")
+            .doc(state.selected[0].id)
+            .update({
+                name: state.editUserName,
+                email: state.editUserEmail,
+                phone: state.editUserPhone,
+                birth_date: state.editUserBirthDate,
+                group_id: state.editUserGroup,
+            })
+            .catch(error => {
+                console.error("Error updating document: ", error);
+            });
+    }
+
+
 
 const getters = {
     filterUsersById(state) {

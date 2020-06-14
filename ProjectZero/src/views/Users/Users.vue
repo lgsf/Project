@@ -50,7 +50,7 @@ const computed = mapState("users", {
   selected: state => state.selected,
   userList: state => state.userList,
   userGroups: state => state.userGroups
-});
+})
 
 const methods = mapActions("users", [
   "readUsers",
@@ -87,7 +87,7 @@ export default {
           {
               text: "Grupo",
               align: "start",
-              value: "group.name"
+              value: "group_id"
           }
       ],
      }
