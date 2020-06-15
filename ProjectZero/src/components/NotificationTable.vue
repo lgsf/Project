@@ -16,7 +16,7 @@
         </v-toolbar> 
          <v-expansion-panels>
             <v-expansion-panel
-            v-for="(item, i) in notifications"
+            v-for="(item, i) in uniqueNotifications"
             :key="i"
           >
                   <v-expansion-panel-header> {{item.title}}<v-spacer></v-spacer> Escrito por: {{item.name}} 
@@ -49,6 +49,7 @@ export default {
       search: "",
       screenTitle: 'Notícias',
       notifications: [],
+      uniqueNotifications: [],
       title: null,
       name: null,
       detail: null,
@@ -64,7 +65,7 @@ export default {
    methods: {
     readNotifications() {
       this.setIsLoading
-      this.notifications = [];
+      this.notifications = []
       db.collection("notifications")
         .get()
         .then(querySnapshot => {
@@ -82,7 +83,7 @@ export default {
                 date: doc.data().date
               })
             }
-            else if (userArray.length > 0) {
+            else if (userArray.length > 0 && groupArray.length == 0) {
               userArray.forEach (item =>  {
                if(item.id == this.$store.state.auth.user.uid){
                   this.notifications.push({
@@ -95,7 +96,7 @@ export default {
                    }
                  })
                 }
-              else if (groupArray.length > 0){
+              else if (groupArray.length > 0 && userArray.length == 0){
                 groupArray.forEach (item => {
                   if(item.id == this.$store.state.auth.userGroup){
                     this.notifications.push({
@@ -108,11 +109,36 @@ export default {
                 }
                })
               }
+              else {
+                  userArray.forEach (item =>  {
+                  if(item.id == this.$store.state.auth.user.uid){
+                      this.notifications.push({
+                        id: doc.id,
+                        title: doc.data().title,
+                        name: doc.data().name,
+                        detail: doc.data().detail,
+                        date: doc.data().date
+                        })
+                      }
+                    })
+                    groupArray.forEach (item => {
+                      if(item.id == this.$store.state.auth.userGroup){
+                        this.notifications.push({
+                          id: doc.id,
+                          title: doc.data().title,
+                          name: doc.data().name,
+                          detail: doc.data().detail,
+                          date: doc.data().date
+                    })
+                    }
+                  })
+              }
           })
+        let uniqueSet = new Set (this.notifications.map(e => JSON.stringify(e)))
+        this.uniqueNotifications = Array.from(uniqueSet).map(e => JSON.parse(e))
         this.resetIsLoading
         })
         .catch(error => {
-       
           console.log("Error getting documents: ", error)
         })
     },
