@@ -33,7 +33,7 @@
                       :search="search"
                       show-select
                       single-select
-                      item-key="name"
+                      item-key="id"
                       :value="selected"
                       @input="selectNotification"
                     ></v-data-table>
@@ -58,13 +58,14 @@ import { mapState, mapActions } from "vuex"
 import EditNotification from "./EditNotification"
 
 const computed = mapState("notifications", {
-  selected: state => state.selected,
+  selected: state => state.selected || [],
   listTitle: state => state.listTitle,
   search: state => state.search,
   searchLabel: state => state.searchLabel,
   headers: state => state.header,
   notifications: state => state.notifications,
 })
+
 
 const methods = mapActions("notifications", [
   "selectNotification",
@@ -73,14 +74,19 @@ const methods = mapActions("notifications", [
   "editNotification"
 ])
 
+const userMethods = mapActions("users", [
+  "readUsers",
+])
+
 export default {
   components: { EditNotification },
   data() {
     return {}
   },
   computed,
-  methods,
+  methods: Object.assign({}, methods, userMethods),
   mounted() {
+    this.readUsers()
     this.loadNotifications()
   }
 }

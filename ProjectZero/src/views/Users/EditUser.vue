@@ -42,6 +42,7 @@
                   :value="group"
                   item-text="name"
                   item-value="id"
+                  return-object
                 ></v-select>
               </v-col>
             </v-row>

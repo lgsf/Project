@@ -87,7 +87,7 @@ export default {
           {
               text: "Grupo",
               align: "start",
-              value: "group_id"
+              value: "group_id.name"
           }
       ],
      }

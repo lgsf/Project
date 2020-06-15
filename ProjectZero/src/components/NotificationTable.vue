@@ -69,13 +69,45 @@ export default {
         .get()
         .then(querySnapshot => {
           querySnapshot.forEach(doc => {
-            this.notifications.push({
-              id: doc.id,
-              title: doc.data().title,
-              name: doc.data().name,
-              detail: doc.data().detail,
-              date: doc.data().date
-            })
+            let userArray = []
+            let groupArray = []
+            userArray = doc.data().user
+            groupArray = doc.data().group
+            if(userArray.length == 0 && groupArray.length == 0){
+              this.notifications.push({
+                id: doc.id,
+                title: doc.data().title,
+                name: doc.data().name,
+                detail: doc.data().detail,
+                date: doc.data().date
+              })
+            }
+            else if (userArray.length > 0) {
+              userArray.forEach (item =>  {
+               if(item.id == this.$store.state.auth.user.uid){
+                  this.notifications.push({
+                    id: doc.id,
+                    title: doc.data().title,
+                    name: doc.data().name,
+                    detail: doc.data().detail,
+                    date: doc.data().date
+                    })
+                   }
+                 })
+                }
+              else if (groupArray.length > 0){
+                groupArray.forEach (item => {
+                  if(item.id == this.$store.state.auth.userGroup){
+                    this.notifications.push({
+                      id: doc.id,
+                      title: doc.data().title,
+                      name: doc.data().name,
+                      detail: doc.data().detail,
+                      date: doc.data().date
+                 })
+                }
+               })
+              }
           })
         this.resetIsLoading
         })
