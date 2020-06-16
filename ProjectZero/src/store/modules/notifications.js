@@ -20,12 +20,12 @@ const state = () => ({
         {
           text: "Usuário",
           align: "start",
-          value: "user"
+          value: "user[0].name"
         },
         {
           text: "Grupo",
           align: "start",
-          value: "group"
+          value: "group[0].name"
         },
         {
           text: "Mensagem",
@@ -101,8 +101,8 @@ const state = () => ({
                 title: state.editingTitle || "",
                 detail: state.editingDetail || "",
                 date: state.editingDate || "",
-                user: state.editingUser.map((obj) => { return Object.assign({}, obj) }) || [],
-                group: state.editingGroup.map((obj) => { return Object.assign({}, obj) }) || []
+                user: state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
+                group: state.editingGroup?.map((obj) => { return Object.assign({}, obj) }) || []
             })
     }
 
@@ -114,8 +114,8 @@ const state = () => ({
                 name: state.editingName || "",
                 detail: state.editingDetail || "",
                 date: state.editingDate || "",
-                user: state.editingUser.map((obj) => { return Object.assign({}, obj) }) || [],
-                group: state.editingGroup.map((obj) => { return Object.assign({}, obj) }) || []
+                user: state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
+                group: state.editingGroup?.map((obj) => { return Object.assign({}, obj) }) || []
             })
     }
 
