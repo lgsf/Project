@@ -72,7 +72,8 @@
                    </v-row>
                    <br> 
                    <v-row>
-                    <v-btn color="error"  text @click="markUnread(item.id)">Não-lido</v-btn>
+                     <v-btn color="error" v-if="isAdmin" text @click="deleteNotification(item.id)">Deletar</v-btn>
+                    <v-btn color="success"  text @click="markUnread(item.id)">Não-lido</v-btn>
                       <v-spacer></v-spacer>
                       <v-btn color="blue darken-1" text @click="markRead(item.id)">Lido</v-btn>
                    </v-row>
@@ -125,6 +126,9 @@ export default {
     isLoading() {
      return this.$store.state.general.isLoading;
     },
+    isAdmin() {
+      return this.$store.state.auth.userGroup == "bmyiE5pvx66Ct7Wmj78b"
+    },
     ...mapActions("general", ["setIsLoading", "resetIsLoading"]),
    },
    methods: {
@@ -144,6 +148,11 @@ export default {
             }).then(this.readNotifications)
      },
 
+    deleteNotification(id){
+        db.collection("notifications")
+            .doc(id)
+            .delete().then(this.readNotifications)
+    },
 
     readNotifications() {
       this.setIsLoading
