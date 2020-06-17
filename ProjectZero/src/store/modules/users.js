@@ -67,8 +67,8 @@ const actions = {
                 commit('setUserGroups', userGroups)
             })
             .catch(error => {
-                console.log("Error getting documents: ", error);
-            });
+                console.log("Error getting documents: ", error)
+            })
     },
 
     readUsers({ state, commit }) {
@@ -81,8 +81,7 @@ const actions = {
                 .catch(error => {
                     console.log("Error getting documents: ", error);
                 })
-        })
-
+            })  
     },
 
     onSelectedUser({ commit }, payload) {
@@ -95,7 +94,7 @@ const actions = {
             state.editUserEmail = state.selected[0].email
             state.editUserPhone = state.selected[0].phone
             state.editUserBirthDate = state.selected[0].birth_date
-            state.editUserGroup = state.selected[0].group[0]
+            state.editUserGroup = state.selected[0].group
         }
         commit('setShowEditModal', true)
     },
@@ -143,19 +142,18 @@ const actions = {
 function onUsersLoaded(context, payload) {
     let users = [];
     payload.forEach(userSnapShot => {
-        let userData = userSnapShot.data();
-        userData.id = userSnapShot.id;
-        userData.group = [context.state.userGroups.find(group => group.id == userSnapShot.data().group_id)]
-        users.push(userData);
-    });
-    context.commit('setUserList', users);
+        let userData = userSnapShot.data()
+        userData.id = userSnapShot.id
+        users.push(userData)
+    })
+    context.commit('setUserList', users)
 }
 
 function formatDate(date) {
     if (!date) return null;
 
-    const [year, month, day] = date.split("-");
-    return `${day}/${month}/${year}`;
+    const [year, month, day] = date.split("-")
+    return `${day}/${month}/${year}`
 }
 
 function createUser(state) {
@@ -172,8 +170,8 @@ function createUser(state) {
                 })
         })
         .catch(error => {
-            console.error("Error inserting document: ", error);
-        });
+            console.error("Error inserting document: ", error)
+        })
 }
 
 function updateUser(state) {
@@ -187,17 +185,17 @@ function updateUser(state) {
             group_id: state.editUserGroup,
         })
         .catch(error => {
-            console.error("Error updating document: ", error);
-        });
+            console.error("Error updating document: ", error)
+        })
 }
 
 
 
 const getters = {
     filterUsersById(state) {
-        return (ids) => state.userList.filter(user => ids.includes(user.id));
+        return (ids) => state.userList.filter(user => ids.includes(user.id))
     }
-};
+}
 
 export default {
     namespaced: true,

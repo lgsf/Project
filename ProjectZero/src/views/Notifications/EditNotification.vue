@@ -23,7 +23,37 @@
                 <v-text-field label="Detalhes*" :value="detail" @input="editDetail" required></v-text-field>
               </v-col>
             </v-row>
-                        <v-row>
+            <v-row>
+              <v-col cols="12">
+                <v-autocomplete
+                  v-model="editingUser"
+                  :items="users"
+                  color="primary"
+                  item-text="name"
+                  label="Definir usuários para receber a mensagem"
+                  return-object
+                  dense
+                  multiple
+                  @input="editUser"
+                ></v-autocomplete>
+              </v-col>
+              </v-row>
+              <v-row>
+              <v-col cols="12">
+                <v-autocomplete
+                  v-model="editingGroup"
+                  :items="groups"
+                  color="primary"
+                  item-text="name"
+                  label="Definir grupos para receber a mensagem"
+                  return-object
+                  dense
+                  multiple
+                  @input="editGroup"
+                ></v-autocomplete>
+              </v-col>
+              </v-row>
+             <v-row>
               <v-col cols="12">
                 <v-text-field label="Data" :value="date" @input="editDate"></v-text-field>
               </v-col>
@@ -46,31 +76,48 @@
 import { mapState, mapActions } from "vuex"
 
 const computed = mapState("notifications", {
-  selected: state => state.selected,
+  selected: state => state.selected || [],
   title: state => state.editingTitle,
   dialog: state => state.editNotification,
   name: state => state.editingName,
   detail: state => state.editingDetail,
-  date: state => state.editingDate
-});
+  date: state => state.editingDate,
+})
+
+const computedUsers = mapState("users", {
+users: state => state.userList,
+groups: state => state.userGroups
+}
+)
+
+const userMethods = mapActions("users", [
+  "readGroups",
+  "readUsers"
+  ])
 
 const methods = mapActions("notifications", [
   "editTitle",
   "editName",
   "editDetail",
   "editDate",
-  "loadNotifications",
+  "editUser",
+  "editGroup",
   "editNotification",
   "saveNotification",
   "deleteNotification"
-]);
+])
 
 export default {
-  computed,
-  methods,
   data() {
-    return {};
+    return {}
+  },
+  computed: Object.assign({}, computed, computedUsers) ,
+  methods: Object.assign({}, methods, userMethods),
+  mounted(){
+    this.readUsers()
   }
+
+  
 };
 </script>
 <style lang="stylus"></style>

@@ -18,11 +18,16 @@ const state = () => ({
           value: "title"
         },
         {
-          text: "Data",
+          text: "Usuário",
           align: "start",
-          value: "date"
+          value: "user[0].name"
         },
-          {
+        {
+          text: "Grupo",
+          align: "start",
+          value: "group[0].name"
+        },
+        {
           text: "Mensagem",
           align: "start",
           value: "detail"
@@ -33,7 +38,9 @@ const state = () => ({
       editingName: '',
       editingTitle: '',
       editingDetail: '',
-      editingDate: ''
+      editingDate: '',
+      editingUser:[],
+      editingGroup:[]
     })
 
     const mutations = {
@@ -52,6 +59,8 @@ const state = () => ({
             state.editingTitle = anySelected ? state.selected.title : ''
             state.editingDetail = anySelected ? state.selected.detail : ''
             state.editingDate = anySelected ? state.selected.date : ''
+            state.editingUser = anySelected ? state.selected.user : []
+            state.editingUser = anySelected ? state.selected.group : []
             state.editNotification = payload
         },
         editName(state, payload) {
@@ -65,10 +74,16 @@ const state = () => ({
         },
         editDate(state, payload) {
             state.editingDate = payload
+        },
+        editUser(state, payload) {
+            state.editingUser = payload
+        },
+        editGroup(state, payload) {
+            state.editingGroup = payload
         }
-    };
+    }
 
-    function onGroupsLoaded(context, payload) {
+    function onNotificationsLoaded(context, payload) {
         let notifications = []
         payload.forEach(notificationSnapShot => {
             let notificationData = notificationSnapShot.data()
@@ -76,6 +91,7 @@ const state = () => ({
             notifications.push(notificationData)
         })
         context.commit('updateNotifications', notifications)
+    
     }
 
     function createNewNotification(state) {
@@ -84,24 +100,27 @@ const state = () => ({
                 name: state.editingName || "",
                 title: state.editingTitle || "",
                 detail: state.editingDetail || "",
-                date: state.editingDate || ""
+                date: state.editingDate || "",
+                user: state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
+                group: state.editingGroup?.map((obj) => { return Object.assign({}, obj) }) || []
             })
     }
 
     function updateExistingNotification(state) {
         return db.collection("notifications")
-            .doc(state.selected.id)
+            .doc(state.selected[0].id)
             .set({
                 title: state.editingTitle || "",
                 name: state.editingName || "",
                 detail: state.editingDetail || "",
-                date: state.editingDate || ""
+                date: state.editingDate || "",
+                user: state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
+                group: state.editingGroup?.map((obj) => { return Object.assign({}, obj) }) || []
             })
     }
 
     const actions = {
         selectNotification({ commit }, payload) {
-            
             commit('selectNotification', payload)
         },
         searchFor({ state, commit }, payload) {
@@ -110,10 +129,11 @@ const state = () => ({
         },
         loadNotifications({ state, commit }) {
             db.collection("notifications")
-                .get()
-                .then(function (snapshots) {
-                    onGroupsLoaded({ state, commit }, snapshots)
-                });
+            .get()
+            .then(function (snapshots) {
+                onNotificationsLoaded({ state, commit }, snapshots)
+            });
+                
         },
         editNotification({ state, commit }, payload) {
             if (!state) console.log('Error, state is undifined.')
@@ -135,21 +155,29 @@ const state = () => ({
             if (!state) console.log('Error, state is undifined.')
             commit('editDate', payload)
         },
+        editUser({ state, commit }, payload) {
+            if (!state) console.log('Error, state is undifined.')
+            commit('editUser', payload)
+        },
+        editGroup({ state, commit }, payload) {
+            if (!state) console.log('Error, state is undifined.')
+            commit('editGroup', payload)
+        },
         saveNotification({ state }) {
-            if (state.selected.lenght == 0)
+            if (state.selected.length == 0)
                 createNewNotification(state).then(() => {
                     this.dispatch('notifications/loadNotifications')
-                    this.dispatch('notifications/editNotification')
-                });
+                    this.dispatch('notifications/editNotification', false)
+                })
             else
                 updateExistingNotification(state).then(() => {
                     this.dispatch('notifications/loadNotifications')
-                    this.dispatch('notifications/editNotification')
-                });
+                    this.dispatch('notifications/editNotification', false)
+                })
         },
         deleteNotification({ state }) {
             db.collection("notifications")
-            .doc(state.selected.id)
+            .doc(state.selected[0].id)
             .delete()
             .then(()=>{
                 this.dispatch('notifications/loadNotifications')
@@ -158,18 +186,12 @@ const state = () => ({
             .catch((error) => {
               console.error("Error deleting: ", error)
             })
-    }
-
-    
-    
+    } 
 }
-    const getters = {
-    }
     
     export default {
         namespaced: true,
         state,
-        getters,
         actions,
         mutations
     }

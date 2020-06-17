@@ -5,7 +5,8 @@ import { db } from "@/main"
 const state = () => ({
     user: null,
     isAuthenticated: false,
-    userName: ''
+    userName: '',
+    userGroup:''
 
 })
 
@@ -20,6 +21,9 @@ const mutations = {
     },
     setUserName(state, payload){
         state.userName = payload
+    },
+    setUserGroup(state, payload){
+        state.userGroup = payload
     }
 }
 
@@ -40,6 +44,7 @@ const actions = {
                 .then((snapshots) => {
                     let currentUser = snapshots.data()
                     commit('setUserName', currentUser.name)
+                    commit('setUserGroup', currentUser.group_id.id)
         })
                 this.dispatch('general/resetIsLoading')
             })
