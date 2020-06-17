@@ -24,7 +24,13 @@
             />
           </v-col>
           <v-col cols="4">
-            <donut-chart />
+            <bar-chart
+              bar-title="Tempo Trabalhado x Cliente"
+              :bar-data="workedDaysPerClient"
+              bar-data-name="Em Dias"
+              :bar-data1="workedHoursPerClient"
+              bar-data1-name="Em Horas"
+            />
           </v-col>
         </v-row>
       </v-card>
@@ -33,6 +39,7 @@
 </template>
 <script>
 import DonutChart from "@/components/shared/DonutChart";
+import BarChart from "@/components/shared/BarChart";
 import { mapState, mapActions, mapGetters } from "vuex";
 
 const computed = Object.assign(
@@ -51,6 +58,18 @@ const computed = Object.assign(
         axisY: m.tasksCount,
         text: `${m.tasksCount}`
       }));
+    },
+    workedDaysPerClient: (state, store) => {
+      return store.getWorkedDaysByClients({}).map(m => ({
+        x: m.client,
+        y: m.spentTimeInDays
+      }));
+    },
+    workedHoursPerClient: (state, store) => {
+      return store.getWorkedHoursByClients({}).map(m => ({
+        x: m.client,
+        y: m.spentTimeInHours
+      }));
     }
   }),
   mapGetters("productivity", [
@@ -64,7 +83,7 @@ const methods = mapActions("productivity", ["loadOrders"]);
 export default {
   computed,
   methods,
-  components: { DonutChart },
+  components: { DonutChart, BarChart },
   data() {
     return {};
   },
