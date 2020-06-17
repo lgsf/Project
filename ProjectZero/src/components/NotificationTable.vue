@@ -73,8 +73,8 @@
                    <v-row>
                       <v-btn color="error" v-if="isAdmin" text @click="deleteNotification(item.id)">Deletar</v-btn>
                       <v-spacer></v-spacer>
-                      <v-btn color="success"  text @click="markUnread(item.id, item)">Não-lido</v-btn>
-                      <v-btn color="blue darken-1" text @click="markRead(item.id, item)">Lido</v-btn>
+                      <v-btn color="success" v-show="item.read" text @click="markUnread(item.id, item)">Não-lido</v-btn>
+                      <v-btn color="blue darken-1" v-show="!item.read" text @click="markRead(item.id, item)">Lido</v-btn>
                    </v-row>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
