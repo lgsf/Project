@@ -14,9 +14,9 @@
             <v-spacer></v-spacer>
           <v-icon right class="white--text">notifications</v-icon>
         </v-toolbar> 
-         <v-expansion-panels>
+         <v-expansion-panels multiple>
             <v-expansion-panel
-            v-for="(item, i) in uniqueNotifications"
+            v-for="(item, i) in uniqueNotifications.slice(0 + counter, 3 + counter)"
             :key="i"
           >
                   <v-expansion-panel-header> {{item.title}}<v-spacer></v-spacer> Escrito por: {{item.name}} 
@@ -30,7 +30,18 @@
                   </v-expansion-panel-content>
                 </v-expansion-panel>
                 </v-expansion-panels>
+                  <v-card-actions >
+                    <v-btn  @click="counter-=3" color="primary" v-if="counter > 0"  dark>
+                      <v-icon >keyboard_arrow_left</v-icon>
+                      </v-btn>
+                          <v-spacer></v-spacer> <span style="text-align: center;">Total de notificações: {{ uniqueNotifications.length}} </span><v-spacer></v-spacer>
+                  <v-btn @click="counter+=3" v-if="counter < uniqueNotifications.length-3" color="primary" dark >
+                      <v-icon >keyboard_arrow_right</v-icon>
+                      </v-btn>
+         </v-card-actions>
+              
       </v-card>
+      
     </v-col>
 
 </template>
@@ -47,7 +58,8 @@ export default {
   data() {
     return {
       search: "",
-      screenTitle: 'Notícias',
+      counter: 0,
+      screenTitle: 'Notificações',
       notifications: [],
       uniqueNotifications: [],
       title: null,

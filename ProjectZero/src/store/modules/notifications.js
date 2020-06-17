@@ -2,13 +2,13 @@ import { db } from "@/main"
 
 const state = () => ({
     label: '',
-    listTitle: "Notícias",
+    listTitle: "Notificações",
     selected: [],
     search: '',
     searchLabel: 'Buscar',
     header: [
         {
-          text: "Usuário",
+          text: "Autor",
           align: "start",
           value: "name"
         } ,
@@ -18,14 +18,19 @@ const state = () => ({
           value: "title"
         },
         {
-          text: "Usuário",
+            text: "Data",
+            align: "start",
+            value: "date"
+          },
+        {
+          text: "Usuários",
           align: "start",
-          value: "user[0].name"
+          value: "user"
         },
         {
-          text: "Grupo",
+          text: "Grupos",
           align: "start",
-          value: "group[0].name"
+          value: "group"
         },
         {
           text: "Mensagem",
@@ -54,13 +59,12 @@ const state = () => ({
             state.notifications = payload
         },
         editNotification(state, payload) {
-            let anySelected = !!state.selected
-            state.editingName = anySelected ? state.selected.name : ''
-            state.editingTitle = anySelected ? state.selected.title : ''
-            state.editingDetail = anySelected ? state.selected.detail : ''
-            state.editingDate = anySelected ? state.selected.date : ''
-            state.editingUser = anySelected ? state.selected.user : []
-            state.editingUser = anySelected ? state.selected.group : []
+            state.editingName = state.selected[0]?.name || ''
+            state.editingTitle = state.selected[0]?.title || ''
+            state.editingDetail = state.selected[0]?.detail || ''
+            state.editingDate =  state.selected[0]?.date || ''
+            state.editingUser =  state.selected[0]?.user || []
+            state.editingUser =  state.selected[0]?.group || []
             state.editNotification = payload
         },
         editName(state, payload) {

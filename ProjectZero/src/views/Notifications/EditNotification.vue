@@ -15,7 +15,7 @@
             </v-row>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Nome*" :value="name" @input="editName" required></v-text-field>
+                <v-text-field label="Autor*" :value="name" @input="editName" required></v-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -63,8 +63,8 @@
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
+          <v-btn color="error" v-if="selected.length > 0" text @click="deleteNotification">Deletar</v-btn>
           <v-spacer></v-spacer>
-          <v-btn  color="blue darken-1" text @click="deleteNotification">Apagar</v-btn>
           <v-btn color="blue darken-1" text @click="editNotification(false)">Fechar</v-btn>
           <v-btn color="blue darken-1" text @click="saveNotification">Salvar</v-btn>
         </v-card-actions>
