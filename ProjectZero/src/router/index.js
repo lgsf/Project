@@ -12,6 +12,7 @@ import EditServiceOrder from '../views/ServiceOrder/EditServiceOrder.vue'
 import Users from '../views/Users/Users.vue'
 import Groups from '../views/Groups/Groups.vue'
 import Notifications from '../views/Notifications/Notifications.vue'
+import OverallProductivity from '../views/Reports/OverallProductivity.vue'
 
 Vue.use(VueRouter)
 
@@ -101,6 +102,14 @@ const routes = [
     path: '/notifications', //Notificações
     name: 'Notifications',
     component: Notifications,
+    meta: {
+      authRequired: true
+    }
+  },
+  {
+    path: '/overall-productivity', //Overall Productivity
+    name: 'OverallProductivity',
+    component: OverallProductivity,
     meta: {
       authRequired: true
     }

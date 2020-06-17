@@ -10,12 +10,12 @@
           <v-container>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Grupo*" v-model="groupName" :rules="[rules.required]"></v-text-field>
+                <v-text-field label="Grupo*" v-model="groupSelected.name" :rules="[rules.required]"></v-text-field>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12">
-                <Email label="Email" v-model="groupEmail" ref="EmalCmp"></Email>  
+                <Email label="Email" v-model="groupSelected.email" ref="EmalCmp"></Email>
               </v-col>
             </v-row>
             <v-row>
@@ -27,7 +27,8 @@
               <v-col cols="12">
                 <v-treeview
                   :items="items"
-                  v-model="selection"
+                  :value="selection"
+                  @input="setSelectedMenuItems"
                   dense
                   selectable
                   open-on-click
@@ -42,129 +43,48 @@
         <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="close">Fechar</v-btn>
-          <v-btn color="blue darken-1" text @click="save">Salvar</v-btn>
+          <v-btn color="blue darken-1" text @click="editGroup(false)">Fechar</v-btn>
+          <v-btn color="blue darken-1" text @click="saveGroup">Salvar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
   </v-row>
 </template>
 <script>
-import { db } from "@/main"
-import Email from "@/components/shared/Email"
+import { mapState, mapActions } from "vuex";
+import Email from "@/components/shared/Email";
 
-var menuItems = []
+const computed = mapState("groups", {
+  selected: state => state.selected,
+  groupSelected: state => (state.selected?.length > 0 ? state.selected[0] : {}),
+  items: state => state.menuItems,
+  selection: function(state) {
+    return state.selectedMenuItems;
+  },
+  dialog: state => state.editGroup
+});
 
-function loadMeunuOptions() {
-  menuItems.splice(0, menuItems.length)
-  db.collection("menuItems")
-    .get()
-    .then(onMenuOptionsLoaded)
-}
-
-function onMenuOptionsLoaded(snapshot) {
-  snapshot.forEach(config => {
-    let appData = config.data()
-    menuItems.push(appData)
-  })
-}
-
-function fillGroupData(model, dataObj) {
-  model.groupId = dataObj.id
-  model.groupName = dataObj.name
-  model.groupEmail = dataObj.email;
-  (dataObj.menu || []).forEach(menuItem => {
-    model.selection.push(menuItem.id)
-    if (!menuItem.children) return
-    menuItem.children.forEach(menuSubItem =>
-      model.selection.push(menuSubItem.id)
-    )
-  })
-}
-
-function createNewGroup(self) {
-  let menu = getMenuSelectedItems(self);
-  db.collection("groups")
-    .add({
-      name: self.groupName || "",
-      email: self.groupEmail || "",
-      menu: menu || []
-    })
-    .then(function() {
-      self.close()
-      if (!self.refreshGroups) return
-      self.refreshGroups()
-    })
-    .catch(function(error) {
-      console.error("Error writing document: ", error)
-    })
-}
-
-function getMenuSelectedItems(self) {
-  return self.items.filter(
-    m =>
-      self.selection.includes(m.id) ||
-      (!!m.children &&
-        m.children.filter(n => self.selection.includes(n.id)).length > 0)
-  )
-}
-
-function updateExistingGroup(self) {
-  if (!self.groupName || !self.$refs.EmalCmp.isValid()) return
-  let menu = getMenuSelectedItems(self)
-  db.collection("groups")
-    .doc(self.groupId)
-    .set({
-      name: self.groupName || "",
-      email: self.groupEmail || "",
-      menu: menu || []
-    })
-    .then(function() {
-      self.close()
-      if (!self.refreshGroups) return
-      self.refreshGroups()
-    })
-    .catch(function(error) {
-      console.error("Error writing document: ", error)
-    })
-}
+const methods = mapActions("groups", [
+  "loadMeunuOptions",
+  "editGroup",
+  "saveGroup",
+  "setSelectedMenuItems"
+]);
 
 export default {
   components: { Email },
-  props: ["refreshGroups"],
+  computed,
   data() {
     return {
-      dialog: false,
-      groupId: "",
-      groupName: "",
-      groupEmail: "",
-      items: menuItems,
-      selection: [],
       rules: {
         required: value => !!value || "Campo obrigatório."
       }
-    }
+    };
   },
-  methods: {
-    show(obj) {
-      fillGroupData(this, obj)
-      this.dialog = true
-    },
-    close() {
-      this.groupName = ""
-      this.groupEmail = ""
-      this.dialog = false
-      this.selection.splice(0, this.selection.length)
-    },
-    save() {
-      let self = this
-      if (!self.groupId) createNewGroup(self)
-      else updateExistingGroup(self)
-    }
-  },
+  methods,
   mounted() {
-    loadMeunuOptions()
+    this.loadMeunuOptions();
   }
-}
+};
 </script>
 <style lang="stylus"></style>
