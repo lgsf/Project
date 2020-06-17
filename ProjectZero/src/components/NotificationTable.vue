@@ -12,7 +12,7 @@
         <v-toolbar class="primary ">
           <h3 class="white--text">Notícias</h3>
             <v-spacer></v-spacer>
-          <v-icon right class="white--text">note</v-icon>
+          <v-icon right class="white--text">message</v-icon>
         </v-toolbar> 
          <v-expansion-panels multiple>
             <v-expansion-panel
