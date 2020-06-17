@@ -36,7 +36,20 @@
                       item-key="id"
                       :value="selected"
                       @input="selectNotification"
-                    ></v-data-table>
+                    >
+                    <template #item.user="{item}">
+                    <span v-for="item1 in item.user" :key="item1.name">
+                      {{ item1.name }}
+                      <br>
+                    </span>
+                    </template>
+                      <template #item.group="{item}">
+                    <span v-for="item2 in item.group" :key="item2.name">
+                      {{ item2.name }}
+                      <br>
+                    </span>
+                    </template>
+                    </v-data-table>
                   </v-col>
                 </v-row>
                 <v-btn color="error" dark fixed bottom right fab @click="editNotification(true)">
@@ -45,8 +58,7 @@
                 </v-btn>
               </v-col>
             </v-row>
-          <EditNotification />
-         
+          <EditNotification/>
       </v-card>
     </v-row>
   </div>
@@ -92,4 +104,5 @@ export default {
 }
 </script>
 <style>
+
 </style>

@@ -17,10 +17,10 @@
             Hoje
           </v-btn>
           <v-btn color="primary" class="mr-1" small @click="prev">
-            <v-icon >skip_previous</v-icon>
+            <v-icon >keyboard_arrow_left</v-icon>
           </v-btn>
           <v-btn color="primary" class="mr-1" small @click="next">
-            <v-icon >skip_next</v-icon>
+            <v-icon >keyboard_arrow_right</v-icon>
           </v-btn>
           <v-spacer></v-spacer>
           <v-menu bottom right>
