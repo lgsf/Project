@@ -8,29 +8,30 @@ import erp from './modules/erp'
 import serviceOrders from './modules/serviceOrders'
 import general from './modules/general'
 import notifications from './modules/notifications'
+import productivity from './modules/productivity'
 import createPersistedState from "vuex-persistedstate"
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
-    modules: { auth, groups, clients, users, erp, serviceOrders, general, notifications },
-    plugins: [
-        createPersistedState({
-          storage: window.sessionStorage,
-          paths:['auth.isAuthenticated', 'auth.userName', 'auth.userGroup', 'auth.user.uid']
-        })
-      ],
+  modules: { auth, groups, clients, users, erp, serviceOrders, general, notifications, productivity },
+  plugins: [
+    createPersistedState({
+      storage: window.sessionStorage,
+      paths: ['auth.isAuthenticated', 'auth.userName', 'auth.userGroup', 'auth.user.uid']
+    })
+  ],
 
-    state: {
-        
-    },
-    mutations: {
-        
-    },
-    actions: {
-       
-    },
-    getters: {
-       
-    }
+  state: {
+
+  },
+  mutations: {
+
+  },
+  actions: {
+
+  },
+  getters: {
+
+  }
 })

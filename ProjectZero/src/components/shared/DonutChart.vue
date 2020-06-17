@@ -22,7 +22,7 @@
             :dataLabel="dataLabel"
             endAngle="360"
             innerRadius="40%"
-            name="Project"
+            :name="legend"
             explode="true"
             explodeOffset="10%"
             :explodeIndex="explodeIndex"
@@ -47,18 +47,23 @@ import {
 
 Vue.use(AccumulationChartPlugin);
 export default Vue.extend({
+  props: ["dnt-title", "dnt-data", "dnt-legend"],
+  computed: {
+    title: props => props.dntTitle || "prop: dnt-title, type: string",
+    seriesData: props =>
+      props.dntData || [
+        {
+          axisX:
+            'prop: dnt-data, type: object array ({axisX: "Name", axisY: Value, text: "" })',
+          axisY: 10,
+          text: ""
+        }
+      ],
+    legend: props => props.dntLegend || "prop: dnt-legend, type: string"
+  },
   data: function() {
     return {
       theme: "Material",
-      seriesData: [
-        { axisX: "Labour", axisY: 18, text: "18%" },
-        { axisX: "Legal", axisY: 8, text: "8%" },
-        { axisX: "Production", axisY: 15, text: "15%" },
-        { axisX: "License", axisY: 11, text: "11%" },
-        { axisX: "Facilities", axisY: 18, text: "18%" },
-        { axisX: "Taxes", axisY: 14, text: "14%" },
-        { axisX: "Insurance", axisY: 16, text: "16%" }
-      ],
 
       //Initializing Primary X Axis
       primaryXAxis: {
@@ -106,8 +111,7 @@ export default Vue.extend({
       },
       tooltip: { enable: true },
 
-      explodeIndex: 3,
-      title: "Project Cost Breakdown"
+      explodeIndex: 3
     };
   },
   provide: {
