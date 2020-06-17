@@ -73,8 +73,8 @@
                    <v-row>
                       <v-btn color="error" v-if="isAdmin" text @click="deleteNotification(item.id)">Deletar</v-btn>
                       <v-spacer></v-spacer>
-                      <v-btn color="success"  text @click="markUnread(item.id)">Não-lido</v-btn>
-                      <v-btn color="blue darken-1" text @click="markRead(item.id)">Lido</v-btn>
+                      <v-btn color="success"  text @click="markUnread(item.id, item)">Não-lido</v-btn>
+                      <v-btn color="blue darken-1" text @click="markRead(item.id, item)">Lido</v-btn>
                    </v-row>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
@@ -130,21 +130,29 @@ export default {
     },
     ...mapActions("general", ["setIsLoading", "resetIsLoading"]),
    },
+   
    methods: {
-     markRead(id){
+
+      changeIcon(item){
+         item.read = !item.read
+     },
+     
+     markRead(id, item){
+       this.changeIcon(item)
        db.collection("notifications")
             .doc(id)
             .update({
                 read: true
-            }).then(this.readNotifications)
+            })
      },
 
-     markUnread(id){
+     markUnread(id, item){
+       this.changeIcon(item)
        db.collection("notifications")
             .doc(id)
             .update({
                 read: false
-            }).then(this.readNotifications)
+            })
      },
 
     deleteNotification(id){
@@ -235,10 +243,7 @@ export default {
         this.uniqueNews = Array.from(uniqueSet1).map(e => JSON.parse(e))
         this.resetIsLoading
         })
-        .catch(error => {
-          console.log("Error getting documents: ", error)
-        })
-    },
+    }
    },
    mounted() {
     this.readNotifications()
