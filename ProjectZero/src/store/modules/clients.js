@@ -43,7 +43,7 @@ const mutations = {
         state.clients = payload
     },
     editClient(state, payload) {
-        let anySelected = !!state.selected;
+        let anySelected = state.selected && state.selected.length > 0;
         state.editingName = anySelected ? state.selected[0].name : '';
         state.editingCnpj = anySelected ? state.selected[0].cnpj : '';
         state.editingEmail = anySelected ? state.selected[0].email : '';
