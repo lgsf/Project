@@ -25,22 +25,27 @@
           </v-row>
           <v-row class="ml-5 mr-5">
             <v-col cols="5">
-              <v-text-field
+              <DatePicker
+                      dateLabel="Data de criação:"
+                      :dateObj="selected[0].creation_date"
+                      ref="DatePicker"
+                      :disable="true"
+                    />
+              <!-- <v-text-field
                 prepend-icon="event"
                 label="Data de criação:"
                 disabled
                 dense
                 :value="selected[0].creation_date"
-              ></v-text-field>
+              ></v-text-field> -->
             </v-col>
             <v-col cols="5">
-              <v-text-field
-                prepend-icon="event"
-                dense
-                label="Data de encerramento:"
-                :value="selected[0].end_date"
-                @input="updateOrderEndDate"
-              ></v-text-field>
+              <DatePicker
+                      dateLabel="Data de encerramento:"
+                      :dateObj="selected[0].end_date"
+                      ref="DatePicker"
+                      v-on:update="updateOrderEndDate"
+                    />
             </v-col>
             <v-col cols="2">
               <v-btn color="error" text @click="deleteOrder">Deletar</v-btn>
@@ -97,6 +102,7 @@
 </template>
 
 <script>
+import DatePicker from "@/components/shared/DatePicker";
 import { mapState, mapActions } from "vuex";
 import draggable from "vuedraggable";
 import Alert from "@/components/shared/Alert";
@@ -132,7 +138,8 @@ export default {
     Alert,
     TaskCard,
     draggable,
-    EditServiceOrderTask
+    EditServiceOrderTask,
+    DatePicker
   },
   computed,
   methods: Object.assign({}, orderMethods, clientMethods),
