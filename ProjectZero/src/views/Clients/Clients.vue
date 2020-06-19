@@ -55,7 +55,7 @@ const computed = mapState("clients", {
   searchLabel: state => state.searchLabel,
   headers: state => state.header,
   clients: state => state.clients,
-  enableEdit: state => !!state.selected
+  enableEdit: state => state.selected && state.selected.length > 0
 });
 
 const methods = mapActions("clients", [

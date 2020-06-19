@@ -40,7 +40,6 @@
 import { mapState, mapActions } from "vuex";
 
 const computed = mapState("clients", {
-  selected: state => state.selected,
   title: state => state.editTitle,
   dialog: state => state.editClient,
   name: state => state.editingName,

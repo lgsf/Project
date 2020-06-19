@@ -5,7 +5,7 @@ const state = () => ({
     label: '',
     listTitle: "Clientes",
     editTitle: 'Cliente',
-    selected: undefined,
+    selected: [],
     search: '',
     searchLabel: 'Buscar',
     header: [
@@ -35,7 +35,7 @@ const state = () => ({
 const mutations = {
     selectClient(state, payload) {
         state.selected = payload
-    },
+    },  
     searchFor(state, payload) {
         state.search = payload
     },
@@ -43,10 +43,10 @@ const mutations = {
         state.clients = payload
     },
     editClient(state, payload) {
-        let anySelected = !!state.selected;
-        state.editingName = anySelected ? state.selected.name : '';
-        state.editingCnpj = anySelected ? state.selected.cnpj : '';
-        state.editingEmail = anySelected ? state.selected.email : '';
+        let anySelected = state.selected && state.selected.length > 0;
+        state.editingName = anySelected ? state.selected[0].name : '';
+        state.editingCnpj = anySelected ? state.selected[0].cnpj : '';
+        state.editingEmail = anySelected ? state.selected[0].email : '';
         state.editClient = payload
     },
     editName(state, payload) {
@@ -85,8 +85,8 @@ function createNewClient(state) {
 
 function updateExistingClient(state) {
     return db.collection("clients")
-        .doc(state.selected.id)
-        .set({
+        .doc(state.selected[0].id)
+        .update({
             name: state.editingName || "",
             email: state.editingEmail || "",
             cnpj: state.editingCnpj || ""
@@ -96,7 +96,7 @@ function updateExistingClient(state) {
 const actions = {
     selectClient({ state, commit }, payload) {
         if (!state) console.log('Error, state is undifined.');
-        var selected = !payload ? undefined : payload[0];
+        var selected = !payload ? [] : payload;
         commit('selectClient', selected)
     },
     searchFor({ state, commit }, payload) {

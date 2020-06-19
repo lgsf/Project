@@ -22,12 +22,14 @@
                   <v-expansion-panel-header> {{item.title}}<v-spacer></v-spacer> Escrito por: {{item.name}} 
                   </v-expansion-panel-header>
                   <v-expansion-panel-content>
-                    <div>
+                    <v-row>
                       Data: {{item.date}}
-                    </div>
+                     </v-row>
                     <br>
+                    <v-row>
                    {{item.detail}}
-                   {{item.id}}
+                    {{item.id}}
+                   </v-row>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
                 </v-expansion-panels>
@@ -68,6 +70,7 @@
                     <br>
                     <v-row>
                    {{item.detail}}
+                    {{item.id}}
                    </v-row>
                    <br> 
                    <v-row>
@@ -121,18 +124,18 @@ export default {
       read: null
     }
   },
+
    computed: {
     isLoading() {
-     return this.$store.state.general.isLoading;
+     return this.$store.state.general.isLoading
     },
     isAdmin() {
       return this.$store.state.auth.userGroup == "bmyiE5pvx66Ct7Wmj78b"
     },
-    ...mapActions("general", ["setIsLoading", "resetIsLoading"]),
+    ...mapActions("general", ["setIsLoading", "resetIsLoading"])
    },
    
    methods: {
-
       changeIcon(item){
          item.read = !item.read
      },
@@ -158,7 +161,9 @@ export default {
     deleteNotification(id){
         db.collection("notifications")
             .doc(id)
-            .delete().then(this.readNotifications)
+            .delete()
+            .then(() => {
+              this.readNotifications()})
     },
 
     readNotifications() {
@@ -243,8 +248,9 @@ export default {
         this.uniqueNews = Array.from(uniqueSet1).map(e => JSON.parse(e))
         this.resetIsLoading
         })
-    }
+      }
    },
+
    mounted() {
     this.readNotifications()
   }
