@@ -106,7 +106,8 @@ const state = () => ({
                 detail: state.editingDetail || "",
                 date: state.editingDate || "",
                 user: state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
-                group: state.editingGroup?.map((obj) => { return Object.assign({}, obj) }) || []
+                group: state.editingGroup?.map((obj) => { return Object.assign({}, obj) }) || [],
+                read: false
             })
     }
 
@@ -119,7 +120,8 @@ const state = () => ({
                 detail: state.editingDetail || "",
                 date: state.editingDate || "",
                 user: state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
-                group: state.editingGroup?.map((obj) => { return Object.assign({}, obj) }) || []
+                group: state.editingGroup?.map((obj) => { return Object.assign({}, obj) }) || [],
+                read: false
             })
     }
 
