@@ -33,6 +33,22 @@
             />
           </v-col>
         </v-row>
+        <v-row>
+          <v-col cols="4">
+            <donut-chart
+              dnt-title="Ordens x Usuário"
+              :dnt-data="ordersPerUser"
+              dnt-legend="Usuário"
+            ></donut-chart>
+          </v-col>
+          <v-col cols="4">
+            <donut-chart
+              dnt-title="Tarefas x Usuário"
+              :dnt-data="tasksPerUser"
+              dnt-legend="Usuário"
+            ></donut-chart>
+          </v-col>
+        </v-row>
       </v-card>
     </v-col>
   </v-row>
@@ -70,6 +86,20 @@ const computed = Object.assign(
         x: m.client,
         y: m.spentTimeInHours
       }));
+    },
+    ordersPerUser: (state, store) => {
+      return store.filterOrdersGroupedByUsers({}).map(m => ({
+        axisX: m.user.name,
+        axisY: m.ordersCount,
+        text: `${m.ordersCount}`
+      }));
+    },
+    tasksPerUser: (state, store) => {
+      return store.filterTasksGroupedByUsers({}).map(m => ({
+        axisX: m.user.name,
+        axisY: m.tasksCount,
+        text: `${m.tasksCount}`
+      }));
     }
   }),
   mapGetters("productivity", [
@@ -78,7 +108,11 @@ const computed = Object.assign(
   ])
 );
 
-const methods = mapActions("productivity", ["loadOrders"]);
+const methods = Object.assign(
+  {},
+  mapActions("productivity", ["loadOrders"]),
+  mapActions("users", ["readUsers"])
+);
 
 export default {
   computed,
@@ -89,6 +123,7 @@ export default {
   },
   mounted() {
     this.loadOrders();
+    this.readUsers();
   }
 };
 </script>

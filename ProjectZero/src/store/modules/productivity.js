@@ -81,6 +81,31 @@ const getters = {
             return data;
         }
     },
+    filterOrdersGroupedByUsers(state, getters, rootState) {
+        return (filters) => {
+            let filteredOrders = state.orders.filter(order =>
+                !filters.startedAt || order.creation_date >= filters.startedAt &&
+                !filters.endedAt || order.creation_date <= filters.endedAt);
+            let mapOrders = filteredOrders.map(order => ({
+                id: order.id,
+                users: order.users.map(m => m.id),
+                groups: order.userGroups.map(m => m.id)
+            }));
+
+            let allUsers = rootState.users.userList;
+            let ordersPerUsers = [];
+            allUsers.forEach(user => {
+                ordersPerUsers.push({
+                    user: user,
+                    ordersCount: mapOrders.filter(m => m.users.includes(user.id) || m.groups.includes(user.group_id.id)).length
+                })
+            });
+            let unassignedOrders = filteredOrders.filter(m => m.users.length == 0 && m.userGroups.length == 0);
+            ordersPerUsers.push({ user: { name: 'sem atribuição' }, ordersCount: unassignedOrders.length });
+            ordersPerUsers = ordersPerUsers.filter(m => m.ordersCount > 0);
+            return ordersPerUsers;
+        }
+    },
 
     filterTasksGroupedByClients(state) {
         return (filters) => {
@@ -96,6 +121,33 @@ const getters = {
                 });
             });
             return data;
+        }
+    },
+    filterTasksGroupedByUsers(state, getters, rootState) {
+        return (filters) => {
+            let filteredOrders = state.orders.filter(order =>
+                !filters.startedAt || order.creation_date >= filters.startedAt &&
+                !filters.endedAt || order.creation_date <= filters.endedAt);
+            let tasks = filteredOrders.flatMap(a => a.tasks);
+            if (!tasks || !tasks.length)
+                return [];
+            let mapTasks = tasks.filter(m => !!m.users.id).map(task => ({
+                id: task.id,
+                users: task?.users?.id
+            }));
+
+            let allUsers = rootState.users.userList;
+            let tasksPerUsers = [];
+            allUsers.forEach(user => {
+                tasksPerUsers.push({
+                    user: user,
+                    tasksCount: mapTasks.filter(m => m.users.includes(user.id)).length
+                });
+            });
+            let unassignedTasks = tasks.filter(m => !m.users?.id);
+            tasksPerUsers.push({ user: { name: 'sem atribuição' }, tasksCount: unassignedTasks.length });
+            tasksPerUsers = tasksPerUsers.filter(m => m.tasksCount > 0);
+            return tasksPerUsers;
         }
     },
 
