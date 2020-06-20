@@ -54,6 +54,10 @@
                 ></v-textarea>
               </v-col>
             </v-row>
+            <v-btn v-if="selectedTask.items.length == 0 && isInEditMode" dark color="green" @click="appendTaskItem()" style='padding-left:8px'>
+                <v-icon>mdi-plus</v-icon> Checklist
+            </v-btn>
+            <label v-if="selectedTask.items.length > 0" class="v-label theme--light">Checklist</label>
             <v-treeview
                 v-if="!isInEditMode"
                 v-model="activeTask"
@@ -138,7 +142,7 @@ export default {
     methods:  Object.assign({}, methods, userMethods, {
           appendTaskItem(item) {
             this.counter = this.counter + 1;
-            this.selectedTask.items.push({description: item.description, id: this.counter });
+            this.selectedTask.items.push({description: item?.description, id: this.counter });
           },
           removeTaskOrItem(item) {
             console.log(this.selectedTask.items)

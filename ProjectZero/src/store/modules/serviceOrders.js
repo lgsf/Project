@@ -6,7 +6,7 @@ const state = () => ({
     selected: [],
     search: '',
     serviceOrders: [],
-    statusList: ['Pendente', 'Em progresso', 'Finalizada'],
+    statusList: ['Pendente', 'Em progresso', 'Finalizada', 'Cancelada'],
     selectedOrderTasks: [],
     kanbanColumns: [],
     selectedTask: { name: '' },
@@ -184,7 +184,6 @@ const actions = {
             payload.items = []
             payload.users = []
             payload.creation_date = new Date().toLocaleString()
-            payload.items.push({ done: false, description: 'Item da tarefa (edite-me)', id: 0 })
             context.commit('updateTaskDialogInEditMode', true)
         }
 
@@ -200,6 +199,7 @@ const actions = {
         context.commit('updateSelectedTask', payload)
     },
     closeTaskModal(context) {
+        context.commit('updateTaskDialogInEditMode', false)
         context.commit('updateShowTaskDialog', false)
     },
     saveTask(context) {
