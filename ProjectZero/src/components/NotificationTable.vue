@@ -19,7 +19,9 @@
             v-for="(item, i) in uniqueNotifications.slice(0 + counter, 8 + counter)"
             :key="i"
           >
-                  <v-expansion-panel-header> {{item.title}}<v-spacer></v-spacer> Escrito por: {{item.name}} 
+                  <v-expansion-panel-header> <strong style="font-family: monospace;" v-show="!item.read">{{item.title}} </strong>
+                   <div v-show="item.read">{{item.title}} </div>
+                  <v-spacer></v-spacer> Escrito por: {{item.name}}
                  <template v-slot:actions>
                   <v-icon color ='success' v-show="item.read" >mdi-check</v-icon>
                   <v-icon color="primary" v-show="!item.read">mdi-alert-circle</v-icon>
