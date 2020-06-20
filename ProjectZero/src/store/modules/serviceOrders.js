@@ -243,6 +243,18 @@ const actions = {
                     console.error("Error updating document: ", error);
                 });
 
+        if(context.state.selectedTask.users && !context.state.selectedTask.users.lenght){
+            this.dispatch('notifications/sendNotification', {
+                name: "Sistema",
+                title:"Alteração em tarefa",
+                detail: "Houve uma alteração em uma de suas tarefas ou você foi vinculado a uma tarefa nova. Confira:" + " <br><br>Nome da tarefa: <b>" + context.state.selectedTask.name + "</b> <br>Nome da ordem: <b>" + context.state.selected[0].name + "</b>",
+                date: new Date().toLocaleString(),
+                user: [context.state.selectedTask.users],
+                group: [],
+                read: false
+            })
+        }
+
         context.commit('updateTaskDialogInEditMode', false)
     },
     deleteTask(context) {
@@ -285,6 +297,18 @@ const actions = {
                                 context.state.selectedTask.started_date = ''
                             }
                             context.state.selectedTask.end_date = ''
+                        }
+
+                        if(context.state.selectedTask.users && !context.state.selectedTask.users.lenght){
+                            this.dispatch('notifications/sendNotification', {
+                                name: "Sistema",
+                                title: "Alteração de status de tarefa",
+                                detail: "Uma tarefa que você é responsável teve seu status alterado. <br><br>Nome da tarefa: <b>" + context.state.selectedTask.name + "</b> <br>Nome da ordem: <b>" + context.state.selected[0].name + "</b>",
+                                date: new Date().toLocaleString(),
+                                user: [context.state.selectedTask.users],
+                                group: [],
+                                read: false
+                            })
                         }
                     }
                 });

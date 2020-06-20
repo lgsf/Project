@@ -23,7 +23,7 @@
           >
                   <v-expansion-panel-header> <strong style="font-family: monospace;" v-if="!item.read">{{item.title}} </strong>
                    <div v-if="item.read">{{item.title}} </div>
-                  <v-spacer></v-spacer> Escrito por: {{item.name}} em {{item.date}}
+                  <v-spacer> Autor: <b>{{item.name}}</b></v-spacer> Data: <b>{{item.date}}</b>
                  <template v-slot:actions>
                   <v-icon color ='success' v-show="item.read" >mdi-check</v-icon>
                   <v-icon color="primary" v-show="!item.read">mdi-alert-circle</v-icon>
@@ -35,8 +35,7 @@
                      </v-row>
                     <br>
                     <v-row>
-                    {{item.detail}}
-                    {{item.id}}
+                    <span v-html="item.detail"></span>
                    </v-row>
                    <br> 
                    <v-row>

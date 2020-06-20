@@ -170,7 +170,7 @@ const state = () => ({
             commit('editGroup', payload)
         },
         saveNotification({ state }) {
-            if (state.selected.length == 0)
+            if (state.selected.length == 0 || !state.selected[0].id)
                 createNewNotification(state).then(() => {
                     this.dispatch('notifications/loadNotifications')
                     this.dispatch('notifications/editNotification', false)
@@ -192,7 +192,20 @@ const state = () => ({
             .catch((error) => {
               console.error("Error deleting: ", error)
             })
-    } 
+        },
+        sendNotification(context, payload){
+            if(context)
+            db.collection("notifications")
+            .add({
+                name: payload.name,
+                title: payload.title,
+                detail: payload.detail,
+                date: payload.date,
+                user: payload.user,
+                group: payload.group,
+                read: false
+            })
+        }
 }
     
     export default {
