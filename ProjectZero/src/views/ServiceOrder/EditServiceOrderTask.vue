@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center">
     <v-dialog :value="dialog" persistent max-width="800px">
-      <v-card>
+      <v-card> 
         <v-toolbar class="primary" dark>
           <v-toolbar-title>{{selectedTask.name}}</v-toolbar-title>
         </v-toolbar>
@@ -54,10 +54,10 @@
                 ></v-textarea>
               </v-col>
             </v-row>
-            <v-btn v-if="selectedTask.items.length == 0 && isInEditMode" dark color="green" @click="appendTaskItem()" style='padding-left:8px'>
+            <v-btn v-if="selectedTask.items && selectedTask.items.length == 0 && isInEditMode" dark color="green" @click="appendTaskItem()" style='padding-left:8px'>
                 <v-icon>mdi-plus</v-icon> Checklist
             </v-btn>
-            <label v-if="selectedTask.items.length > 0" class="v-label theme--light">Checklist</label>
+            <label v-if="selectedTask.items && selectedTask.items.length > 0" class="v-label theme--light">Checklist</label>
             <v-treeview
                 v-if="!isInEditMode"
                 v-model="activeTask"

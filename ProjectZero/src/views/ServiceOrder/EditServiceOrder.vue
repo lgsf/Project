@@ -12,11 +12,11 @@
           <v-row class="ml-5 mt-5 mr-5">
             <v-col cols="12">
               <v-autocomplete
-                :value="selected[0].client.name"
+                :value="selected[0].client"
                 @input="updateClient"
                 :items="clientList"
                 color="primary"
-                item-text="Cliente"
+                item-text="name"
                 label="Cliente"
                 return-object
                 dense
@@ -114,7 +114,7 @@ const computed = mapState({
   statusList: state => state.serviceOrders.statusList,
   tasks: state => state.serviceOrders.selectedOrderTasks,
   columns: state => state.serviceOrders.kanbanColumns,
-  clientList: state => state.clients.clients.map(m => m.name)
+  clientList: state => state.clients.clients
 });
 
 const orderMethods = mapActions("serviceOrders", [
