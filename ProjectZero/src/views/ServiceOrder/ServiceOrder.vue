@@ -90,9 +90,19 @@ export default {
           value: "name"
         },
         {
-          text: "Administrator",
+          text: "Administrador",
           align: "start",
           value: "administratorName"
+        },
+        {
+          text: "Data Criação",
+          align: "start",
+          value: "creation_date"
+        },
+        {
+          text: "Data Encerramento",
+          align: "start",
+          value: "end_date"
         }
       ]
     };
