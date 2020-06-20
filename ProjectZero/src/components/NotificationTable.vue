@@ -11,17 +11,18 @@
   >
         <v-toolbar class="primary">
           <h3 class="white--text">{{ screenTitle }}</h3>
-            <v-spacer></v-spacer>
+            <v-spacer></v-spacer> <v-btn color="primary" v-show="!order" dark small @click="orderNotificationDate()">Ordenar por data</v-btn>
+            <v-btn color="primary" v-show="order" dark small @click="orderNotificationNotRead()">Ordenar por não-lidos</v-btn>
           <v-icon right class="white--text">notifications</v-icon>
         </v-toolbar> 
          <v-expansion-panels>
             <v-expansion-panel
-            v-for="(item, i) in uniqueNotifications.slice(0 + counter, 8 + counter)"
+            v-for="(item, i) in uniqueNotifications.slice(0 + counter, MAX_NUMBER + counter)"
             :key="i"
           >
-                  <v-expansion-panel-header> <strong style="font-family: monospace;" v-show="!item.read">{{item.title}} </strong>
-                   <div v-show="item.read">{{item.title}} </div>
-                  <v-spacer></v-spacer> Escrito por: {{item.name}}
+                  <v-expansion-panel-header> <strong style="font-family: monospace;" v-if="!item.read">{{item.title}} </strong>
+                   <div v-if="item.read">{{item.title}} </div>
+                  <v-spacer></v-spacer> Escrito por: {{item.name}} em {{item.date}}
                  <template v-slot:actions>
                   <v-icon color ='success' v-show="item.read" >mdi-check</v-icon>
                   <v-icon color="primary" v-show="!item.read">mdi-alert-circle</v-icon>
@@ -47,11 +48,11 @@
                 </v-expansion-panel>
                 </v-expansion-panels>
                   <v-card-actions >
-                    <v-btn  @click="counter-=8" color="primary" v-show="counter > 0"  dark>
+                    <v-btn  @click="counter-=MAX_NUMBER" color="primary" v-show="counter > 0"  dark>
                         <v-icon >keyboard_arrow_left</v-icon>
                     </v-btn>
                     <v-spacer></v-spacer> <span style="text-align: center;">Total de notificações: {{ uniqueNotifications.length}} </span><v-spacer></v-spacer>
-                    <v-btn @click="counter+=8" v-show="counter < uniqueNotifications.length-8" color="primary" dark >
+                    <v-btn @click="counter+=MAX_NUMBER" v-show="counter < uniqueNotifications.length-MAX_NUMBER" color="primary" dark >
                         <v-icon >keyboard_arrow_right</v-icon>
                     </v-btn>
          </v-card-actions>
@@ -74,6 +75,8 @@ export default {
   data() {
     return {
       search: "",
+      order: false,
+      MAX_NUMBER: 8,
       counter: 0,
       screenTitle: 'Notificações',
       notifications: [],
@@ -97,6 +100,17 @@ export default {
    },
    
    methods: {
+
+      orderNotificationDate(){
+          this.uniqueNotifications.sort((a, b) => (a.date < b.date) ? 1 : -1)
+          this.order = !this.order
+      },
+
+       orderNotificationNotRead(){
+          this.uniqueNotifications.sort((a, b) => (a.read > b.read) ? 1 : (a.read === b.read) ? ((a.date < b.date) ? 1 : -1) : -1 )
+          this.order = !this.order
+      },
+
       changeIcon(item){
          item.read = !item.read
      },
@@ -205,6 +219,7 @@ export default {
           })
         let uniqueSet = new Set (this.notifications.map(e => JSON.stringify(e)))
         this.uniqueNotifications = Array.from(uniqueSet).map(e => JSON.parse(e))
+        this.uniqueNotifications.sort((a, b) => (a.read > b.read) ? 1 : (a.read === b.read) ? ((a.date < b.date) ? 1 : -1) : -1 )
         this.resetIsLoading
         })
       }

@@ -10,7 +10,7 @@
         </div>
       <v-sheet height="64" v-if="!isLoading">
         <v-toolbar  color="primary">
-          <v-btn color="primary" class="mr-1 " small @click.stop="dialog = true">
+          <v-btn color="primary" class="mr-1" small @click.stop="dialog = true">
             <v-icon>add</v-icon>
           </v-btn>
           <v-btn color="primary" class="mr-1"  small @click="setToday">
