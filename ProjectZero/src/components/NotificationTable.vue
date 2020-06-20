@@ -10,10 +10,11 @@
       <v-card v-if="!isLoading"
   >
         <v-toolbar class="primary">
-          <h3 class="white--text">{{ screenTitle }}</h3>
-            <v-spacer></v-spacer> <v-btn color="primary" v-show="!order" dark small @click="orderNotificationDate()">Ordenar por data</v-btn>
-            <v-btn color="primary" v-show="order" dark small @click="orderNotificationNotRead()">Ordenar por não-lidos</v-btn>
-          <v-icon right class="white--text">notifications</v-icon>
+            <h3 class="white--text">{{ screenTitle }}</h3>
+            <v-spacer></v-spacer> 
+            <span v-if="isAdmin"><v-btn color="primary" v-show="!order" dark small @click="orderNotificationDate()">Ordenar por data</v-btn></span>
+            <span v-if="isAdmin"><v-btn color="primary" v-show="order" dark small @click="orderNotificationNotRead()">Ordenar por não-lidos</v-btn></span>
+            <v-icon right class="white--text">notifications</v-icon>
         </v-toolbar> 
          <v-expansion-panels>
             <v-expansion-panel
@@ -47,12 +48,12 @@
                   </v-expansion-panel-content>
                 </v-expansion-panel>
                 </v-expansion-panels>
-                  <v-card-actions >
-                    <v-btn  @click="counter-=MAX_NUMBER" color="primary" v-show="counter > 0"  dark>
+                  <v-card-actions>
+                    <v-btn  @click="counter-=MAX_NUMBER" color="primary" v-show="counter > 0" small dark>
                         <v-icon >keyboard_arrow_left</v-icon>
                     </v-btn>
                     <v-spacer></v-spacer> <span style="text-align: center;">Total de notificações: {{ uniqueNotifications.length}} </span><v-spacer></v-spacer>
-                    <v-btn @click="counter+=MAX_NUMBER" v-show="counter < uniqueNotifications.length-MAX_NUMBER" color="primary" dark >
+                    <v-btn @click="counter+=MAX_NUMBER" v-show="counter < uniqueNotifications.length-MAX_NUMBER" color="primary" dark small >
                         <v-icon >keyboard_arrow_right</v-icon>
                     </v-btn>
          </v-card-actions>
