@@ -7,44 +7,6 @@
       color="primary"
     ></v-progress-circular>
   </div>
-  <v-card v-if="!isLoading"
-  >
-        <v-toolbar class="primary ">
-          <h3 class="white--text">Notícias</h3>
-            <v-spacer></v-spacer>
-          <v-icon right class="white--text">message</v-icon>
-        </v-toolbar> 
-         <v-expansion-panels multiple>
-            <v-expansion-panel
-            v-for="(item, i) in uniqueNews.slice(0 + counter, 2 + counter)"
-            :key="i"
-          >
-                  <v-expansion-panel-header> {{item.title}}<v-spacer></v-spacer> Escrito por: {{item.name}} 
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
-                    <v-row>
-                      Data: {{item.date}}
-                     </v-row>
-                    <br>
-                    <v-row>
-                   {{item.detail}}
-                    {{item.id}}
-                   </v-row>
-                  </v-expansion-panel-content>
-                </v-expansion-panel>
-                </v-expansion-panels>
-                  <v-card-actions >
-                    <v-btn  @click="counter-=2" color="primary" v-if="counter > 0"  dark>
-                      <v-icon >keyboard_arrow_left</v-icon>
-                      </v-btn>
-                          <v-spacer></v-spacer> <span style="text-align: center;">Total de notícias: {{ uniqueNews.length}} </span><v-spacer></v-spacer>
-                  <v-btn @click="counter+=2" v-if="counter < uniqueNews.length-2" color="primary" dark >
-                      <v-icon >keyboard_arrow_right</v-icon>
-                      </v-btn>
-         </v-card-actions>
-              
-      </v-card>
-      <br>
       <v-card v-if="!isLoading"
   >
         <v-toolbar class="primary">
@@ -54,7 +16,7 @@
         </v-toolbar> 
          <v-expansion-panels>
             <v-expansion-panel
-            v-for="(item, i) in uniqueNotifications.slice(0 + counter1, 3 + counter1)"
+            v-for="(item, i) in uniqueNotifications.slice(0 + counter, 8 + counter)"
             :key="i"
           >
                   <v-expansion-panel-header> {{item.title}}<v-spacer></v-spacer> Escrito por: {{item.name}} 
@@ -69,7 +31,7 @@
                      </v-row>
                     <br>
                     <v-row>
-                   {{item.detail}}
+                    {{item.detail}}
                     {{item.id}}
                    </v-row>
                    <br> 
@@ -83,13 +45,13 @@
                 </v-expansion-panel>
                 </v-expansion-panels>
                   <v-card-actions >
-                    <v-btn  @click="counter1-=3" color="primary" v-if="counter1 > 0"  dark>
-                      <v-icon >keyboard_arrow_left</v-icon>
-                      </v-btn>
-                          <v-spacer></v-spacer> <span style="text-align: center;">Total de notificações: {{ uniqueNotifications.length}} </span><v-spacer></v-spacer>
-                  <v-btn @click="counter1+=3" v-if="counter1 < uniqueNotifications.length-3" color="primary" dark >
-                      <v-icon >keyboard_arrow_right</v-icon>
-                      </v-btn>
+                    <v-btn  @click="counter-=8" color="primary" v-show="counter > 0"  dark>
+                        <v-icon >keyboard_arrow_left</v-icon>
+                    </v-btn>
+                    <v-spacer></v-spacer> <span style="text-align: center;">Total de notificações: {{ uniqueNotifications.length}} </span><v-spacer></v-spacer>
+                    <v-btn @click="counter+=8" v-show="counter < uniqueNotifications.length-8" color="primary" dark >
+                        <v-icon >keyboard_arrow_right</v-icon>
+                    </v-btn>
          </v-card-actions>
               
       </v-card>
@@ -111,11 +73,8 @@ export default {
     return {
       search: "",
       counter: 0,
-      counter1:0,
       screenTitle: 'Notificações',
       notifications: [],
-      news: [],
-      uniqueNews: [],
       uniqueNotifications: [],
       title: null,
       name: null,
@@ -178,7 +137,7 @@ export default {
             userArray = doc.data().user
             groupArray = doc.data().group
             if(userArray.length == 0 && groupArray.length == 0){
-              this.news.push({
+              this.notifications.push({
                 id: doc.id,
                 title: doc.data().title,
                 name: doc.data().name,
@@ -244,8 +203,6 @@ export default {
           })
         let uniqueSet = new Set (this.notifications.map(e => JSON.stringify(e)))
         this.uniqueNotifications = Array.from(uniqueSet).map(e => JSON.parse(e))
-        let uniqueSet1 = new Set (this.news.map(e => JSON.stringify(e)))
-        this.uniqueNews = Array.from(uniqueSet1).map(e => JSON.parse(e))
         this.resetIsLoading
         })
       }
