@@ -37,54 +37,53 @@
                       :value="selected"
                       @input="selectNotification"
                     >
-                     <template #item.name="{item}">
-                     <v-col cols="12">
-                    <span >
-                      {{ item.name }}
-                    </span>
-                    </v-col>
+                    <template #item.name="{item}">
+                      <v-col cols="12">
+                        <span >
+                          {{ item.name }}
+                        </span>
+                      </v-col>
                     </template>
-                     <template #item.detail="{item}">
-                       <v-col cols="12">
-                    <span >
-                      {{ item.title }}
-                    </span>
-                    </v-col>
+                    <template #item.detail="{item}">
+                      <v-col cols="12">
+                        <span >
+                          {{ item.title }}
+                        </span>
+                      </v-col>
                     </template>
-                     <template #item.date="{item}">
-                       <v-col cols="12">
-                    <span >
-                      {{ item.date }}
-                    </span>
-                    </v-col>
+                    <template #item.date="{item}">
+                      <v-col cols="12">
+                        <span >
+                          {{ item.date }}
+                        </span>
+                      </v-col>
                     </template>
                     <template #item.user="{item}">
-                       <v-col cols="12">
-                    <span v-for="item1 in item.user" :key="item1.name">
-                      {{ item1.name }}
-                      <br>
-                    </span>
-                    </v-col>
+                      <v-col cols="12">
+                        <span v-for="item1 in item.user" :key="item1.name">
+                          {{ item1.name }}
+                          <br>
+                        </span>
+                      </v-col>
                     </template>
-                      <template #item.group="{item}">
-                    <v-col cols="12">
-                    <span v-for="item2 in item.group" :key="item2.name">
-                      {{ item2.name }}
-                      <br>
-                    </span>
-                    </v-col>
+                    <template #item.group="{item}">
+                      <v-col cols="12">
+                        <span v-for="item2 in item.group" :key="item2.name">
+                          {{ item2.name }}
+                          <br>
+                        </span>
+                      </v-col>
                     </template>
-                   
-                    </v-data-table>
+                  </v-data-table>
                 </v-col>
-                </v-row>
-                <v-btn color="error" dark fixed bottom right fab @click="editNotification(true)">
-                      <v-icon v-show="selected.length == 0">mdi-plus</v-icon>
-                      <v-icon v-show="selected.length > 0">mdi-pen</v-icon>
-                </v-btn>
-              </v-col>
-            </v-row>
-          <EditNotification/>
+              </v-row>
+              <v-btn color="error" dark fixed bottom right fab @click="editNotification(true)">
+                  <v-icon v-show="selected.length == 0">mdi-plus</v-icon>
+                  <v-icon v-show="selected.length > 0">mdi-pen</v-icon>
+              </v-btn>
+            </v-col>
+           </v-row>
+        <EditNotification/>
       </v-card>
     </v-row>
   </div>
