@@ -96,7 +96,7 @@
         </v-card>
       </v-dialog>
 
-<v-sheet height="400" v-if="!isLoading">
+<v-sheet height="500" v-if="!isLoading">
   <v-calendar
   ref="calendar"
   locale="pt"
