@@ -1,6 +1,30 @@
 <template>
   <v-card class="pa-2" raised height="150px">
     <div>
+      <v-tooltip bottom v-if="task.priority == 'Critica'">
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon v-bind="attrs" v-on="on" color="error" v-if="task.priority == 'Critica'">arrow_upward</v-icon>
+        </template>
+        <span>{{task.priority}} prioridade</span>
+      </v-tooltip>
+      <v-tooltip bottom v-if="task.priority == 'Baixa'">
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon v-bind="attrs" v-on="on" color="success" v-if="task.priority == 'Baixa'">expand_less</v-icon>
+        </template>
+        <span>{{task.priority}} prioridade</span>
+      </v-tooltip>
+      <v-tooltip bottom v-if="task.priority == 'Media'">
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon v-bind="attrs" v-on="on" color="yellow" v-if="task.priority == 'Media'">expand_less</v-icon>
+        </template>
+        <span>{{task.priority}} prioridade</span>
+      </v-tooltip>
+      <v-tooltip bottom v-if="task.priority == 'Alta'">
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon v-bind="attrs" v-on="on" color="error" v-if="task.priority == 'Alta'">expand_less</v-icon>
+        </template>
+        <span>{{task.priority}} prioridade</span>
+      </v-tooltip>
       <span class="font-weight-medium">Tarefa: </span>
       <span class="font-weight-regular">{{task.name}}</span>
     </div>

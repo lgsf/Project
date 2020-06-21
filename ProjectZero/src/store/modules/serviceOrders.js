@@ -13,7 +13,8 @@ const state = () => ({
     showTaskDialog: false,
     taskDialogInEditMode: false,
     showCreateOrderDialog: false,
-    newOrder: { name: '', creation_date: new Date().toLocaleString(), end_date: '', users: [], userGroups: [] }
+    newOrder: { name: '', creation_date: new Date().toLocaleString(), end_date: '', users: [], userGroups: [] },
+    taskPriorityList: ['', 'Baixa', 'Media', 'Alta', 'Critica']
 });
 
 const mutations = {
@@ -207,7 +208,8 @@ const actions = {
             getOrderFromDatabase(context.state.selected[0].id).get()
                 .then((order) => {
                     let orderData = order.data()
-
+                    if(!context.state.selectedTask.priority)
+                        context.state.selectedTask.priority = ''
                     var index = orderData.tasks.indexOf(orderData.tasks.find(t => t.id == context.state.selectedTask.id));
                     orderData.tasks[index] = context.state.selectedTask
 
@@ -225,6 +227,9 @@ const actions = {
             getOrderFromDatabase(context.state.selected[0].id).get()
                 .then((order) => {
                     context.state.selectedTask.status = "Pendente";
+                    if(!context.state.selectedTask.priority)
+                        context.state.selectedTask.priority = ''
+
                     let orderData = order.data()
 
                     context.state.selectedTask.id = orderData.tasks.length + 1;

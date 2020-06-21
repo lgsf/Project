@@ -18,6 +18,18 @@
             </v-row>
             <v-row>
               <v-col cols="12" class="no-top-bottom-padding">
+                <v-select
+                  v-model="selectedTask.priority"
+                  :items="taskPriorityList"
+                  :disabled="!isInEditMode"
+                  :multiple="false"
+                  label="Prioridade"
+                >
+                </v-select>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" class="no-top-bottom-padding">
                 <v-row>
                   <v-col cols="4" class="no-top-bottom-padding">
                     <v-text-field label="Data de criação:" disabled v-model="selectedTask.creation_date"></v-text-field>
@@ -121,7 +133,8 @@ const computed = mapState({
     selectedTask: state => state.serviceOrders.selectedTask,
     users: state => state.users.userList,
     selectedUsers: state => state.serviceOrders.selectedTask.users,
-    isInEditMode: state => state.serviceOrders.taskDialogInEditMode
+    isInEditMode: state => state.serviceOrders.taskDialogInEditMode,
+    taskPriorityList: state => state.serviceOrders.taskPriorityList
 });
 
 const userMethods = mapActions("users", ["readUsers"]);
