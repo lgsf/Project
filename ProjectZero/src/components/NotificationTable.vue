@@ -22,7 +22,7 @@
             :key="i"
           > <v-row>
                   <v-expansion-panel-header> 
-                  <v-col cols="4" >
+                  <v-col cols="4">
                   <strong style="font-family: monospace;" v-if="!item.read">{{item.title}} </strong>
                   <span v-if="item.read">{{item.title}} </span>
                   </v-col>
