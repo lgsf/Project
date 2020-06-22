@@ -22,15 +22,15 @@
             :key="i" 
           > <v-row>
                 <v-expansion-panel-header @click="markRead(item)"> 
-                  <v-col cols="3">
+                  <v-col cols="4">
                     <strong v-if="!item.read">{{item.title}} </strong>
                     <span v-if="item.read">{{item.title}} </span>
                   </v-col>
-                  <v-col cols="3">
+                  <v-col cols="4">
                     <strong v-if="!item.read"> {{item.name}} </strong>
                     <span v-if="item.read">{{item.name}} </span> 
                   </v-col>
-                  <v-col cols="3">
+                  <v-col cols="4">
                     <strong v-if="!item.read"> {{item.date}}</strong>
                     <span v-if="item.read">{{item.date}} </span> 
                   </v-col>
