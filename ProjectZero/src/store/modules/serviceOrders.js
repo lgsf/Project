@@ -180,14 +180,27 @@ const actions = {
             })
     },
     loadTasksByOrder(context, filterCurrentUser) {
-        if (context.state.selected[0])
+        if (!context.state.selected[0]){
+            getOrderFromDatabase(window.location.href.split('/')[4]).get()
+            .then(snapshot => {
+                let order = snapshot.data()
+                order.id = window.location.href.split('/')[4]
+                context.commit('selectOrder', [order])
+                this.dispatch('serviceOrders/updateSelectedOrderTask', 
+                    snapshot.data().tasks.filter(task => !filterCurrentUser || (task.users && task.users.email == auth.currentUser.email))).then(() => {
+                        context.commit('updateKanbanColumns')
+                    });
+            })
+        }
+        else{
             getOrderFromDatabase(context.state.selected[0].id).get()
-                .then(snapshot => {
-                    this.dispatch('serviceOrders/updateSelectedOrderTask', 
-                        snapshot.data().tasks.filter(task => !filterCurrentUser || (task.users && task.users.email == auth.currentUser.email))).then(() => {
-                            context.commit('updateKanbanColumns')
-                        });
-                });
+            .then(snapshot => {
+                this.dispatch('serviceOrders/updateSelectedOrderTask', 
+                    snapshot.data().tasks.filter(task => !filterCurrentUser || (task.users && task.users.email == auth.currentUser.email))).then(() => {
+                        context.commit('updateKanbanColumns')
+                    });
+            });
+        }
     },
     updateClient(context, payload) {
         context.commit("updateClient", payload)
@@ -267,7 +280,7 @@ const actions = {
             this.dispatch('notifications/sendNotification', {
                 name: "Sistema",
                 title:"Alteração em tarefa",
-                detail: "Houve uma alteração em uma de suas tarefas ou você foi vinculado a uma tarefa nova. Confira:" + " <br><br>Nome da tarefa: <b>" + context.state.selectedTask.name + "</b> <br>Nome da ordem: <b>" + context.state.selected[0].name + "</b>",
+                detail: "Houve uma alteração em uma de suas tarefas ou você foi vinculado a uma tarefa nova. Confira:" + " <br><br><a href='" + window.location.href + "'>Link para ordem</a><br>Nome da tarefa: <b>" + context.state.selectedTask.name + "</b> <br>Nome da ordem: <b>" + context.state.selected[0].name + "</b>",
                 date: new Date().toLocaleString('pt-br'),
                 user: [context.state.selectedTask.users],
                 group: [],
