@@ -125,12 +125,12 @@ export default {
      
      markRead(item){
        if(item.read == false){
-       this.changeIcon(item)
-       db.collection("notifications")
-            .doc(item.id)
-            .update({
-                read: true
-            })
+          this.changeIcon(item)
+          db.collection("notifications")
+                .doc(item.id)
+                .update({
+                    read: true
+                })
        }    
      },
 
