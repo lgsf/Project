@@ -12,10 +12,10 @@ const state = () => ({
 
 const mutations = {
     setUser(state, payload) {
-        state.user = payload;
+        state.user = payload
         if (!!payload && !!payload.user) {
-            state.user.uid = payload.user.uid;
-            state.sessionStart = moment().unix();
+            state.user.uid = payload.user.uid
+            state.sessionStart = moment().unix()
         }
     },
     setIsAuthenticated(state, payload) {
@@ -47,12 +47,12 @@ const actions = {
                         let currentUser = snapshots.data()
                         commit('setUserName', currentUser.name)
                         commit('setUserGroup', currentUser.group_id.id)
-                    });
-                this.dispatch('general/resetIsLoading');
+                    })
+                this.dispatch('general/resetIsLoading')
             })
             .then(() => new Promise(function (resolve) {
-                router.push('/home');
-                resolve();
+                router.push('/home')
+                resolve()
             }))
             .catch((error) => {
                 console.log(error)
@@ -64,29 +64,28 @@ const actions = {
     },
 
     userSignOut({ commit, state }) {
-        let currentUser = firebase.auth().currentUser;
+        let currentUser = firebase.auth().currentUser
         firebase
             .auth()
             .signOut()
             .then(() => new Promise(resolve => {
-                commit('setUser', null);
-                commit('setIsAuthenticated', false);
-                sessionStorage.clear();
-                router.push('/');
-                resolve();
+                commit('setUser', null)
+                commit('setIsAuthenticated', false)
+                sessionStorage.clear()
+                router.push('/')
+                resolve()
             }))
             .then(() => new Promise(resolve => {
                 db.collection('userSessionInfo').add({
                     uid: currentUser.uid,
                     sesstion_start: state.sessionStart,
                     session_end: moment().unix()
-                }).then(() => resolve());
+                }).then(() => resolve())
             }))
             .catch(() => {
                 commit('setUser', null)
                 commit('setIsAuthenticated', false)
                 sessionStorage.clear()
-                router.push('/')
             })
     },
 
@@ -107,7 +106,6 @@ const actions = {
                 commit('setIsAuthenticated', false)
                 this.dispatch('general/resetIsLoading')
                 sessionStorage.clear()
-                router.push('/')
             })
     }
 

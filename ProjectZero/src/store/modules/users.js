@@ -8,7 +8,7 @@ const state = () => ({
     editUserName: '',
     editUserEmail: '',
     editUserPhone: '',
-    editUserBirthDate: formatDate(new Date().toISOString().substr(0, 10)),
+    editUserBirthDate: '',
     editUserGroup: '',
     userList: [],
     userGroups: []
@@ -149,12 +149,6 @@ function onUsersLoaded(context, payload) {
     context.commit('setUserList', users)
 }
 
-function formatDate(date) {
-    if (!date) return null;
-
-    const [year, month, day] = date.split("-")
-    return `${day}/${month}/${year}`
-}
 
 function createUser(state) {
     return auth.createUserWithEmailAndPassword(state.editUserEmail, "temporario")

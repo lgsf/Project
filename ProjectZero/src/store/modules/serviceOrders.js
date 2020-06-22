@@ -13,7 +13,7 @@ const state = () => ({
     showTaskDialog: false,
     taskDialogInEditMode: false,
     showCreateOrderDialog: false,
-    newOrder: { name: '', creation_date: new Date().toLocaleString(), end_date: '', users: [], userGroups: [] },
+    newOrder: { name: '', creation_date: new Date().toLocaleString('pt-br'), end_date: '', users: [], userGroups: [] },
     taskPriorityList: ['', 'Baixa', 'Media', 'Alta', 'Critica']
 });
 
@@ -127,9 +127,9 @@ const actions = {
         context.commit('updateShowCreateOrderDialog', false)
     },
     saveNewOrder(context) {
-        let tasks = [];
+        let tasks = []
         if (context.state.newOrder.template) {
-            tasks = context.state.newOrder.template.tasks.map((obj) => { return Object.assign({}, obj, { creation_date: formatDate(new Date().toISOString().substr(0, 10)) }) }) || [];
+            tasks = context.state.newOrder.template.tasks.map((obj) => { return Object.assign({}, obj, { creation_date: formatDate(new Date().toLocaleString('pt-br').substr(0,10)) }) }) || []
         }
 
         db.collection("serviceOrder").add({
@@ -159,11 +159,11 @@ const actions = {
             .then(function (serviceOrders) {
                 self.dispatch('users/readUsers').then(function () {
                     let userIds = getOrderUsersIds(serviceOrders);
-                    let users = context.rootGetters['users/filterUsersById'](userIds);
-                    completeOrdersWithUsersInformation(serviceOrders, users);
-                    context.commit('updateOrders', serviceOrders);
+                    let users = context.rootGetters['users/filterUsersById'](userIds)
+                    completeOrdersWithUsersInformation(serviceOrders, users)
+                    context.commit('updateOrders', serviceOrders)
                 })
-            });
+            })
     },
     loadTasksByOrder(context) {
         if (context.state.selected[0])
@@ -175,7 +175,7 @@ const actions = {
                 });
     },
     updateClient(context, payload) {
-        context.commit("updateClient", payload);
+        context.commit("updateClient", payload)
     },
     updateOrderEndDate(context, payload) {
         context.commit('updateOrderEndDate', payload)
@@ -184,7 +184,7 @@ const actions = {
         if (!payload.id) {
             payload.items = []
             payload.users = []
-            payload.creation_date = new Date().toLocaleString()
+            payload.creation_date = new Date().toLocaleString('pt-br')
             context.commit('updateTaskDialogInEditMode', true)
         }
 
@@ -253,7 +253,7 @@ const actions = {
                 name: "Sistema",
                 title:"Alteração em tarefa",
                 detail: "Houve uma alteração em uma de suas tarefas ou você foi vinculado a uma tarefa nova. Confira:" + " <br><br>Nome da tarefa: <b>" + context.state.selectedTask.name + "</b> <br>Nome da ordem: <b>" + context.state.selected[0].name + "</b>",
-                date: new Date().toLocaleString(),
+                date: new Date().toLocaleString('pt-br'),
                 user: [context.state.selectedTask.users],
                 group: [],
                 read: false
@@ -292,11 +292,11 @@ const actions = {
                         context.state.selectedTask.status = column.title
 
                         if (column.title == "Finalizada") {
-                            context.state.selectedTask.end_date = new Date().toLocaleString()
+                            context.state.selectedTask.end_date = new Date().toLocaleString('pt-br')
                         }
                         else {
                             if (column.title == "Em progresso") {
-                                context.state.selectedTask.started_date = new Date().toLocaleString()
+                                context.state.selectedTask.started_date = new Date().toLocaleString('pt-br')
                             }
                             else {
                                 context.state.selectedTask.started_date = ''
@@ -309,7 +309,7 @@ const actions = {
                                 name: "Sistema",
                                 title: "Alteração de status de tarefa",
                                 detail: "Uma tarefa que você é responsável teve seu status alterado. <br><br>Nome da tarefa: <b>" + context.state.selectedTask.name + "</b> <br>Nome da ordem: <b>" + context.state.selected[0].name + "</b>",
-                                date: new Date().toLocaleString(),
+                                date: new Date().toLocaleString('pt-br'),
                                 user: [context.state.selectedTask.users],
                                 group: [],
                                 read: false

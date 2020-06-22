@@ -7,7 +7,6 @@
     transition="scale-transition"
     offset-y
     min-width="290px"
-    v-if="dateObj"
     >
     <template v-slot:activator="{ on }">
         <v-text-field
@@ -19,9 +18,9 @@
         :disabled="disable"
         ></v-text-field>
     </template>
-    <v-date-picker :disabled="disable" v-model="date" no-title scrollable>
+    <v-date-picker :disabled="disable" v-model="date" no-title scrollable locale="pt-br">
         <v-spacer></v-spacer>
-        <v-btn :disabled="disable" text color="primary" @click="menu = false">Cancel</v-btn>
+        <v-btn :disabled="disable" text color="primary" @click="menu = false">Cancelar</v-btn>
         <v-btn :disabled="disable" text color="primary" @click="updateValue(date)">OK</v-btn>
     </v-date-picker>
     </v-menu>
@@ -29,7 +28,7 @@
 
 <script>
   export default {
-    props: ["dateLabel", "dateObj", "disable"],
+    props: ["dateLabel", "disable"],
     data: () => ({
       date: new Date().toISOString().substr(0, 10),
       dateFormatted: '',
@@ -48,12 +47,6 @@
             const [year, month, day] = date.split('-')
             return `${day}/${month}/${year}`
         }
-    },
-    mounted() {
-        if(this.dateObj){
-            this.dateFormatted = this.dateObj
-            this.date = new Date(this.dateObj).toISOString().substr(0, 10)
-        }
-    },
+    }
   }
 </script>

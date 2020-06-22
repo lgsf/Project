@@ -7,8 +7,7 @@ import VueTextareaAutosize from 'vue-textarea-autosize'
 import AlertCmp from './components/shared/Alert.vue'
 import { store } from './store'
 import IdleVue from "idle-vue"
-
-export const moment = require('moment');
+export const moment = require('moment')
 
 const eventsHub = new Vue()
 

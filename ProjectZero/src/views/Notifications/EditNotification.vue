@@ -55,7 +55,12 @@
               </v-row>
              <v-row>
               <v-col cols="12">
-                <v-text-field label="Data" :value="date" @input="editDate"></v-text-field>
+                <DatePicker
+                  dateLabel="Data"
+                  :dateObj="date"
+                  v-on:update="editDate"
+                  ref="DatePicker"
+                />
               </v-col>
             </v-row>
           </v-container>
@@ -74,6 +79,7 @@
 </template>
 <script>
 import { mapState, mapActions } from "vuex"
+import DatePicker from "@/components/shared/DatePicker"
 
 const computed = mapState("notifications", {
   selected: state => state.selected || [],
@@ -108,6 +114,7 @@ const methods = mapActions("notifications", [
 ])
 
 export default {
+  components: {DatePicker},
   data() {
     return {}
   },
