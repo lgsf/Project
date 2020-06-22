@@ -1,5 +1,6 @@
 import { db } from "@/main";
 import router from '@/router'
+import { auth } from "@/main";
 
 const state = () => ({
     client: undefined,
@@ -48,7 +49,7 @@ const mutations = {
     updateKanbanColumns(state) {
         state.kanbanColumns = state.statusList.map(status => ({
             title: status,
-            tasks: state.selectedOrderTasks?.filter(task => task.status == status) || []
+            tasks: state.selectedOrderTasks?.sort((a, b) => comparePriorities(a, b)).filter(task => task.status == status) || []
         }));
     },
     updateSelectedTask(state, payload) {
@@ -59,6 +60,19 @@ const mutations = {
     }
 };
 
+function comparePriorities(a, b){
+    let priorityLevel = [
+        {name: '', value: 0},
+        {name: 'Baixa', value: 1},
+        {name: 'Media', value: 2},
+        {name: 'Alta', value: 3},
+        {name: 'Critica', value: 4},
+    ]
+    let priorityA = priorityLevel.find(p => p.name == (a.priority || '')).value
+    let priorityB = priorityLevel.find(p => p.name == (b.priority || '')).value
+    
+    return priorityB - priorityA
+}
 
 function onServiceOrdersLoaded(payload) {
     let serviceOrders = [];
@@ -165,13 +179,14 @@ const actions = {
                 })
             })
     },
-    loadTasksByOrder(context) {
+    loadTasksByOrder(context, filterCurrentUser) {
         if (context.state.selected[0])
             getOrderFromDatabase(context.state.selected[0].id).get()
                 .then(snapshot => {
-                    this.dispatch('serviceOrders/updateSelectedOrderTask', snapshot.data().tasks).then(() => {
-                        context.commit('updateKanbanColumns')
-                    });
+                    this.dispatch('serviceOrders/updateSelectedOrderTask', 
+                        snapshot.data().tasks.filter(task => !filterCurrentUser || (task.users && task.users.email == auth.currentUser.email))).then(() => {
+                            context.commit('updateKanbanColumns')
+                        });
                 });
     },
     updateClient(context, payload) {
