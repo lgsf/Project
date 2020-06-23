@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog :value="dialog" persistent max-width="800px">
+    <v-dialog :value="dialog" persistent max-width="800px" @click:outside="closeTaskModal">
       <v-card> 
         <v-toolbar class="primary" dark>
           <v-toolbar-title>{{selectedTask.name}}</v-toolbar-title>
