@@ -11,7 +11,7 @@
     <template v-slot:activator="{ on }">
       <v-text-field
         prepend-icon="event"
-        v-model="value"
+        v-model="dateFormatted"
         :label="dateLabel"
         readonly
         v-on="on"
