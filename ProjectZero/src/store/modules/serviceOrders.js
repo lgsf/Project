@@ -4,7 +4,7 @@ import { auth } from "@/main";
 
 const state = () => ({
     client: undefined,
-    selected: [],
+    selected: '',
     search: '',
     serviceOrders: [],
     statusList: ['Pendente', 'Em progresso', 'Finalizada', 'Cancelada'],
@@ -137,6 +137,16 @@ Array.prototype.unique = function () {
 };
 
 const actions = {
+    editServiceOrder(context) {
+        if (context.state.selected)
+          router.push({ path: `/EditServiceOrder/${context.state.selected.id}` });
+        else
+        context.commit('updateShowCreateOrderDialog', true)
+      },
+      returnToServiceOrders(context) {
+        context.commit('selectOrder', false)
+        router.push({ path: `/serviceOrder` })
+      },
     openCreateOrderModal(context) {
         context.commit('updateShowCreateOrderDialog', true)
     },
@@ -164,6 +174,7 @@ const actions = {
     },
     selectOrder(context, payload) {
         context.commit('selectOrder', payload)
+        this.dispatch('serviceOrders/editServiceOrder')
     },
     searchFor(context, payload) {
         context.commit('searchFor', payload)
@@ -183,7 +194,7 @@ const actions = {
             })
     },
     loadTasksByOrder(context, filterCurrentUser) {
-        if (!context.state.selected[0]) {
+        if (!context.state.selected) {
             getOrderFromDatabase(window.location.href.split('/')[4]).get()
                 .then(snapshot => {
                     let order = snapshot.data()
@@ -196,7 +207,7 @@ const actions = {
                 })
         }
         else {
-            getOrderFromDatabase(context.state.selected[0].id).get()
+            getOrderFromDatabase(context.state.selected.id).get()
                 .then(snapshot => {
                     this.dispatch('serviceOrders/updateSelectedOrderTask',
                         snapshot.data().tasks.filter(task => !filterCurrentUser || (task.users && task.users.email == auth.currentUser.email))).then(() => {
@@ -236,7 +247,7 @@ const actions = {
     },
     saveTask(context) {
         if (context.state.selectedTask.id)
-            getOrderFromDatabase(context.state.selected[0].id).get()
+            getOrderFromDatabase(context.state.selected.id).get()
                 .then((order) => {
                     let orderData = order.data()
                     if (!context.state.selectedTask.priority)
@@ -244,7 +255,7 @@ const actions = {
                     var index = orderData.tasks.indexOf(orderData.tasks.find(t => t.id == context.state.selectedTask.id));
                     orderData.tasks[index] = context.state.selectedTask
 
-                    getOrderFromDatabase(context.state.selected[0].id).update({ tasks: orderData.tasks }).then(() => {
+                    getOrderFromDatabase(context.state.selected.id).update({ tasks: orderData.tasks }).then(() => {
                         this.dispatch('serviceOrders/loadTasksByOrder')
                     })
                 })
@@ -255,7 +266,7 @@ const actions = {
                     console.error("Error updating document: ", error);
                 });
         else
-            getOrderFromDatabase(context.state.selected[0].id).get()
+            getOrderFromDatabase(context.state.selected.id).get()
                 .then((order) => {
                     context.state.selectedTask.status = "Pendente";
                     if (!context.state.selectedTask.priority)
@@ -266,7 +277,7 @@ const actions = {
                     context.state.selectedTask.id = orderData.tasks.length + 1;
                     orderData.tasks.push(context.state.selectedTask)
 
-                    getOrderFromDatabase(context.state.selected[0].id)
+                    getOrderFromDatabase(context.state.selected.id)
                         .update({ tasks: orderData.tasks })
                         .then(() => {
                             this.dispatch('serviceOrders/loadTasksByOrder')
@@ -283,7 +294,7 @@ const actions = {
             this.dispatch('notifications/sendNotification', {
                 name: "Sistema",
                 title: "Alteração em tarefa",
-                detail: "Houve uma alteração em uma de suas tarefas ou você foi vinculado a uma tarefa nova. Confira:" + " <br><br><a href='" + window.location.href + "'>Link para ordem</a><br>Nome da tarefa: <b>" + context.state.selectedTask.name + "</b> <br>Nome da ordem: <b>" + context.state.selected[0].name + "</b>",
+                detail: "Houve uma alteração em uma de suas tarefas ou você foi vinculado a uma tarefa nova. Confira:" + " <br><br><a href='" + window.location.href + "'>Link para ordem</a><br>Nome da tarefa: <b>" + context.state.selectedTask.name + "</b> <br>Nome da ordem: <b>" + context.state.selected.name + "</b>",
                 date: new Date().toLocaleString('pt-br'),
                 user: [context.state.selectedTask.users],
                 group: [],
@@ -295,12 +306,12 @@ const actions = {
     },
     deleteTask(context) {
         if (context.state.selectedTask.id) {
-            getOrderFromDatabase(context.state.selected[0].id).get()
+            getOrderFromDatabase(context.state.selected.id).get()
                 .then((order) => {
                     let orderData = order.data()
 
                     orderData.tasks = orderData.tasks.filter(t => t.id != context.state.selectedTask.id)
-                    getOrderFromDatabase(context.state.selected[0].id).update({ tasks: orderData.tasks }).then(() => {
+                    getOrderFromDatabase(context.state.selected.id).update({ tasks: orderData.tasks }).then(() => {
                         this.dispatch('serviceOrders/loadTasksByOrder').then(() => {
                             this.dispatch('serviceOrders/closeTaskModal')
                         })
@@ -339,7 +350,7 @@ const actions = {
                             this.dispatch('notifications/sendNotification', {
                                 name: "Sistema",
                                 title: "Alteração de status de tarefa",
-                                detail: "Uma tarefa que você é responsável teve seu status alterado. <br><br>Nome da tarefa: <b>" + context.state.selectedTask.name + "</b> <br>Nome da ordem: <b>" + context.state.selected[0].name + "</b>",
+                                detail: "Uma tarefa que você é responsável teve seu status alterado. <br><br>Nome da tarefa: <b>" + context.state.selectedTask.name + "</b> <br>Nome da ordem: <b>" + context.state.selected.name + "</b>",
                                 date: new Date().toLocaleString('pt-br'),
                                 user: [context.state.selectedTask.users],
                                 group: [],
@@ -354,7 +365,7 @@ const actions = {
 
     },
     saveServiceOrder(context) {
-        let serviceOrder = context.state.selected[0];
+        let serviceOrder = context.state.selected
         if (!serviceOrder)
             return;
         db.collection("serviceOrder")
@@ -378,7 +389,7 @@ const actions = {
         context.commit('updateTaskDialogInEditMode', !context.state.taskDialogInEditMode)
     },
     deleteOrder(context) {
-        db.collection("serviceOrder").doc(context.state.selected[0].id)
+        db.collection("serviceOrder").doc(context.state.selected.id)
             .delete()
             .then(() => {
                 this.dispatch('serviceOrders/reloadOrders')
