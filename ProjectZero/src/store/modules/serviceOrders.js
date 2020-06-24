@@ -1,4 +1,4 @@
-import { db } from "@/main";
+import { db, moment } from "@/main";
 import router from '@/router'
 import { auth } from "@/main";
 
@@ -60,17 +60,17 @@ const mutations = {
     }
 };
 
-function comparePriorities(a, b){
+function comparePriorities(a, b) {
     let priorityLevel = [
-        {name: '', value: 0},
-        {name: 'Baixa', value: 1},
-        {name: 'Media', value: 2},
-        {name: 'Alta', value: 3},
-        {name: 'Critica', value: 4},
+        { name: '', value: 0 },
+        { name: 'Baixa', value: 1 },
+        { name: 'Media', value: 2 },
+        { name: 'Alta', value: 3 },
+        { name: 'Critica', value: 4 },
     ]
     let priorityA = priorityLevel.find(p => p.name == (a.priority || '')).value
     let priorityB = priorityLevel.find(p => p.name == (b.priority || '')).value
-    
+
     return priorityB - priorityA
 }
 
@@ -79,6 +79,9 @@ function onServiceOrdersLoaded(payload) {
     payload.forEach(orderSnapShot => {
         let orderData = orderSnapShot.data();
         orderData.id = orderSnapShot.id;
+        orderData.creation_date = moment.unix(orderData.creation_date);
+        if (orderData.end_date)
+            orderData.end_date = moment.unix(orderData.end_date);
         serviceOrders.push(orderData);
     });
     return new Promise(function (resolve, reject) {
@@ -143,7 +146,7 @@ const actions = {
     saveNewOrder(context) {
         let tasks = []
         if (context.state.newOrder.template) {
-            tasks = context.state.newOrder.template.tasks.map((obj) => { return Object.assign({}, obj, { creation_date: formatDate(new Date().toLocaleString('pt-br').substr(0,10)) }) }) || []
+            tasks = context.state.newOrder.template.tasks.map((obj) => { return Object.assign({}, obj, { creation_date: formatDate(new Date().toLocaleString('pt-br').substr(0, 10)) }) }) || []
         }
 
         db.collection("serviceOrder").add({
@@ -180,26 +183,26 @@ const actions = {
             })
     },
     loadTasksByOrder(context, filterCurrentUser) {
-        if (!context.state.selected[0]){
+        if (!context.state.selected[0]) {
             getOrderFromDatabase(window.location.href.split('/')[4]).get()
-            .then(snapshot => {
-                let order = snapshot.data()
-                order.id = window.location.href.split('/')[4]
-                context.commit('selectOrder', [order])
-                this.dispatch('serviceOrders/updateSelectedOrderTask', 
-                    snapshot.data().tasks.filter(task => !filterCurrentUser || (task.users && task.users.email == auth.currentUser.email))).then(() => {
-                        context.commit('updateKanbanColumns')
-                    });
-            })
+                .then(snapshot => {
+                    let order = snapshot.data()
+                    order.id = window.location.href.split('/')[4]
+                    context.commit('selectOrder', [order])
+                    this.dispatch('serviceOrders/updateSelectedOrderTask',
+                        snapshot.data().tasks.filter(task => !filterCurrentUser || (task.users && task.users.email == auth.currentUser.email))).then(() => {
+                            context.commit('updateKanbanColumns')
+                        });
+                })
         }
-        else{
+        else {
             getOrderFromDatabase(context.state.selected[0].id).get()
-            .then(snapshot => {
-                this.dispatch('serviceOrders/updateSelectedOrderTask', 
-                    snapshot.data().tasks.filter(task => !filterCurrentUser || (task.users && task.users.email == auth.currentUser.email))).then(() => {
-                        context.commit('updateKanbanColumns')
-                    });
-            });
+                .then(snapshot => {
+                    this.dispatch('serviceOrders/updateSelectedOrderTask',
+                        snapshot.data().tasks.filter(task => !filterCurrentUser || (task.users && task.users.email == auth.currentUser.email))).then(() => {
+                            context.commit('updateKanbanColumns')
+                        });
+                });
         }
     },
     updateClient(context, payload) {
@@ -236,7 +239,7 @@ const actions = {
             getOrderFromDatabase(context.state.selected[0].id).get()
                 .then((order) => {
                     let orderData = order.data()
-                    if(!context.state.selectedTask.priority)
+                    if (!context.state.selectedTask.priority)
                         context.state.selectedTask.priority = ''
                     var index = orderData.tasks.indexOf(orderData.tasks.find(t => t.id == context.state.selectedTask.id));
                     orderData.tasks[index] = context.state.selectedTask
@@ -255,7 +258,7 @@ const actions = {
             getOrderFromDatabase(context.state.selected[0].id).get()
                 .then((order) => {
                     context.state.selectedTask.status = "Pendente";
-                    if(!context.state.selectedTask.priority)
+                    if (!context.state.selectedTask.priority)
                         context.state.selectedTask.priority = ''
 
                     let orderData = order.data()
@@ -276,10 +279,10 @@ const actions = {
                     console.error("Error updating document: ", error);
                 });
 
-        if(context.state.selectedTask.users && !context.state.selectedTask.users.lenght){
+        if (context.state.selectedTask.users && !context.state.selectedTask.users.lenght) {
             this.dispatch('notifications/sendNotification', {
                 name: "Sistema",
-                title:"Alteração em tarefa",
+                title: "Alteração em tarefa",
                 detail: "Houve uma alteração em uma de suas tarefas ou você foi vinculado a uma tarefa nova. Confira:" + " <br><br><a href='" + window.location.href + "'>Link para ordem</a><br>Nome da tarefa: <b>" + context.state.selectedTask.name + "</b> <br>Nome da ordem: <b>" + context.state.selected[0].name + "</b>",
                 date: new Date().toLocaleString('pt-br'),
                 user: [context.state.selectedTask.users],
@@ -332,7 +335,7 @@ const actions = {
                             context.state.selectedTask.end_date = ''
                         }
 
-                        if(context.state.selectedTask.users && !context.state.selectedTask.users.lenght){
+                        if (context.state.selectedTask.users && !context.state.selectedTask.users.lenght) {
                             this.dispatch('notifications/sendNotification', {
                                 name: "Sistema",
                                 title: "Alteração de status de tarefa",
@@ -359,7 +362,8 @@ const actions = {
             .update({
                 name: serviceOrder.name,
                 client: serviceOrder.client || '',
-                end_date: serviceOrder.end_date || ''
+                creation_date: moment(serviceOrder.creation_date, "DD/MM/YYYY").unix(),
+                end_date: serviceOrder.end_date ? moment(serviceOrder.end_date, "DD/MM/YYYY").unix() : ''
             })
             .then(() => {
                 this.dispatch('general/setSuccessMessage', 'Ordem de serviço salva com sucesso.');

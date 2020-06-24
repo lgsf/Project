@@ -96,8 +96,8 @@ const getters = {
     filterOrdersGroupedByClients(state) {
         return (filters) => {
             let filteredOrders = state.orders.filter(order =>
-                !filters.startedAt || order.creation_date >= filters.startedAt &&
-                !filters.endedAt || order.creation_date <= filters.endedAt);
+                (!filters.startedAt || order.creation_date >= filters.startedAt) &&
+                (!filters.endedAt || order.creation_date <= filters.endedAt));
             let groupedOrders = filteredOrders.groupBy(m => m.client.id);
             let data = [];
             groupedOrders.forEach(group => {

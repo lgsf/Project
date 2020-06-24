@@ -26,26 +26,19 @@
           <v-row class="ml-5 mr-5">
             <v-col cols="5">
               <DatePicker
-                      dateLabel="Data de criação:"
-                      :dateObj="selected[0].creation_date"
-                      ref="DatePicker"
-                      :disable="true"
-                    />
-              <!-- <v-text-field
-                prepend-icon="event"
-                label="Data de criação:"
-                disabled
-                dense
+                dateLabel="Data de criação:"
                 :value="selected[0].creation_date"
-              ></v-text-field> -->
+                ref="DatePicker"
+                :disable="true"
+              />
             </v-col>
             <v-col cols="5">
               <DatePicker
-                      dateLabel="Data de encerramento:"
-                      :dateObj="selected[0].end_date"
-                      ref="DatePicker"
-                      v-on:update="updateOrderEndDate"
-                    />
+                dateLabel="Data de encerramento:"
+                :value="selected[0].end_date"
+                ref="DatePicker"
+                v-on:update="updateOrderEndDate"
+              />
             </v-col>
             <v-col cols="2">
               <v-btn color="error" text @click="deleteOrder">Deletar</v-btn>
@@ -53,9 +46,26 @@
           </v-row>
           <v-row class="ml-5 mt-5 mr-5">
             <v-col cols="12">
-              <v-btn color="success" dark @click="showTaskDialog({name: ''})" style='padding-left:8px'><v-icon>mdi-plus</v-icon> Nova task</v-btn>
-              <v-btn color="blue" dark @click="filtertasks()" style='margin-left:8px;'><v-icon>filter-alt</v-icon> Somente as minhas</v-btn>
-              <v-btn color="primary" right dark @click="returnToServiceOrders()" style='margin-left:8px; padding-left:8px'><v-icon style="padding-right:8px">keyboard_return</v-icon> Voltar</v-btn>
+              <v-btn
+                color="success"
+                dark
+                @click="showTaskDialog({name: ''})"
+                style="padding-left:8px"
+              >
+                <v-icon>mdi-plus</v-icon>Nova task
+              </v-btn>
+              <v-btn color="blue" dark @click="filtertasks()" style="margin-left:8px;">
+                <v-icon>filter-alt</v-icon>Somente as minhas
+              </v-btn>
+              <v-btn
+                color="primary"
+                right
+                dark
+                @click="returnToServiceOrders()"
+                style="margin-left:8px; padding-left:8px"
+              >
+                <v-icon style="padding-right:8px">keyboard_return</v-icon>Voltar
+              </v-btn>
             </v-col>
           </v-row>
           <v-row>
@@ -148,9 +158,9 @@ export default {
     returnToServiceOrders() {
       this.$router.push({ path: `/serviceOrder` });
     },
-    filtertasks(){
-      this.showOnlyMine = !this.showOnlyMine
-      this.loadTasksByOrder(this.showOnlyMine)
+    filtertasks() {
+      this.showOnlyMine = !this.showOnlyMine;
+      this.loadTasksByOrder(this.showOnlyMine);
     }
   }),
   data: () => ({
