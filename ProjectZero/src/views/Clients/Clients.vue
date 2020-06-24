@@ -25,17 +25,15 @@
                       :headers="headers"
                       :items="clients"
                       :search="search"
-                      show-select
-                      single-select
-                      item-key="name"
-                      :value="selected"
-                      @input="selectClient"
-                    ></v-data-table>
+                      :value="item"
+                      @click:row="selectClient"
+                    >
+                    </v-data-table>
                   </v-col>
                 </v-row>
-                <v-btn color="error" dark fixed bottom right fab @click="editClient(true)">
-                  <v-icon v-show="!enableEdit">mdi-plus</v-icon>
-                  <v-icon v-show="enableEdit">mdi-pen</v-icon>
+                <v-btn color="error" dark fixed bottom right fab v-show="!enableEdit" @click="editClient(true)">
+                  <v-icon >mdi-plus</v-icon>
+
                 </v-btn>
               </v-col>
             </v-row>
@@ -55,7 +53,7 @@ const computed = mapState("clients", {
   searchLabel: state => state.searchLabel,
   headers: state => state.header,
   clients: state => state.clients,
-  enableEdit: state => state.selected && state.selected.length > 0
+
 });
 
 const methods = mapActions("clients", [
