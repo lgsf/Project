@@ -13,6 +13,7 @@ import Users from '../views/Users/Users.vue'
 import Groups from '../views/Groups/Groups.vue'
 import Notifications from '../views/Notifications/Notifications.vue'
 import OverallProductivity from '../views/Reports/OverallProductivity.vue'
+import ManagementTaskView from '../views/Management/ManagementTaskView.vue'
 
 Vue.use(VueRouter)
 
@@ -78,6 +79,14 @@ const routes = [
     name: 'EditServiceOrder',
     component: EditServiceOrder,
     props: true,
+    meta: {
+      authRequired: true
+    }
+  },
+  {
+    path: '/taskView', //Gerenciamento - visão de tasks
+    name: 'ManagementTaskView',
+    component: ManagementTaskView,
     meta: {
       authRequired: true
     }

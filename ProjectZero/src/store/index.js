@@ -9,12 +9,13 @@ import serviceOrders from './modules/serviceOrders'
 import general from './modules/general'
 import notifications from './modules/notifications'
 import productivity from './modules/productivity'
+import management from './modules/management'
 import createPersistedState from "vuex-persistedstate"
 
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
-  modules: { auth, groups, clients, users, erp, serviceOrders, general, notifications, productivity },
+  modules: { auth, groups, clients, users, erp, serviceOrders, general, notifications, productivity, management },
   plugins: [
     createPersistedState({
       storage: window.sessionStorage,
