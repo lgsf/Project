@@ -2,6 +2,7 @@
   <div class="control-section">
     <div align="center">
       <ejs-accumulationchart
+        :key="componentKey"
         style="display:block"
         :theme="theme"
         align="center"
@@ -61,8 +62,22 @@ export default Vue.extend({
       ],
     legend: props => props.dntLegend || "prop: dnt-legend, type: string"
   },
+  watch: {
+    seriesData() {
+      // console.log(newValue);
+      // console.log(oldValue);
+      // if (oldValue.length && oldValue.length != newValue.length) {
+      //   this.forceRerender();
+      //   this.forceRerender();
+      //   this.forceRerender();
+      //   this.forceRerender();
+      //   this.forceRerender();
+      //}
+    }
+  },
   data: function() {
     return {
+      componentKey: Math.round(Math.random() * 10000),
       theme: "Material",
 
       //Initializing Primary X Axis
@@ -122,6 +137,11 @@ export default Vue.extend({
       AccumulationDataLabel
     ]
   },
-  methods: {}
+  methods: {
+    forceRerender() {
+      this.componentKey += 1;
+      //this.$forceUpdate();
+    }
+  }
 });
 </script>

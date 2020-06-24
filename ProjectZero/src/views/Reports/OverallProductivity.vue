@@ -7,10 +7,35 @@
           <v-spacer></v-spacer>
           <v-icon right class="white--text">pie_chart</v-icon>
         </v-toolbar>
-        <v-row></v-row>
+        <v-row>
+          <v-col cols="6">
+            <v-row>
+              <v-col cols="2">
+                <div class="text-right mt-1 pt-4">Período:</div>
+              </v-col>
+              <v-col cols="3">
+                <date-picker date-label="Início" v-model="startedAt" />
+              </v-col>
+              <v-col cols="1">
+                <div class="text-center mt-1 pt-4">até</div>
+              </v-col>
+              <v-col cols="3">
+                <date-picker date-label="Fim" v-model="endedAt" />
+              </v-col>
+              <v-col cols="3">
+                <div class="mt-1 pt-2">
+                  <v-btn color="success" dark @click="reloadCharts">
+                    <v-icon>mdi-search</v-icon>Carregar
+                  </v-btn>
+                </div>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
         <v-row>
           <v-col cols="4">
             <donut-chart
+              :key="dntOrderPerClients"
               dnt-title="Ordens x Cliente"
               :dnt-data="ordersPerClient"
               dnt-legend="Cliente"
@@ -18,6 +43,7 @@
           </v-col>
           <v-col cols="4">
             <donut-chart
+              :key="dntTaskPerClients"
               dnt-title="Tarefas x Cliente"
               :dnt-data="tasksPerClient"
               dnt-legend="Cliente"
@@ -36,6 +62,7 @@
         <v-row>
           <v-col cols="4">
             <donut-chart
+              :key="dntOrderPerUsers"
               dnt-title="Ordens x Usuário"
               :dnt-data="ordersPerUser"
               dnt-legend="Usuário"
@@ -43,6 +70,7 @@
           </v-col>
           <v-col cols="4">
             <donut-chart
+              :key="dntTaskPerUsers"
               dnt-title="Tarefas x Usuário"
               :dnt-data="tasksPerUser"
               dnt-legend="Usuário"
@@ -66,13 +94,19 @@
 import DonutChart from "@/components/shared/DonutChart";
 import BarChart from "@/components/shared/BarChart";
 import LineChart from "@/components/shared/LineChart";
+import DatePicker from "@/components/shared/DatePicker";
 import { mapState, mapActions, mapGetters } from "vuex";
+import { moment } from "@/main";
 
 const computed = Object.assign(
   {},
   mapState("productivity", {
-    ordersPerClient: (state, store) => {
-      return store.filterOrdersGroupedByClients({}).map(m => ({
+    ordersPerClient(state, store) {
+      let filters = {
+        startedAt: this.startedAt.unix(),
+        endedAt: this.endedAt.unix()
+      };
+      return store.filterOrdersGroupedByClients(filters).map(m => ({
         axisX: m.client,
         axisY: m.ordersCount,
         text: `${m.ordersCount}`
@@ -138,11 +172,24 @@ const methods = Object.assign(
 
 export default {
   computed,
-  methods,
-  components: { DonutChart, BarChart, LineChart },
+  methods: Object.assign(methods, {
+    reloadCharts() {
+      this.dntOrderPerClients += 1;
+      this.dntTaskPerClients += 1;
+      this.dntOrderPerUsers += 1;
+      this.dntTaskPerUsers += 1;
+    }
+  }),
+  components: { DonutChart, BarChart, LineChart, DatePicker },
   data() {
     return {
-      yConfig: { title: "Tempo trabalhado (m)" }
+      dntOrderPerClients: 0,
+      dntTaskPerClients: 5,
+      dntOrderPerUsers: 10,
+      dntTaskPerUsers: 15,
+      yConfig: { title: "Tempo trabalhado (m)" },
+      startedAt: moment().add(-15, "day"),
+      endedAt: moment()
     };
   },
   mounted() {
