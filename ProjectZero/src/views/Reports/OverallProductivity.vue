@@ -49,6 +49,15 @@
             ></donut-chart>
           </v-col>
         </v-row>
+        <v-row>
+          <v-col cols="12">
+            <line-chart
+              line-title="Relatório de Tempo de Trabalho"
+              :line-data="chartSeries"
+              :line-y-config="yConfig"
+            ></line-chart>
+          </v-col>
+        </v-row>
       </v-card>
     </v-col>
   </v-row>
@@ -56,6 +65,7 @@
 <script>
 import DonutChart from "@/components/shared/DonutChart";
 import BarChart from "@/components/shared/BarChart";
+import LineChart from "@/components/shared/LineChart";
 import { mapState, mapActions, mapGetters } from "vuex";
 
 const computed = Object.assign(
@@ -100,29 +110,44 @@ const computed = Object.assign(
         axisY: m.tasksCount,
         text: `${m.tasksCount}`
       }));
+    },
+    chartSeries: (state, store) => {
+      let infos = store.getWorkedHoursByUsersByDate({});
+      return infos.map(userData => ({
+        title: userData.user.name,
+        data: userData.workedHoursByDay.map(n => ({ x: n.day, y: n.hours }))
+      }));
     }
   }),
   mapGetters("productivity", [
     "filterOrdersGroupedByClients",
-    "filterTasksGroupedByClients"
+    "filterTasksGroupedByClients",
+    "getWorkedDaysByClients",
+    "getWorkedHoursByClients",
+    "filterOrdersGroupedByUsers",
+    "filterTasksGroupedByUsers",
+    "getWorkedHoursByUsersByDate"
   ])
 );
 
 const methods = Object.assign(
   {},
-  mapActions("productivity", ["loadOrders"]),
+  mapActions("productivity", ["loadOrders", "loadSessionInfo"]),
   mapActions("users", ["readUsers"])
 );
 
 export default {
   computed,
   methods,
-  components: { DonutChart, BarChart },
+  components: { DonutChart, BarChart, LineChart },
   data() {
-    return {};
+    return {
+      yConfig: { title: "Tempo trabalhado (m)" }
+    };
   },
   mounted() {
     this.loadOrders();
+    this.loadSessionInfo();
     this.readUsers();
   }
 };
