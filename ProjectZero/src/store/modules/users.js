@@ -1,10 +1,10 @@
-import { db } from "@/main";
-import { auth } from "@/main";
+import { db } from "@/main"
+import { auth } from "@/main"
 
 const state = () => ({
     search: "",
     showEditModal: false,
-    selected: [],
+    selected: '',
     editUserName: '',
     editUserEmail: '',
     editUserPhone: '',
@@ -12,7 +12,8 @@ const state = () => ({
     editUserGroup: '',
     userList: [],
     userGroups: []
-});
+
+})
 
 const mutations = {
     setUserGroups(state, payload) {
@@ -21,6 +22,15 @@ const mutations = {
 
     setUserList(state, payload) {
         state.userList = payload
+    },
+    editUser(state, payload) {
+        let anySelected = state.selected 
+        state.editUserName = anySelected ? state.selected.name : ''
+        state.editUserEmail= anySelected ? state.selected.email : ''
+        state.editUserPhone= anySelected ? state.selected.phone : ''
+        state.editUserBirthDate = anySelected ? state.selected.birth_date :''
+        state.editUserGroup = anySelected ? state.selected.group_id : {}
+        state.showEditModal = payload
     },
 
     setSelectedUser(state, payload) {
@@ -50,7 +60,7 @@ const mutations = {
         state.editUserGroup = payload
     },
 
-};
+}
 
 const actions = {
     readGroups({ commit }) { //Move to groups module
@@ -86,17 +96,11 @@ const actions = {
 
     onSelectedUser({ commit }, payload) {
         commit('setSelectedUser', payload)
+        commit('editUser', true)
     },
 
-    openEditUserModal({ state, commit }) {
-        if (state.selected.length > 0) {
-            state.editUserName = state.selected[0].name
-            state.editUserEmail = state.selected[0].email
-            state.editUserPhone = state.selected[0].phone
-            state.editUserBirthDate = state.selected[0].birth_date
-            state.editUserGroup = state.selected[0].group
-        }
-        commit('setShowEditModal', true)
+    openEditUserModal({ commit }) {
+        commit('editUser', true)
     },
 
     setName({ commit }, payload) {
@@ -121,10 +125,11 @@ const actions = {
 
     closeEditUserModal({ commit }) {
         commit('setShowEditModal', false)
+        commit('setSelectedUser', false)
     },
 
     save({ state }) {
-        if (state.selected.length == 0)
+        if (!state.selected)
             createUser(state).then(() => {
                 this.dispatch('users/readUsers')
                 this.dispatch('users/closeEditUserModal')
@@ -134,19 +139,19 @@ const actions = {
                 this.dispatch('users/readUsers')
                 this.dispatch('users/closeEditUserModal')
             })
-
     }
 
 }
 
 function onUsersLoaded(context, payload) {
-    let users = [];
+    let users = []
     payload.forEach(userSnapShot => {
         let userData = userSnapShot.data()
         userData.id = userSnapShot.id
         users.push(userData)
     })
     context.commit('setUserList', users)
+
 }
 
 
@@ -166,11 +171,12 @@ function createUser(state) {
         .catch(error => {
             console.error("Error inserting document: ", error)
         })
+
 }
 
 function updateUser(state) {
     return db.collection("users")
-        .doc(state.selected[0].id)
+        .doc(state.selected.id)
         .update({
             name: state.editUserName,
             email: state.editUserEmail,
@@ -181,6 +187,7 @@ function updateUser(state) {
         .catch(error => {
             console.error("Error updating document: ", error)
         })
+
 }
 
 
@@ -189,6 +196,7 @@ const getters = {
     filterUsersById(state) {
         return (ids) => state.userList.filter(user => ids.includes(user.id))
     }
+    
 }
 
 export default {

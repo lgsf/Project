@@ -28,7 +28,7 @@
 
 <script>
   export default {
-    props: ["dateLabel", "disable"],
+    props: ["dateLabel", "dateObj", "disable"],
     data: () => ({
       date: new Date().toISOString().substr(0, 10),
       dateFormatted: '',
@@ -47,6 +47,11 @@
             const [year, month, day] = date.split('-')
             return `${day}/${month}/${year}`
         }
-    }
+    },
+    mounted() {
+        if(this.dateObj){
+            this.dateFormatted = this.dateObj
+        }
+    },
   }
 </script>

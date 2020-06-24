@@ -30,7 +30,7 @@ const state = () => ({
     editingName: '',
     editingCnpj: '',
     editingEmail: ''
-});
+})
 
 const mutations = {
     selectClient(state, payload) {
@@ -44,34 +44,34 @@ const mutations = {
     },
     editClient(state, payload) {
         let anySelected = state.selected 
-        state.editingName = anySelected ? state.selected.name : '';
-        state.editingCnpj = anySelected ? state.selected.cnpj : '';
-        state.editingEmail = anySelected ? state.selected.email : '';
+        state.editingName = anySelected ? state.selected.name : ''
+        state.editingCnpj = anySelected ? state.selected.cnpj : ''
+        state.editingEmail = anySelected ? state.selected.email : ''
         state.editClient = payload
     },
     editName(state, payload) {
-        state.editingName = payload;
+        state.editingName = payload
     },
     editEmail(state, payload) {
-        state.editingEmail = payload;
+        state.editingEmail = payload
     },
     editCnpj(state, payload) {
-        state.editingCnpj = payload;
+        state.editingCnpj = payload
     },
     updateUsers(state, payload) {
-        state.users = payload;
+        state.users = payload
     }
-};
+}
 
 
 function onGroupsLoaded(context, payload) {
-    let clients = [];
+    let clients = []
     payload.forEach(clientSnapShot => {
-        let clientData = clientSnapShot.data();
-        clientData.id = clientSnapShot.id;
-        clients.push(clientData);
-    });
-    context.commit('updateClients', clients);
+        let clientData = clientSnapShot.data()
+        clientData.id = clientSnapShot.id
+        clients.push(clientData)
+    })
+    context.commit('updateClients', clients)
 }
 
 function createNewClient(state) {
@@ -80,7 +80,7 @@ function createNewClient(state) {
             name: state.editingName || "",
             email: state.editingEmail || "",
             cnpj: state.editingCnpj || ""
-        });
+        })
 }
 
 function updateExistingClient(state) {
@@ -90,18 +90,23 @@ function updateExistingClient(state) {
             name: state.editingName || "",
             email: state.editingEmail || "",
             cnpj: state.editingCnpj || ""
-        });
+        })
 }
 
 const actions = {
     selectClient({ state, commit }, payload) {
-        if (!state) console.log('Error, state is undifined.');
+        if (!state) console.log('Error, state is undifined.')
         var selected = payload
         commit('selectClient', selected)
         commit('editClient', true)
     },
+    closeSelectionClient({ commit }, payload) {
+        var selected = payload
+        commit('selectClient', selected)
+        commit('editClient', false)
+    },
     searchFor({ state, commit }, payload) {
-        if (!state) console.log('Error, state is undifined.');
+        if (!state) console.log('Error, state is undifined.')
         commit('searchFor', payload)
     },
     loadClients({ state, commit }) {
@@ -112,36 +117,36 @@ const actions = {
             });
     },
     editClient({ state, commit }, payload) {
-        if (!state) console.log('Error, state is undifined.');
+        if (!state) console.log('Error, state is undifined.')
         commit('editClient', payload)
     },
     editName({ state, commit }, payload) {
-        if (!state) console.log('Error, state is undifined.');
+        if (!state) console.log('Error, state is undifined.')
         commit('editName', payload)
     },
     editEmail({ state, commit }, payload) {
-        if (!state) console.log('Error, state is undifined.');
+        if (!state) console.log('Error, state is undifined.')
         commit('editEmail', payload)
     },
     editCnpj({ state, commit }, payload) {
-        if (!state) console.log('Error, state is undifined.');
+        if (!state) console.log('Error, state is undifined.')
         commit('editCnpj', payload)
     },
     saveClient({ state }) {
         if (!state.selected)
             createNewClient(state).then(() => {
-                this.dispatch('clients/loadClients');
-                this.dispatch('clients/editClient');
-            });
+                this.dispatch('clients/loadClients')
+                this.dispatch('clients/closeSelectionClient')
+            })
         else
             updateExistingClient(state).then(() => {
-                this.dispatch('clients/loadClients');
-                this.dispatch('clients/editClient');
-            });
+                this.dispatch('clients/loadClients')
+                this.dispatch('clients/closeSelectionClient')
+            })
     }
-};
+}
 const getters = {
-};
+}
 
 export default {
     namespaced: true,

@@ -31,9 +31,8 @@
                     </v-data-table>
                   </v-col>
                 </v-row>
-                <v-btn color="error" dark fixed bottom right fab v-show="!enableEdit" @click="editClient(true)">
-                  <v-icon >mdi-plus</v-icon>
-
+                <v-btn color="error" dark fixed bottom right v-show="!selected" fab @click="editClient(true)">
+                  <v-icon>mdi-plus</v-icon>
                 </v-btn>
               </v-col>
             </v-row>
@@ -52,8 +51,7 @@ const computed = mapState("clients", {
   search: state => state.search,
   searchLabel: state => state.searchLabel,
   headers: state => state.header,
-  clients: state => state.clients,
-
+  clients: state => state.clients
 });
 
 const methods = mapActions("clients", [
