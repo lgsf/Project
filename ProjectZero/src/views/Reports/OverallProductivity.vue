@@ -32,13 +32,14 @@
             </v-row>
           </v-col>
         </v-row>
-        <v-row>
+        <v-row v-if="showCharts">
           <v-col cols="4">
             <donut-chart
               :key="dntOrderPerClients"
               dnt-title="Ordens x Cliente"
               :dnt-data="ordersPerClient"
               dnt-legend="Cliente"
+              dnt-height="350px"
             />
           </v-col>
           <v-col cols="4">
@@ -47,39 +48,45 @@
               dnt-title="Tarefas x Cliente"
               :dnt-data="tasksPerClient"
               dnt-legend="Cliente"
+              dnt-height="350px"
             />
           </v-col>
           <v-col cols="4">
             <bar-chart
+              :key="barTimePerClients"
               bar-title="Tempo Trabalhado x Cliente"
               :bar-data="workedDaysPerClient"
               bar-data-name="Em Dias"
               :bar-data1="workedHoursPerClient"
               bar-data1-name="Em Horas"
+              bar-height="350px"
             />
           </v-col>
         </v-row>
-        <v-row>
-          <v-col cols="4">
+        <v-row v-if="showCharts">
+          <v-col cols="6">
             <donut-chart
               :key="dntOrderPerUsers"
               dnt-title="Ordens x Usuário"
               :dnt-data="ordersPerUser"
               dnt-legend="Usuário"
+              dnt-height="350px"
             ></donut-chart>
           </v-col>
-          <v-col cols="4">
+          <v-col cols="6">
             <donut-chart
               :key="dntTaskPerUsers"
               dnt-title="Tarefas x Usuário"
               :dnt-data="tasksPerUser"
               dnt-legend="Usuário"
+              dnt-height="350px"
             ></donut-chart>
           </v-col>
         </v-row>
-        <v-row>
+        <v-row v-if="showCharts">
           <v-col cols="12">
             <line-chart
+              :key="lineWorkedTime"
               line-title="Relatório de Tempo de Trabalho"
               :line-data="chartSeries"
               :line-y-config="yConfig"
@@ -112,41 +119,65 @@ const computed = Object.assign(
         text: `${m.ordersCount}`
       }));
     },
-    tasksPerClient: (state, store) => {
-      return store.filterTasksGroupedByClients({}).map(m => ({
+    tasksPerClient(state, store) {
+      let filters = {
+        startedAt: this.startedAt.unix(),
+        endedAt: this.endedAt.unix()
+      };
+      return store.filterTasksGroupedByClients(filters).map(m => ({
         axisX: m.client,
         axisY: m.tasksCount,
         text: `${m.tasksCount}`
       }));
     },
-    workedDaysPerClient: (state, store) => {
-      return store.getWorkedDaysByClients({}).map(m => ({
+    workedDaysPerClient(state, store) {
+      let filters = {
+        startedAt: this.startedAt.unix(),
+        endedAt: this.endedAt.unix()
+      };
+      return store.getWorkedDaysByClients(filters).map(m => ({
         x: m.client,
         y: m.spentTimeInDays
       }));
     },
-    workedHoursPerClient: (state, store) => {
-      return store.getWorkedHoursByClients({}).map(m => ({
+    workedHoursPerClient(state, store) {
+      let filters = {
+        startedAt: this.startedAt.unix(),
+        endedAt: this.endedAt.unix()
+      };
+      return store.getWorkedHoursByClients(filters).map(m => ({
         x: m.client,
         y: m.spentTimeInHours
       }));
     },
-    ordersPerUser: (state, store) => {
-      return store.filterOrdersGroupedByUsers({}).map(m => ({
+    ordersPerUser(state, store) {
+      let filters = {
+        startedAt: this.startedAt.unix(),
+        endedAt: this.endedAt.unix()
+      };
+      return store.filterOrdersGroupedByUsers(filters).map(m => ({
         axisX: m.user.name,
         axisY: m.ordersCount,
         text: `${m.ordersCount}`
       }));
     },
-    tasksPerUser: (state, store) => {
-      return store.filterTasksGroupedByUsers({}).map(m => ({
+    tasksPerUser(state, store) {
+      let filters = {
+        startedAt: this.startedAt.unix(),
+        endedAt: this.endedAt.unix()
+      };
+      return store.filterTasksGroupedByUsers(filters).map(m => ({
         axisX: m.user.name,
         axisY: m.tasksCount,
         text: `${m.tasksCount}`
       }));
     },
-    chartSeries: (state, store) => {
-      let infos = store.getWorkedHoursByUsersByDate({});
+    chartSeries(state, store) {
+      let filters = {
+        startedAt: this.startedAt.unix(),
+        endedAt: this.endedAt.unix()
+      };
+      let infos = store.getWorkedHoursByUsersByDate(filters);
       return infos.map(userData => ({
         title: userData.user.name,
         data: userData.workedHoursByDay.map(n => ({ x: n.day, y: n.hours }))
@@ -178,6 +209,9 @@ export default {
       this.dntTaskPerClients += 1;
       this.dntOrderPerUsers += 1;
       this.dntTaskPerUsers += 1;
+      this.barTimePerClients += 1;
+      this.lineWorkedTime += 1;
+      this.showCharts = true;
     }
   }),
   components: { DonutChart, BarChart, LineChart, DatePicker },
@@ -187,10 +221,29 @@ export default {
       dntTaskPerClients: 5,
       dntOrderPerUsers: 10,
       dntTaskPerUsers: 15,
+      barTimePerClients: 20,
+      lineWorkedTime: 25,
       yConfig: { title: "Tempo trabalhado (m)" },
       startedAt: moment().add(-15, "day"),
-      endedAt: moment()
+      endedAt: moment(),
+      showCharts: false
     };
+  },
+  watch: {
+    startedAt(oldValue, newValue) {
+      this.showCharts =
+        this.showCharts &&
+        oldValue instanceof moment &&
+        newValue instanceof moment &&
+        oldValue.unix() == newValue.unix();
+    },
+    endedAt(oldValue, newValue) {
+      this.showCharts =
+        this.showCharts &&
+        oldValue instanceof moment &&
+        newValue instanceof moment &&
+        oldValue.unix() == newValue.unix();
+    }
   },
   mounted() {
     this.loadOrders();

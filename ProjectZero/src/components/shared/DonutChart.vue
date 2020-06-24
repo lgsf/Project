@@ -12,6 +12,8 @@
         :chartArea="chartArea"
         :legendSettings="legendSettings"
         :tooltip="tooltip"
+        :width="dntWidth"
+        :height="dntHeight"
       >
         <e-accumulation-series-collection>
           <e-accumulation-series
@@ -48,7 +50,7 @@ import {
 
 Vue.use(AccumulationChartPlugin);
 export default Vue.extend({
-  props: ["dnt-title", "dnt-data", "dnt-legend"],
+  props: ["dnt-title", "dnt-data", "dnt-legend", "dnt-width", "dnt-height"],
   computed: {
     title: props => props.dntTitle || "prop: dnt-title, type: string",
     seriesData: props =>
@@ -61,19 +63,6 @@ export default Vue.extend({
         }
       ],
     legend: props => props.dntLegend || "prop: dnt-legend, type: string"
-  },
-  watch: {
-    seriesData() {
-      // console.log(newValue);
-      // console.log(oldValue);
-      // if (oldValue.length && oldValue.length != newValue.length) {
-      //   this.forceRerender();
-      //   this.forceRerender();
-      //   this.forceRerender();
-      //   this.forceRerender();
-      //   this.forceRerender();
-      //}
-    }
   },
   data: function() {
     return {
@@ -140,7 +129,6 @@ export default Vue.extend({
   methods: {
     forceRerender() {
       this.componentKey += 1;
-      //this.$forceUpdate();
     }
   }
 });

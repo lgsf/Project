@@ -9,9 +9,10 @@
         :primaryXAxis="primaryXAxis"
         :primaryYAxis="primaryYAxis"
         :chartArea="chartArea"
-        :width="width"
+        :width="barWidth"
         :tooltip="tooltip"
         :load="load"
+        :height="barHeight"
       >
         <e-series-collection>
           <e-series
@@ -53,7 +54,6 @@
 </style>
 <script>
 import Vue from "vue";
-import { Browser } from "@syncfusion/ej2-base";
 import {
   ChartPlugin,
   ColumnSeries,
@@ -73,7 +73,9 @@ export default Vue.extend({
     "bar-data2",
     "bar-data-name",
     "bar-data1-name",
-    "bar-data2-name"
+    "bar-data2-name",
+    "bar-width",
+    "bar-height"
   ],
   computed: {
     title: props => props.barTitle || "prop: bar-title, type: string",
@@ -110,8 +112,6 @@ export default Vue.extend({
         lineStyle: { width: 0 },
         labelStyle: { color: "transparent" }
       },
-
-      width: Browser.isDevice ? "100%" : "60%",
       marker: {
         dataLabel: {
           visible: true,

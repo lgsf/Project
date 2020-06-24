@@ -112,8 +112,8 @@ const getters = {
     filterOrdersGroupedByUsers(state, getters, rootState) {
         return (filters) => {
             let filteredOrders = state.orders.filter(order =>
-                !filters.startedAt || order.creation_date >= filters.startedAt &&
-                !filters.endedAt || order.creation_date <= filters.endedAt);
+                (!filters.startedAt || order.creation_date >= filters.startedAt) &&
+                (!filters.endedAt || order.creation_date <= filters.endedAt));
             let mapOrders = filteredOrders.map(order => ({
                 id: order.id,
                 users: order.users.map(m => m.id),
@@ -138,8 +138,8 @@ const getters = {
     filterTasksGroupedByClients(state) {
         return (filters) => {
             let filteredOrders = state.orders.filter(order =>
-                !filters.startedAt || order.creation_date >= filters.startedAt &&
-                !filters.endedAt || order.creation_date <= filters.endedAt);
+                (!filters.startedAt || order.creation_date >= filters.startedAt) &&
+                (!filters.endedAt || order.creation_date <= filters.endedAt));
             let groupedOrders = filteredOrders.groupBy(m => m.client.id);
             let data = [];
             groupedOrders.forEach(group => {
@@ -154,8 +154,8 @@ const getters = {
     filterTasksGroupedByUsers(state, getters, rootState) {
         return (filters) => {
             let filteredOrders = state.orders.filter(order =>
-                !filters.startedAt || order.creation_date >= filters.startedAt &&
-                !filters.endedAt || order.creation_date <= filters.endedAt);
+                (!filters.startedAt || order.creation_date >= filters.startedAt) &&
+                (!filters.endedAt || order.creation_date <= filters.endedAt));
             let tasks = filteredOrders.flatMap(a => a.tasks);
             if (!tasks || !tasks.length)
                 return [];
@@ -182,38 +182,37 @@ const getters = {
     getWorkedDaysByClients(state) {
         return (filters) => {
             let filteredOrders = state.orders.filter(order =>
-                !filters.startedAt || order.creation_date >= filters.startedAt &&
-                !filters.endedAt || order.creation_date <= filters.endedAt);
+                (!filters.startedAt || order.creation_date >= filters.startedAt) &&
+                (!filters.endedAt || order.creation_date <= filters.endedAt));
             let groupedOrders = filteredOrders.groupBy(m => m.client.id);
             let data = [];
             groupedOrders.forEach(group => {
                 data.push({
                     client: group[0].client.name,
                     spentTimeInDays: group.sum(m => {
-                        var start = moment(m.creation_date, "DD/MM/YYYY");
-                        var end = m.end_date ? moment(m.end_date, "DD/MM/YYYY") : moment().endOf('day');
-                        return Math.round((end - start) / (1000 * 3600 * 24));
+                        var start = m.creation_date;
+                        var end = m.end_date || moment().endOf('day').unix();
+                        return Math.round((end - start) / (3600 * 24));
                     })
                 });
             });
             return data;
         }
     },
-
     getWorkedHoursByClients(state) {
         return (filters) => {
             let filteredOrders = state.orders.filter(order =>
-                !filters.startedAt || order.creation_date >= filters.startedAt &&
-                !filters.endedAt || order.creation_date <= filters.endedAt);
+                (!filters.startedAt || order.creation_date >= filters.startedAt) &&
+                (!filters.endedAt || order.creation_date <= filters.endedAt));
             let groupedOrders = filteredOrders.groupBy(m => m.client.id);
             let data = [];
             groupedOrders.forEach(group => {
                 data.push({
                     client: group[0].client.name,
                     spentTimeInHours: group.sum(m => {
-                        var start = moment(m.creation_date, "DD/MM/YYYY");
-                        var end = m.end_date ? moment(m.end_date, "DD/MM/YYYY") : moment();
-                        return Math.round((end - start) / (1000 * 3600));
+                        var start = m.creation_date;
+                        var end = m.end_date || moment().endOf('day').unix();
+                        return Math.round((end - start) / (3600));
                     })
                 });
             });
@@ -224,8 +223,8 @@ const getters = {
     getWorkedHoursByUsersByDate(state, getters, rootState) {
         return (filters) => {
             let filteredInfos = state.sessionInfos.filter(info =>
-                !filters.startedAt || info.sesstion_start >= filters.startedAt &&
-                !filters.endedAt || info.session_end <= filters.endedAt);
+                (!filters.startedAt || info.sesstion_start >= filters.startedAt) &&
+                (!filters.endedAt || info.session_end <= filters.endedAt));
 
 
             filteredInfos.forEach(elem => elem.workingDate = elem.sessionDate.format("DD/MM/YYYY"));
