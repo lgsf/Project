@@ -27,7 +27,7 @@
               <v-col cols="12">
                 <DatePicker
                   dateLabel="Data de Nascimento"
-                  :dateObj="birth_date"
+                  :value="birth_date"
                   v-on:update="setBirthDate"
                   ref="DatePicker"
                 />
