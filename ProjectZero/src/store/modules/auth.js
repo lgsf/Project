@@ -60,7 +60,7 @@ const actions = {
                 commit('setIsAuthenticated', false)
                 this.dispatch('general/resetIsLoading')
                 router.push('/')
-            });
+            })
     },
 
     userSignOut({ commit, state }) {

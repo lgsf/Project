@@ -32,9 +32,11 @@
                       :items="notifications"
                       :search="search"
                       show-select
-                      single-select
+                      multiple-select
                       item-key="id"
                       :value="selected"
+                      sort-by="date"
+                      sort-desc
                       @input="selectNotification"
                     >
                     <template #item.name="{item}">
@@ -44,7 +46,7 @@
                         </span>
                       </v-col>
                     </template>
-                    <template #item.detail="{item}">
+                    <template #item.title="{item}">
                       <v-col cols="12">
                         <span >
                           {{ item.title }}
@@ -69,17 +71,31 @@
                     <template #item.group="{item}">
                       <v-col cols="12">
                         <span v-for="item2 in item.group" :key="item2.name">
+                          &nbsp;
                           {{ item2.name }}
                           <br>
                         </span>
                       </v-col>
                     </template>
+                    <template #item.detail="{item}">
+                      <v-col cols="12">
+                        <v-tooltip bottom color="grey lighten-4">
+                          <template v-slot:activator="{ on, attrs }">
+                            <span v-bind="attrs" v-on="on"> {{ item.detail.substr(0,25) + '...' }}</span>
+                          </template>
+                          <span v-html="item.detail" class="black--text"></span>
+                        </v-tooltip>
+                      </v-col>
+                    </template>
                   </v-data-table>
                 </v-col>
               </v-row>
-              <v-btn color="error" dark fixed bottom right fab @click="editNotification(true)">
+              <v-btn color="error" dark fixed bottom right v-show="selected.length < 2" fab @click="editNotification(true)">
                   <v-icon v-show="selected.length == 0">mdi-plus</v-icon>
-                  <v-icon v-show="selected.length > 0">mdi-pen</v-icon>
+                  <v-icon v-show="selected.length == 1">mdi-pen</v-icon>
+              </v-btn>
+              <v-btn color="error" dark fixed bottom right  v-show="selected.length > 1" fab @click="deleteMultipleNotifications(selected)">
+                  <v-icon>mdi-delete</v-icon>
               </v-btn>
             </v-col>
            </v-row>
@@ -93,6 +109,7 @@
 
 import { mapState, mapActions } from "vuex"
 import EditNotification from "./EditNotification"
+import { db } from "@/main"
 
 const computed = mapState("notifications", {
   selected: state => state.selected || [],
@@ -121,7 +138,17 @@ export default {
     return {}
   },
   computed,
-  methods: Object.assign({}, methods, userMethods),
+  methods: Object.assign({}, methods, userMethods, {
+    deleteMultipleNotifications(selected){
+      selected.forEach(doc => {
+          db.collection("notifications")
+            .doc(doc.id)
+            .delete()
+         })
+      this.loadNotifications()
+      this.selectNotification(false)
+      }
+  }),
   mounted() {
     this.readUsers()
     this.loadNotifications()

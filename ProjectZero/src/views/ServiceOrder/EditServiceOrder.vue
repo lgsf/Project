@@ -5,14 +5,14 @@
       <v-col cols="12">
         <v-card class="mx-auto mt-5">
           <v-toolbar class="primary white--text" dark>
-            <h3>{{ selected[0].name }}</h3>
+            <h3>{{ selected.name }}</h3>
             <v-spacer></v-spacer>
             <v-icon right class="white--text">receipt</v-icon>
           </v-toolbar>
           <v-row class="ml-5 mt-5 mr-5">
             <v-col cols="12">
               <v-autocomplete
-                :value="selected[0].client"
+                :value="selected.client"
                 @input="updateClient"
                 :items="clientList"
                 color="primary"
@@ -26,26 +26,19 @@
           <v-row class="ml-5 mr-5">
             <v-col cols="5">
               <DatePicker
-                      dateLabel="Data de criação:"
-                      :dateObj="selected[0].creation_date"
-                      ref="DatePicker"
-                      :disable="true"
-                    />
-              <!-- <v-text-field
-                prepend-icon="event"
-                label="Data de criação:"
-                disabled
-                dense
-                :value="selected[0].creation_date"
-              ></v-text-field> -->
+                dateLabel="Data de criação:"
+                :value="selected.creation_date"
+                ref="DatePicker"
+                :disable="true"
+              />
             </v-col>
             <v-col cols="5">
               <DatePicker
-                      dateLabel="Data de encerramento:"
-                      :dateObj="selected[0].end_date"
-                      ref="DatePicker"
-                      v-on:update="updateOrderEndDate"
-                    />
+                dateLabel="Data de encerramento:"
+                :value="selected.end_date"
+                ref="DatePicker"
+                v-on:update="updateOrderEndDate"
+              />
             </v-col>
             <v-col cols="2">
               <v-btn color="error" text @click="deleteOrder">Deletar</v-btn>
@@ -53,9 +46,26 @@
           </v-row>
           <v-row class="ml-5 mt-5 mr-5">
             <v-col cols="12">
-              <v-btn color="success" dark @click="showTaskDialog({name: ''})" style='padding-left:8px'><v-icon>mdi-plus</v-icon> Nova task</v-btn>
-              <v-btn color="blue" dark @click="filtertasks()" style='margin-left:8px;'><v-icon>filter-alt</v-icon> Somente as minhas</v-btn>
-              <v-btn color="primary" right dark @click="returnToServiceOrders()" style='margin-left:8px; padding-left:8px'><v-icon style="padding-right:8px">keyboard_return</v-icon> Voltar</v-btn>
+              <v-btn
+                color="success"
+                dark
+                @click="showTaskDialog({name: ''})"
+                style="padding-left:8px"
+              >
+                <v-icon>mdi-plus</v-icon>Nova task
+              </v-btn>
+              <v-btn color="blue" dark @click="filtertasks()" style="margin-left:8px;">
+                <v-icon>filter-alt</v-icon>Somente as minhas
+              </v-btn>
+              <v-btn
+                color="primary"
+                right
+                dark
+                @click="returnToServiceOrders"
+                style="margin-left:8px; padding-left:8px"
+              >
+                <v-icon style="padding-right:8px">keyboard_return</v-icon>Voltar
+              </v-btn>
             </v-col>
           </v-row>
           <v-row>
@@ -112,7 +122,7 @@ import TaskCard from "@/components/shared/TaskCard.vue";
 import EditServiceOrderTask from "./EditServiceOrderTask.vue";
 
 const computed = mapState({
-  selected: state => state.serviceOrders.selected || [{}],
+  selected: state => state.serviceOrders.selected || {},
   statusList: state => state.serviceOrders.statusList,
   tasks: state => state.serviceOrders.selectedOrderTasks,
   columns: state => state.serviceOrders.kanbanColumns,
@@ -129,7 +139,8 @@ const orderMethods = mapActions("serviceOrders", [
   "loadTasksByOrder",
   "onTaskDrag",
   "saveServiceOrder",
-  "deleteOrder"
+  "deleteOrder",
+  "returnToServiceOrders"
 ]);
 
 const clientMethods = mapActions("clients", ["loadClients"]);
@@ -145,12 +156,9 @@ export default {
   },
   computed,
   methods: Object.assign({}, orderMethods, clientMethods, {
-    returnToServiceOrders() {
-      this.$router.push({ path: `/serviceOrder` });
-    },
-    filtertasks(){
-      this.showOnlyMine = !this.showOnlyMine
-      this.loadTasksByOrder(this.showOnlyMine)
+    filtertasks() {
+      this.showOnlyMine = !this.showOnlyMine;
+      this.loadTasksByOrder(this.showOnlyMine);
     }
   }),
   data: () => ({

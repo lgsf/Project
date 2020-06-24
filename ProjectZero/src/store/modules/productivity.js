@@ -4,11 +4,15 @@ import { moment } from "@/main";
 
 const state = () => ({
     orders: [],
+    sessionInfos: []
 });
 
 const mutations = {
     setOrders(state, payload) {
-        state.orders = payload
+        state.orders = payload;
+    },
+    setSessionInfos(state, payload) {
+        state.sessionInfos = payload;
     }
 };
 
@@ -29,13 +33,37 @@ function onServiceOrdersLoaded(context, payload) {
     });
 }
 
+
+function onSessionInfosLoaded(context, payload) {
+    let infos = [];
+    payload.forEach(infosSnapShot => {
+        let infoData = infosSnapShot.data();
+        infoData.id = infosSnapShot.id;
+        infoData.sessionDate = moment.unix(infoData.sesstion_start);
+        infos.push(infoData);
+    });
+    context.commit('setSessionInfos', infos);
+    return new Promise(function (resolve, reject) {
+        if (!infos.length)
+            reject(infos);
+        else
+            resolve(infos);
+    });
+}
+
 const actions = {
     loadOrders(context) {
-        console.log('Loading orders...');
         db.collection("serviceOrder")
             .get()
             .then(function (snapshots) {
                 return onServiceOrdersLoaded(context, snapshots);
+            });
+    },
+    loadSessionInfo(context) {
+        db.collection("userSessionInfo")
+            .get()
+            .then(function (snapshots) {
+                return onSessionInfosLoaded(context, snapshots);
             });
     }
 };
@@ -68,8 +96,8 @@ const getters = {
     filterOrdersGroupedByClients(state) {
         return (filters) => {
             let filteredOrders = state.orders.filter(order =>
-                !filters.startedAt || order.creation_date >= filters.startedAt &&
-                !filters.endedAt || order.creation_date <= filters.endedAt);
+                (!filters.startedAt || order.creation_date >= filters.startedAt) &&
+                (!filters.endedAt || order.creation_date <= filters.endedAt));
             let groupedOrders = filteredOrders.groupBy(m => m.client.id);
             let data = [];
             groupedOrders.forEach(group => {
@@ -84,8 +112,8 @@ const getters = {
     filterOrdersGroupedByUsers(state, getters, rootState) {
         return (filters) => {
             let filteredOrders = state.orders.filter(order =>
-                !filters.startedAt || order.creation_date >= filters.startedAt &&
-                !filters.endedAt || order.creation_date <= filters.endedAt);
+                (!filters.startedAt || order.creation_date >= filters.startedAt) &&
+                (!filters.endedAt || order.creation_date <= filters.endedAt));
             let mapOrders = filteredOrders.map(order => ({
                 id: order.id,
                 users: order.users.map(m => m.id),
@@ -110,8 +138,8 @@ const getters = {
     filterTasksGroupedByClients(state) {
         return (filters) => {
             let filteredOrders = state.orders.filter(order =>
-                !filters.startedAt || order.creation_date >= filters.startedAt &&
-                !filters.endedAt || order.creation_date <= filters.endedAt);
+                (!filters.startedAt || order.creation_date >= filters.startedAt) &&
+                (!filters.endedAt || order.creation_date <= filters.endedAt));
             let groupedOrders = filteredOrders.groupBy(m => m.client.id);
             let data = [];
             groupedOrders.forEach(group => {
@@ -126,8 +154,8 @@ const getters = {
     filterTasksGroupedByUsers(state, getters, rootState) {
         return (filters) => {
             let filteredOrders = state.orders.filter(order =>
-                !filters.startedAt || order.creation_date >= filters.startedAt &&
-                !filters.endedAt || order.creation_date <= filters.endedAt);
+                (!filters.startedAt || order.creation_date >= filters.startedAt) &&
+                (!filters.endedAt || order.creation_date <= filters.endedAt));
             let tasks = filteredOrders.flatMap(a => a.tasks);
             if (!tasks || !tasks.length)
                 return [];
@@ -154,17 +182,37 @@ const getters = {
     getWorkedDaysByClients(state) {
         return (filters) => {
             let filteredOrders = state.orders.filter(order =>
-                !filters.startedAt || order.creation_date >= filters.startedAt &&
-                !filters.endedAt || order.creation_date <= filters.endedAt);
+                (!filters.startedAt || order.creation_date >= filters.startedAt) &&
+                (!filters.endedAt || order.creation_date <= filters.endedAt));
             let groupedOrders = filteredOrders.groupBy(m => m.client.id);
             let data = [];
             groupedOrders.forEach(group => {
                 data.push({
                     client: group[0].client.name,
                     spentTimeInDays: group.sum(m => {
-                        var start = moment(m.creation_date, "DD/MM/YYYY");
-                        var end = m.end_date ? moment(m.end_date, "DD/MM/YYYY") : moment().endOf('day');
-                        return Math.round((end - start) / (1000 * 3600 * 24));
+                        var start = m.creation_date;
+                        var end = m.end_date || moment().endOf('day').unix();
+                        return Math.round((end - start) / (3600 * 24));
+                    })
+                });
+            });
+            return data;
+        }
+    },
+    getWorkedHoursByClients(state) {
+        return (filters) => {
+            let filteredOrders = state.orders.filter(order =>
+                (!filters.startedAt || order.creation_date >= filters.startedAt) &&
+                (!filters.endedAt || order.creation_date <= filters.endedAt));
+            let groupedOrders = filteredOrders.groupBy(m => m.client.id);
+            let data = [];
+            groupedOrders.forEach(group => {
+                data.push({
+                    client: group[0].client.name,
+                    spentTimeInHours: group.sum(m => {
+                        var start = m.creation_date;
+                        var end = m.end_date || moment().endOf('day').unix();
+                        return Math.round((end - start) / (3600));
                     })
                 });
             });
@@ -172,22 +220,36 @@ const getters = {
         }
     },
 
-    getWorkedHoursByClients(state) {
+    getWorkedHoursByUsersByDate(state, getters, rootState) {
         return (filters) => {
-            let filteredOrders = state.orders.filter(order =>
-                !filters.startedAt || order.creation_date >= filters.startedAt &&
-                !filters.endedAt || order.creation_date <= filters.endedAt);
-            let groupedOrders = filteredOrders.groupBy(m => m.client.id);
+            let filteredInfos = state.sessionInfos.filter(info =>
+                (!filters.startedAt || info.sesstion_start >= filters.startedAt) &&
+                (!filters.endedAt || info.session_end <= filters.endedAt));
+
+
+            filteredInfos.forEach(elem => elem.workingDate = elem.sessionDate.format("DD/MM/YYYY"));
+            filteredInfos = filteredInfos.sort((m, n) => m.sesstion_start > n.sesstion_start ? 1 : -1);
+            let period = [...new Set(filteredInfos.map(m => m.workingDate))];
+
+
+            let infosGroupedById = filteredInfos.groupBy(m => m.uid);
             let data = [];
-            groupedOrders.forEach(group => {
-                data.push({
-                    client: group[0].client.name,
-                    spentTimeInHours: group.sum(m => {
-                        var start = moment(m.creation_date, "DD/MM/YYYY");
-                        var end = m.end_date ? moment(m.end_date, "DD/MM/YYYY") : moment();
-                        return Math.round((end - start) / (1000 * 3600));
-                    })
+            let allUsers = rootState.users.userList;
+            infosGroupedById.forEach(user => {
+                let userData = {
+                    uid: user[0].uid,
+                    user: allUsers.reduce((a, b) => a.id == user[0].uid ? a : b, 0),
+                    workedHoursByDay: []
+                };
+                let daysWorked = user.groupBy(m => m.workingDate);
+                period.forEach(day => {
+                    let dayData = daysWorked.get(day) || [{ workingDate: day, session_end: 0, sesstion_start: 0 }];
+                    userData.workedHoursByDay.push({
+                        day: dayData[0].workingDate,
+                        hours: Math.round(dayData.sum(m => (m.session_end - m.sesstion_start)) / 60)
+                    });
                 });
+                data.push(userData);
             });
             return data;
         }

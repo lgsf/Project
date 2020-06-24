@@ -32,11 +32,8 @@
                     :headers="header"
                     :items="serviceOrders"
                     :search="search"
-                    show-select
-                    single-select
-                    item-key="id"
-                    :value="selected"
-                    @input="selectOrder"
+                    :value="item"
+                    @click:row="selectOrder"
                   ></v-data-table>
                 </v-col>
               </v-row>
@@ -64,7 +61,7 @@ const computed = mapState("serviceOrders", {
   selected: state => state.selected,
   search: state => state.search,
   serviceOrders: state => state.serviceOrders,
-  enableEdit: state => state.selected && state.selected.length
+  enableEdit: state => state.selected 
   
 });
 
@@ -72,7 +69,8 @@ const methods = mapActions("serviceOrders", [
   "selectOrder",
   "searchFor",
   "reloadOrders",
-  "openCreateOrderModal"
+  "openCreateOrderModal",
+  "editServiceOrder"
 ]);
 
 const generalMethods = mapActions("general", [
@@ -111,14 +109,7 @@ export default {
     CreateServiceOrder
   },
   computed: Object.assign({}, computed, computedServiceOrders),
-  methods: Object.assign({}, methods, generalMethods, {
-    editServiceOrder() {
-      if (this.selected.length > 0)
-        this.$router.push({ path: `/EditServiceOrder/${this.selected[0].id}` });
-      else
-        this.openCreateOrderModal()
-    }
-  }),
+  methods: Object.assign({}, methods, generalMethods),
   mounted() {
     this.setIsLoading()
     this.reloadOrders().then(() => {this.resetIsLoading() });

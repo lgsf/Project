@@ -57,7 +57,7 @@
               <v-col cols="12">
                 <DatePicker
                   dateLabel="Data"
-                  :dateObj="date"
+                  :value="date"
                   v-on:update="editDate"
                   ref="DatePicker"
                 />
