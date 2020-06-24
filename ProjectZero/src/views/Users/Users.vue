@@ -19,20 +19,16 @@
             <v-row>
               <v-col cols="12">
                 <v-data-table
-                  @input="onSelectedUser"
                   :headers="headers"
                   :items="userList"
                   :search="search"
-                  show-select
-                  single-select
-                  item-key="name"
-                  :value="selected"
+                  :value="item"
+                  @click:row="onSelectedUser"
                 ></v-data-table>
               </v-col>
             </v-row>
-            <v-btn color="error" dark fixed bottom right fab @click="openEditUserModal">
-              <v-icon v-show="selected.length == 0">mdi-plus</v-icon>
-              <v-icon v-show="selected.length > 0">mdi-pen</v-icon>
+            <v-btn color="error" dark fixed bottom right v-show="!selected" fab @click="openEditUserModal">
+              <v-icon>mdi-plus</v-icon>
             </v-btn>
             <EditUser ref="EditUser" />
           </v-card>

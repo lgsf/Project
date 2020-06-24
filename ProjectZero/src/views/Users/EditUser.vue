@@ -73,7 +73,7 @@ const computed = mapState("users", {
   group:  state => state.editUserGroup,
   birth_date:  state => state.editUserBirthDate,
   userGroups: state => state.userGroups
-});
+})
 
 const methods = mapActions("users", [
   "setName",
@@ -83,16 +83,16 @@ const methods = mapActions("users", [
   "setGroup",
   "save",
   "closeEditUserModal",
-]);
+])
 
 export default {
   components: { DatePicker, PhoneNumberInput },
   data() {
-    return { }
+    return {}
   },
   methods,
   computed
-};
+}
 </script>
 
 <style lang="stylus"></style>

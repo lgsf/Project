@@ -29,7 +29,7 @@
         <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="editClient(false)">Fechar</v-btn>
+          <v-btn color="blue darken-1" text @click="closeSelectionClient(false)">Fechar</v-btn>
           <v-btn color="blue darken-1" text @click="saveClient">Salvar</v-btn>
         </v-card-actions>
       </v-card>
@@ -45,7 +45,7 @@ const computed = mapState("clients", {
   name: state => state.editingName,
   cnpj: state => state.editingCnpj,
   email: state => state.editingEmail
-});
+})
 
 const methods = mapActions("clients", [
   "editName",
@@ -53,15 +53,16 @@ const methods = mapActions("clients", [
   "editCnpj",
   "loadClients",
   "editClient",
-  "saveClient"
-]);
+  "saveClient",
+  "closeSelectionClient"
+])
 
 export default {
   computed,
   methods,
   data() {
-    return {};
+    return {}
   }
-};
+}
 </script>
 <style lang="stylus"></style>
