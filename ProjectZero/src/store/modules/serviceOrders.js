@@ -4,7 +4,7 @@ import { auth } from "@/main";
 
 const state = () => ({
     client: undefined,
-    selected: [],
+    selected: '',
     search: '',
     serviceOrders: [],
     statusList: ['Pendente', 'Em progresso', 'Finalizada', 'Cancelada'],
@@ -137,6 +137,16 @@ Array.prototype.unique = function () {
 };
 
 const actions = {
+    editServiceOrder(context) {
+        if (context.state.selected)
+          router.push({ path: `/EditServiceOrder/${context.state.selected.id}` });
+        else
+        context.commit('updateShowCreateOrderDialog', true)
+      },
+      returnToServiceOrders(context) {
+        context.commit('selectOrder', false)
+        router.push({ path: `/serviceOrder` })
+      },
     openCreateOrderModal(context) {
         context.commit('updateShowCreateOrderDialog', true)
     },
@@ -164,6 +174,7 @@ const actions = {
     },
     selectOrder(context, payload) {
         context.commit('selectOrder', payload)
+        this.dispatch('serviceOrders/editServiceOrder')
     },
     searchFor(context, payload) {
         context.commit('searchFor', payload)

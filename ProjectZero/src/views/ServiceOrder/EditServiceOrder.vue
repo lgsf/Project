@@ -61,7 +61,7 @@
                 color="primary"
                 right
                 dark
-                @click="returnToServiceOrders()"
+                @click="returnToServiceOrders"
                 style="margin-left:8px; padding-left:8px"
               >
                 <v-icon style="padding-right:8px">keyboard_return</v-icon>Voltar
@@ -122,7 +122,7 @@ import TaskCard from "@/components/shared/TaskCard.vue";
 import EditServiceOrderTask from "./EditServiceOrderTask.vue";
 
 const computed = mapState({
-  selected: state => state.serviceOrders.selected || [{}],
+  selected: state => state.serviceOrders.selected || {},
   statusList: state => state.serviceOrders.statusList,
   tasks: state => state.serviceOrders.selectedOrderTasks,
   columns: state => state.serviceOrders.kanbanColumns,
@@ -139,7 +139,8 @@ const orderMethods = mapActions("serviceOrders", [
   "loadTasksByOrder",
   "onTaskDrag",
   "saveServiceOrder",
-  "deleteOrder"
+  "deleteOrder",
+  "returnToServiceOrders"
 ]);
 
 const clientMethods = mapActions("clients", ["loadClients"]);
@@ -155,9 +156,6 @@ export default {
   },
   computed,
   methods: Object.assign({}, orderMethods, clientMethods, {
-    returnToServiceOrders() {
-      this.$router.push({ path: `/serviceOrder` });
-    },
     filtertasks() {
       this.showOnlyMine = !this.showOnlyMine;
       this.loadTasksByOrder(this.showOnlyMine);
