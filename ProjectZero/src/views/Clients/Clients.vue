@@ -52,26 +52,26 @@ const computed = mapState("clients", {
   searchLabel: state => state.searchLabel,
   headers: state => state.header,
   clients: state => state.clients
-});
+})
 
 const methods = mapActions("clients", [
   "selectClient",
   "searchFor",
   "loadClients",
   "editClient"
-]);
+])
 
 export default {
   components: { EditClient },
   data() {
-    return {};
+    return {}
   },
   computed,
   methods,
   mounted() {
-    this.loadClients();
+    this.loadClients()
   }
-};
+}
 </script>
 <style>
 </style>
