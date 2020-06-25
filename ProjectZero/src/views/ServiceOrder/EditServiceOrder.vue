@@ -63,6 +63,7 @@
                 dark
                 @click="returnToServiceOrders"
                 style="margin-left:8px; padding-left:8px"
+                
               >
                 <v-icon style="padding-right:8px">keyboard_return</v-icon>Voltar
               </v-btn>
