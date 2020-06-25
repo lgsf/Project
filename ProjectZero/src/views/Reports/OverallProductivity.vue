@@ -1,6 +1,6 @@
 <template>
-  <v-row justify="center">
-    <v-col cols="10">
+  <v-row style="min-width:70vw;">
+    <v-col >
       <v-card class="mx-auto">
         <v-toolbar class="primary white--text" dark>
           <h3>Produtividade Geral</h3>

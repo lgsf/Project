@@ -1,14 +1,14 @@
 <template>
   <div>
-    <v-row justify="center">
-      <v-col md="6">
+    <v-row style="min-width:70vw;">
+      <v-col >
         <div class="text-center screen-margin-top" v-if="isLoading">
           <v-progress-circular
             indeterminate
             color="primary"
           ></v-progress-circular>
         </div>
-        <v-card v-if="!isLoading" class="mx-auto">
+        <v-card v-if="!isLoading" >
           <v-toolbar class="primary white--text" dark>
             <h3>Ordens de Serviço</h3>
             <v-spacer></v-spacer>

@@ -1,6 +1,7 @@
 <template>
 <div class="setup">
-    <v-row justify="center">
+    <v-row style="min-width:70vw;">
+      <v-col>
         <div class="text-center screen-margin-top" v-if="isLoading">
           <v-progress-circular
             indeterminate
@@ -81,8 +82,9 @@
                   </v-btn>
                   </v-col>
 
-                  <v-col class='ms-6 me-6'>
+                  <v-col  class="d-flex justify-end ms-6 me-6">
                    <v-btn
+                   
                     color="primary"
                     depressed
                     type="submit"
@@ -93,6 +95,7 @@
             </v-row>
           </v-form>
         </v-card>
+        </v-col>
     </v-row>
   </div>
 </template>

@@ -1,6 +1,7 @@
 <template>
   <div class="notifications">
-    <v-row justify="center">
+    <v-row style="min-width:70vw;">
+      <v-col>
         <div class="text-center" v-if="loading">
           <v-progress-circular
             indeterminate
@@ -101,6 +102,7 @@
            </v-row>
         <EditNotification/>
       </v-card>
+      </v-col>
     </v-row>
   </div>
 </template>

@@ -1,6 +1,7 @@
 <template>
   <div class="groups">
-    <v-row justify="center">
+    <v-row style="min-width:70vw;">
+      <v-col>
       <v-card class="mx-auto">
         <v-toolbar class="primary white--text" dark>
           <h3>{{ title }}</h3>
@@ -40,6 +41,7 @@
         </v-row>
         <EditGroup />
       </v-card>
+      </v-col>
     </v-row>
   </div>
 </template>

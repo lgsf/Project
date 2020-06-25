@@ -1,13 +1,14 @@
 <template>
   <div class="groups">
-      <v-row justify="center">
-          <v-card class="mx-auto">
+      <v-row style="min-width:70vw;">
+        <v-col>
+          <v-card >
             <v-toolbar class="primary white--text" dark>
               <h3>{{ title }}</h3>
               <v-spacer></v-spacer>
               <v-icon right class="white--text">contacts</v-icon>
             </v-toolbar>
-            <v-row justify="center">
+            <v-row >
               <v-col cols="12">
                 <v-card-title>
                   <v-text-field
@@ -38,6 +39,7 @@
             </v-row>
             <EditClient />
           </v-card>
+          </v-col>
       </v-row>
   </div>
 </template>

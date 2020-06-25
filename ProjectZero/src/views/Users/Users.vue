@@ -1,7 +1,8 @@
 <template>
   <div class="users">
-      <v-row justify="center">
-          <v-card class="mx-auto">
+      <v-row style="min-width:70vw;">
+        <v-col>
+          <v-card >
             <v-toolbar color="primary" dark>
               <h3>Usuários</h3>
               <v-spacer></v-spacer>
@@ -32,6 +33,7 @@
             </v-btn>
             <EditUser ref="EditUser" />
           </v-card>
+          </v-col>
       </v-row>
   </div>
 </template>
