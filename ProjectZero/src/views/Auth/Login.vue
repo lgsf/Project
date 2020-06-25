@@ -1,5 +1,5 @@
 <template>
-  <div class="login">
+  <div class="login" >
     <br />
     <v-banner>
       <v-img :src="imageUrl"></v-img>
@@ -39,11 +39,14 @@
                     v-model="password"
                     :rules="passwordRules"
                     required
+                    @keyup.13.native="login"
                   ></v-text-field>
                 </v-col>
                 <v-btn color="error" router :to="{name: 'ResetPassword'}">Esqueci a senha</v-btn>
                 <v-spacer></v-spacer>
-                <v-btn @click="login" :loading="isLoading" color="primary" :disabled="!valid">
+                <v-btn 
+                
+                @click="login" :loading="isLoading" color="primary" :disabled="!valid">
                   Login
                   <template v-slot:loader>
                     <span class="custom-loader">

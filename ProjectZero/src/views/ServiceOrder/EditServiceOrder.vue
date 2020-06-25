@@ -57,7 +57,7 @@
               </v-btn>
               <v-btn color="blue" dark @click="filtertasks()" class=" mt-1"
                >
-                Filtrar <v-icon style="padding-left:8px;">receipt</v-icon>
+                Filtrar <v-icon style="padding-left:8px;">filter_list</v-icon>
               </v-btn>
               </v-col>
               <v-col

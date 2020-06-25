@@ -145,8 +145,8 @@ export default {
             .doc(doc.id)
             .delete()
          })
-      this.loadNotifications()
       this.selectNotification(false)
+      this.loadNotifications()
       }
   }),
   mounted() {
