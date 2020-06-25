@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog :value="dialog" persistent scrollable max-width="600px">
+    <v-dialog :value="dialog" persistent scrollable max-width="600px" @click:outside="closeSelectionClient(false)">
       <v-card>
         <v-toolbar class="primary" dark>
           <v-toolbar-title>{{title}}</v-toolbar-title>

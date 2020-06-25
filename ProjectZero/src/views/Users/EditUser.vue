@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog :value="dialog" persistent max-width="600px">
+    <v-dialog :value="dialog" persistent max-width="600px" @click:outside="closeEditUserModal">
       <v-card>
         <v-toolbar class="primary" dark>
           <v-toolbar-title>Usuário</v-toolbar-title>

@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="dialog" persistent max-width="600px">
+    <v-dialog v-model="dialog" persistent max-width="600px" @click:outside="editNotification(false)">
       <v-card>
         <v-toolbar class="primary" dark>
           <v-toolbar-title>Adicionar notificação</v-toolbar-title>

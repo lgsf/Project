@@ -50,7 +50,7 @@
                   </v-row>
                   <br> 
                   <v-row>
-                    <v-btn color="error" v-if="isAdmin" text @click="deleteNotification(item)">Deletar</v-btn>
+                    <v-btn color="error" v-if="isAdmin" text @click="deleteNotification(item)">Excluir</v-btn>
                     <v-spacer></v-spacer>
                     <v-btn color="blue darken-1" v-show="item.read" text @click="markUnread(item)">Não-lido</v-btn>
                   </v-row>

@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog v-model="dialog" persistent scrollable max-width="600px">
+    <v-dialog v-model="dialog" persistent scrollable max-width="600px" @click:outside="editGroup(false)">
       <v-card>
         <v-toolbar class="primary" dark>
           <v-toolbar-title>Grupo</v-toolbar-title>

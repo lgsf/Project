@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center">
-    <v-dialog :value="dialog" persistent max-width="800px">
+    <v-dialog :value="dialog" persistent max-width="800px" @click:outside="closeCreateOrderModal">
       <v-card>
         <v-toolbar class="primary" dark>
           <v-toolbar-title>Criar nova ordem de serviço</v-toolbar-title>

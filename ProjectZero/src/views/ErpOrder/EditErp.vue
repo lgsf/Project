@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-dialog :value="dialog" persistent scrollable max-width="800px">
+    <v-dialog :value="dialog" persistent scrollable max-width="800px" @click:outside="closeSelectedErpOrder(false)">
       <v-card>
         <v-toolbar class="primary" dark>
           <v-toolbar-title>Ordem de Serviço ERP</v-toolbar-title>

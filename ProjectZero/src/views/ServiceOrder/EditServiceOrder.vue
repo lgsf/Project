@@ -111,7 +111,7 @@
       </v-col>
     </v-row>
 
-    <v-btn color="info" dark fixed bottom right fab @click="saveServiceOrder">
+    <v-btn color="primary" dark fixed bottom right fab @click="saveServiceOrder">
       <v-icon>mdi-content-save</v-icon>
     </v-btn>
     <EditServiceOrderTask></EditServiceOrderTask>
