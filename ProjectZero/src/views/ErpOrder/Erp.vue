@@ -25,17 +25,13 @@
                   :headers="headers"
                   :items="erp"
                   :search="search"
-                  show-select
-                  single-select
-                  item-key="name"
-                  :value="selected"
-                  @input="selectErpOrder"
+                  :value="item"
+                  @click:row="selectErpOrder"
                 ></v-data-table>
               </v-col>
             </v-row>
-            <v-btn color="error" dark fixed bottom right fab @click="editErpOrder(true)">
-              <v-icon v-show="!enableEdit">mdi-plus</v-icon>
-              <v-icon v-show="enableEdit">mdi-pen</v-icon>
+            <v-btn color="error" dark fixed bottom right v-show="!selected" fab @click="editErpOrder(true)">
+              <v-icon >mdi-plus</v-icon>
             </v-btn>
           </v-col>
         </v-row>
@@ -55,7 +51,6 @@ const computed = mapState("erp", {
   searchLabel: state => state.searchLabel,
   headers: state => state.header,
   erp: state => state.erpOrders,
-  enableEdit: state => state.selected && state.selected.length
 })
 
 const methods = mapActions("erp", [

@@ -89,9 +89,9 @@
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
-          <v-btn color="error" text @click="deleteErp">Deletar</v-btn>
+          <v-btn color="error" text v-show="selected" @click="deleteErp">Deletar</v-btn>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="editErpOrder(false)">Fechar</v-btn>
+          <v-btn color="blue darken-1" text @click="closeSelectedErpOrder(false)">Fechar</v-btn>
           <v-btn color="blue darken-1" text @click="saveErpOrder">Salvar</v-btn>
         </v-card-actions>
       </v-card>
@@ -102,14 +102,19 @@
 import { mapState, mapActions } from "vuex"
 
 const computed = mapState({
-  selected: state => state.erp.selectedOrder,
+  selected: state => state.erp.selected,
   dialog: state => state.erp.editErp,
   users: state => state.users.userList
-});
+})
 
 const userMethods = mapActions("users", ["readUsers"])
 
-const erpMethods = mapActions("erp", ["saveErpOrder", "editErpOrder", "deleteErp"])
+const erpMethods = mapActions("erp", 
+["saveErpOrder", 
+"editErpOrder", 
+"deleteErp",
+"closeSelectedErpOrder"
+])
 
 export default {
   computed,

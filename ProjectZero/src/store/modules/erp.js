@@ -4,7 +4,7 @@ import { db } from "@/main";
 const state = () => ({
     label: '',
     listTitle: "Ordem Erp",
-    selected: [],
+    selected: '',
     selectedOrder: {},
     search: '',
     searchLabel: 'Buscar',
@@ -33,7 +33,7 @@ const state = () => ({
 const mutations = {
     selectErpOrder(state, payload) {
         state.selected = payload
-        state.selectedOrder = state.selected.length ? state.selected[0] : { tasks: [] }
+        state.selectedOrder = state.selected ? state.selected : { tasks: [] }
     },
     searchFor(state, payload) {
         state.search = payload
@@ -42,28 +42,28 @@ const mutations = {
         state.erpOrders = payload
     },
     editErpOrder(state, payload) {
-        let anySelected = !!state.selected;
-        state.editingName = anySelected ? state.selected.name : '';
-        state.editingTask = anySelected ? state.selected.task : '';
-        state.editingUser = anySelected ? state.selected.user : '';
+        let anySelected = state.selected
+        state.editingName = anySelected ? state.selected.name : ''
+        state.editingTask = anySelected ? state.selected.task : ''
+        state.editingUser = anySelected ? state.selected.user : ''
         state.editErp = payload
     }
-};
+}
 
 
 function onErpOrdersLoaded(context, payload) {
-    let erpOrders = [];
+    let erpOrders = []
     payload.forEach(erpSnapShot => {
-        let erpData = erpSnapShot.data();
-        erpData.id = erpSnapShot.id;
-        erpOrders.push(erpData);
-    });
-    context.commit('updateErpOrders', erpOrders);
+        let erpData = erpSnapShot.data()
+        erpData.id = erpSnapShot.id
+        erpOrders.push(erpData)
+    })
+    context.commit('updateErpOrders', erpOrders)
 }
 
 function createNewErp(state) {
-    let admin = mapUser(state.selectedOrder.administrator);
-    let users = (state.selectedOrder.users || []).map(m => mapUser(m));
+    let admin = mapUser(state.selectedOrder.administrator)
+    let users = (state.selectedOrder.users || []).map(m => mapUser(m))
 
     if (state.selectedOrder.tasks) {
         let newTaskList = []
@@ -83,25 +83,25 @@ function createNewErp(state) {
             administrator: admin,
             tasks: state.selectedOrder.tasks || [],
             users: users
-        });
+        })
 }
 
 function mapUser(user) {
-    let userMapped = '';
+    let userMapped = ''
     if (!user)
-        return userMapped;
+        return userMapped
     userMapped = {
         id: user.id,
         name: user.name,
         group_id: user.group_id,
         email: user.email
-    };
-    return userMapped;
+    }
+    return userMapped
 }
 
 function updateExistingErp(state) {
-    let admin = mapUser(state.selectedOrder.administrator);
-    let users = (state.selectedOrder.users || []).map(m => mapUser(m));
+    let admin = mapUser(state.selectedOrder.administrator)
+    let users = (state.selectedOrder.users || []).map(m => mapUser(m))
 
     return db.collection("erp")
         .doc(state.selectedOrder.id)
@@ -110,23 +110,30 @@ function updateExistingErp(state) {
             administrator: admin,
             tasks: state.selectedOrder.tasks || [],
             users: users
-        });
+        })
 }
 
 const actions = {
     selectErpOrder({ commit }, payload) {
-        var selected = payload;
-        commit('selectErpOrder', selected);
+        var selected = payload
+        commit('selectErpOrder', selected)
+        commit('editErpOrder', true)
     },
+    closeSelectedErpOrder({ commit }, payload) {
+        var selected = payload
+        commit('selectErpOrder', selected)
+        commit('editErpOrder', false)
+    },
+    
     searchFor({ commit }, payload) {
-        commit('searchFor', payload);
+        commit('searchFor', payload)
     },
     loadErpOrders({ state, commit }) {
         db.collection("erp")
             .get()
             .then(function (snapshots) {
                 onErpOrdersLoaded({ state, commit }, snapshots)
-            });
+            })
     },
     editErpOrder({ commit }, payload) {
         commit('editErpOrder', payload);
@@ -134,16 +141,16 @@ const actions = {
     saveErpOrder({ commit, state }) {
         if (!state.selectedOrder.id)
             createNewErp(state).then(() => {
-                commit("selectErpOrder", []);
-                this.dispatch('erp/loadErpOrders');
-                this.dispatch('erp/editErpOrder');
-            });
+                commit("selectErpOrder", [])
+                this.dispatch('erp/loadErpOrders')
+                this.dispatch('erp/closeSelectedErpOrder')
+            })
         else
             updateExistingErp(state).then(() => {
                 commit("selectErpOrder", []);
-                this.dispatch('erp/loadErpOrders');
-                this.dispatch('erp/editErpOrder');
-            });
+                this.dispatch('erp/loadErpOrders')
+                this.dispatch('erp/closeSelectedErpOrder')
+            })
     },
     getErpOrder(context, payload) {
         console.log(context)
@@ -152,12 +159,15 @@ const actions = {
     },
     deleteErp(context) {
         if (context.state.selectedOrder.id)
-            db.collection("erp").doc(context.state.selectedOrder.id).delete().then(() => { this.dispatch('erp/editErpOrder').then(() => { this.dispatch('erp/loadErpOrders') }) })
+            db.collection("erp").doc(context.state.selectedOrder.id)
+            .delete().then(() => { this.dispatch('erp/closeSelectedErpOrder')
+            .then(() => { this.dispatch('erp/loadErpOrders') }) })
         else
             this.dispatch('erp/editErpOrder')
     }
-};
-const getters = {};
+}
+
+const getters = {}
 
 export default {
     namespaced: true,

@@ -114,12 +114,12 @@
 </template>
 
 <script>
-import DatePicker from "@/components/shared/DatePicker";
-import { mapState, mapActions } from "vuex";
-import draggable from "vuedraggable";
-import Alert from "@/components/shared/Alert";
-import TaskCard from "@/components/shared/TaskCard.vue";
-import EditServiceOrderTask from "./EditServiceOrderTask.vue";
+import DatePicker from "@/components/shared/DatePicker"
+import { mapState, mapActions } from "vuex"
+import draggable from "vuedraggable"
+import Alert from "@/components/shared/Alert"
+import TaskCard from "@/components/shared/TaskCard.vue"
+import EditServiceOrderTask from "./EditServiceOrderTask.vue"
 
 const computed = mapState({
   selected: state => state.serviceOrders.selected || {},
@@ -127,7 +127,7 @@ const computed = mapState({
   tasks: state => state.serviceOrders.selectedOrderTasks,
   columns: state => state.serviceOrders.kanbanColumns,
   clientList: state => state.clients.clients
-});
+})
 
 const orderMethods = mapActions("serviceOrders", [
   "selectOrder",
@@ -141,9 +141,9 @@ const orderMethods = mapActions("serviceOrders", [
   "saveServiceOrder",
   "deleteOrder",
   "returnToServiceOrders"
-]);
+])
 
-const clientMethods = mapActions("clients", ["loadClients"]);
+const clientMethods = mapActions("clients", ["loadClients"])
 
 export default {
   props: ["id"],
@@ -157,18 +157,18 @@ export default {
   computed,
   methods: Object.assign({}, orderMethods, clientMethods, {
     filtertasks() {
-      this.showOnlyMine = !this.showOnlyMine;
-      this.loadTasksByOrder(this.showOnlyMine);
+      this.showOnlyMine = !this.showOnlyMine
+      this.loadTasksByOrder(this.showOnlyMine)
     }
   }),
   data: () => ({
     showOnlyMine: false
   }),
   mounted() {
-    this.loadTasksByOrder();
-    this.loadClients();
+    this.loadTasksByOrder()
+    this.loadClients()
   }
-};
+}
 </script>
 
 <style scoped>
