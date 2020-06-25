@@ -7,6 +7,9 @@
           <v-toolbar class="primary white--text" dark>
             <h3>{{ selected.name }}</h3>
             <v-spacer></v-spacer>
+             <v-btn color="primary" class="white--text" small dark @click="deleteOrder">Excluir Ordem
+               <v-icon right class="white--text">mdi-delete</v-icon>
+             </v-btn>
             <v-icon right class="white--text">receipt</v-icon>
           </v-toolbar>
           <v-row class="ml-5 mt-5 mr-5">
@@ -24,7 +27,7 @@
             </v-col>
           </v-row>
           <v-row class="ml-5 mr-5">
-            <v-col cols="5">
+            <v-col cols="6">
               <DatePicker
                 dateLabel="Data de criação:"
                 :value="selected.creation_date"
@@ -32,7 +35,7 @@
                 :disable="true"
               />
             </v-col>
-            <v-col cols="5">
+            <v-col cols="6">
               <DatePicker
                 dateLabel="Data de encerramento:"
                 :value="selected.end_date"
@@ -40,34 +43,39 @@
                 v-on:update="updateOrderEndDate"
               />
             </v-col>
-            <v-col cols="2">
-              <v-btn color="error" text @click="deleteOrder">Deletar</v-btn>
-            </v-col>
           </v-row>
           <v-row class="ml-5 mt-5 mr-5">
-            <v-col cols="12">
+            <v-col 
+            sm="11"
+            lg="8">
               <v-btn
+                class=" mt-1"
                 color="success"
                 dark
                 @click="showTaskDialog({name: ''})"
-                style="padding-left:8px"
+                style="padding-left:8px; margin-right:8px;"
               >
-                <v-icon>mdi-plus</v-icon>Nova task
+                <v-icon>mdi-plus</v-icon>Tarefa
               </v-btn>
-              <v-btn color="blue" dark @click="filtertasks()" style="margin-left:8px;">
-                <v-icon>filter-alt</v-icon>Somente as minhas
+              <v-btn color="blue" dark @click="filtertasks()" class=" mt-1" >
+                <v-icon>filter-alt</v-icon>Minhas tarefas
               </v-btn>
+              </v-col>
+              <v-col
+              sm="1"
+              lg="4"
+               class="d-flex justify-end">
               <v-btn
                 color="primary"
-                right
                 dark
                 @click="returnToServiceOrders"
-                style="margin-left:8px; padding-left:8px"
-                
+
+                class=" mt-1"
               >
                 <v-icon style="padding-right:8px">keyboard_return</v-icon>Voltar
               </v-btn>
-            </v-col>
+              </v-col>
+           
           </v-row>
           <v-row>
             <v-col
