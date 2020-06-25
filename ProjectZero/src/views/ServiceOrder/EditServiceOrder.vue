@@ -45,9 +45,7 @@
             </v-col>
           </v-row>
           <v-row class="ml-5 mt-5 mr-5">
-            <v-col 
-            sm="11"
-            lg="8">
+            <v-col>
               <v-btn
                 class=" mt-1"
                 color="success"
@@ -57,22 +55,20 @@
               >
                 <v-icon>mdi-plus</v-icon>Tarefa
               </v-btn>
-              <v-btn color="blue" dark @click="filtertasks()" class=" mt-1" >
-                <v-icon>filter-alt</v-icon>Minhas tarefas
+              <v-btn color="blue" dark @click="filtertasks()" class=" mt-1"
+               >
+                Filtrar <v-icon style="padding-left:8px;">receipt</v-icon>
               </v-btn>
               </v-col>
               <v-col
-              sm="1"
-              lg="4"
                class="d-flex justify-end">
               <v-btn
                 color="primary"
                 dark
                 @click="returnToServiceOrders"
-
                 class=" mt-1"
               >
-                <v-icon style="padding-right:8px">keyboard_return</v-icon>Voltar
+                <v-icon style="padding-right:8px; padding-left:0px;">keyboard_return</v-icon>Voltar
               </v-btn>
               </v-col>
            
