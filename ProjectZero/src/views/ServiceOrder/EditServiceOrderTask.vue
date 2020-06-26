@@ -212,6 +212,8 @@
 <script>
 import { mapState, mapActions } from "vuex";
 
+const moment = require("moment");
+
 const computed = mapState({
   dialog: state => state.serviceOrders.showTaskDialog,
   selectedTask: state => state.serviceOrders.selectedTask,
@@ -256,13 +258,16 @@ export default {
     addFiles() {
       this.selectedTask.files = this.selectedTask.files || [];
       this.files.forEach(element => {
+        console.log(element);
         this.selectedTask.files.push({
+          newFile: true,
           name: element.name,
-          lastModified: element.lastModifiedDate.toLocaleDateString()
+          addedDate: moment().format("DD/MM/YYYY"),
+          lastModified: element.lastModifiedDate.toLocaleDateString(),
+          file: element
         });
       });
       this.files = [];
-      console.log(this.files);
     }
   }),
   computed,

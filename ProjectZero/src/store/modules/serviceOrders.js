@@ -1,6 +1,5 @@
-import { db, moment } from "@/main";
+import { db, fileStorage, auth, moment } from "@/main";
 import router from '@/router'
-import { auth } from "@/main";
 
 const state = () => ({
     client: undefined,
@@ -117,6 +116,49 @@ function getOrderFromDatabase(serviceOrderId) {
         .doc(serviceOrderId)
 }
 
+function uploadTaskFiles(context, order, resolve) {
+    if (!context.state.selectedTask.files?.length)
+        return;
+    let files = context.state.selectedTask.files.filter(m => m.newFile);
+    let promises = [];
+    files.forEach(file => {
+        promises.push(fileStorage.ref(`orders/${order.id}/${file.name}`).put(file.file));
+    });
+    return Promise.all(promises).then(files => {
+        resolve({ order, files });
+    });
+}
+
+function updateTaskFilesReference(files, context) {
+    if (!files.length)
+        return;
+    context.state.selectedTask.files = context.state.selectedTask.files.filter(m => !m.newFile);
+    files.forEach(newFile => {
+        /* eslint-disable */
+        var regex = new RegExp(/[^\/]+.[\w]*$/);
+        context.state.selectedTask.files.push({
+            bucket: newFile.metadata.bucket,
+            fullPath: newFile.metadata.fullPath,
+            size: newFile.metadata.size,
+            name: regex.exec(newFile.metadata.fullPath)[0],
+            lastModified: moment(newFile.metadata.updated).format('DD/MM/YYYY HH:mm:ss')
+        });
+    });
+}
+
+function saveCurrentSelectedTask(order, context, resolve) {
+    let orderData = order.data();
+    if (!context.state.selectedTask.priority)
+        context.state.selectedTask.priority = '';
+    var index = orderData.tasks.indexOf(orderData.tasks.find(t => t.id == context.state.selectedTask.id));
+    orderData.tasks[index] = context.state.selectedTask;
+
+    getOrderFromDatabase(context.state.selected.id).update({ tasks: orderData.tasks }).then(() => {
+        context.dispatch('loadTasksByOrder');
+        resolve();
+    });
+}
+
 function formatDate(date) {
     if (!date) return null;
 
@@ -139,14 +181,14 @@ Array.prototype.unique = function () {
 const actions = {
     editServiceOrder(context) {
         if (context.state.selected)
-          router.push({ path: `/EditServiceOrder/${context.state.selected.id}` });
+            router.push({ path: `/EditServiceOrder/${context.state.selected.id}` });
         else
-        context.commit('updateShowCreateOrderDialog', true)
-      },
-      returnToServiceOrders(context) {
+            context.commit('updateShowCreateOrderDialog', true)
+    },
+    returnToServiceOrders(context) {
         context.commit('selectOrder', false)
         router.push({ path: `/serviceOrder` })
-      },
+    },
     openCreateOrderModal(context) {
         context.commit('updateShowCreateOrderDialog', true)
     },
@@ -248,16 +290,13 @@ const actions = {
     saveTask(context) {
         if (context.state.selectedTask.id)
             getOrderFromDatabase(context.state.selected.id).get()
-                .then((order) => {
-                    let orderData = order.data()
-                    if (!context.state.selectedTask.priority)
-                        context.state.selectedTask.priority = ''
-                    var index = orderData.tasks.indexOf(orderData.tasks.find(t => t.id == context.state.selectedTask.id));
-                    orderData.tasks[index] = context.state.selectedTask
+                .then(order => {
+                    return new Promise(resolve => uploadTaskFiles(context, order, resolve));
+                })
+                .then(({ order, files }) => {
+                    updateTaskFilesReference(files, context);
 
-                    getOrderFromDatabase(context.state.selected.id).update({ tasks: orderData.tasks }).then(() => {
-                        this.dispatch('serviceOrders/loadTasksByOrder')
-                    })
+                    return new Promise((resolve) => saveCurrentSelectedTask(order, context, resolve));
                 })
                 .then(() => {
                     this.dispatch('serviceOrders/closeTaskModal')
@@ -407,3 +446,4 @@ export default {
     actions,
     mutations
 }
+
