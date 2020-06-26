@@ -42,12 +42,14 @@
                     @keyup.13.native="login"
                   ></v-text-field>
                 </v-col>
-                <v-btn color="error" router :to="{name: 'ResetPassword'}">Esqueci a senha</v-btn>
+                <v-btn color="error" router :to="{name: 'ResetPassword'}"> 
+                  <v-icon light style="margin-right:8px;">vpn_key</v-icon>
+                  Esqueci a senha  </v-btn>
                 <v-spacer></v-spacer>
                 <v-btn 
                 
                 @click="login" :loading="isLoading" color="primary" :disabled="!valid">
-                  Login
+                  Login <v-icon light style="margin-left:8px;">send</v-icon>
                   <template v-slot:loader>
                     <span class="custom-loader">
                       <v-icon light>cached</v-icon>
