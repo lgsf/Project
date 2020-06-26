@@ -25,7 +25,7 @@
               <v-col cols="3">
                 <div class="mt-1 pt-2">
                   <v-btn color="success" dark @click="reloadCharts">
-                    <v-icon>mdi-search</v-icon>Carregar
+                    <v-icon>search</v-icon>Carregar
                   </v-btn>
                 </div>
               </v-col>

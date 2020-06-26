@@ -1,6 +1,13 @@
 <template>
-<div class="login" >
+<div class="resetPassword" >
   <br>
+    <v-banner>
+      <v-img :src="imageUrl"></v-img>
+      <template v-slot:actions>
+        <h3>{{screenCompany}}</h3>
+      </template>
+    </v-banner>
+    <br />
  <v-row class="dark" justify="center">
       <v-card>
         <v-toolbar class="primary ">
@@ -22,13 +29,13 @@
                 </v-col>
                 <v-btn @click="reset"
                   color="success"
-                > Limpar</v-btn>
+                > <v-icon light style="margin-right:8px;">delete_sweep</v-icon>Limpar</v-btn>
                  <v-spacer></v-spacer>
               <v-btn @click="go"
                   :loading="isLoading"
                   color="primary"
                   :disabled="!valid"
-                > Enviar senha
+                > Enviar senha <v-icon light style="margin-left:8px;">send</v-icon>
                 <template v-slot:loader>
                   <span class='custom-loader'>
                     <v-icon light>cached</v-icon>
@@ -47,12 +54,16 @@
 
 <script>
 import { mapActions  } from "vuex"
+import { fileStorage } from "@/main"
+import { db } from "@/main"
 
 export default {
     name: 'ResetPassword',
     data() {
         return {
+            imageUrl: "",
             valid: false,
+            screenCompany: "",
             screenTitle: 'Esqueci a senha',
             email: '',
             emailRules: [
@@ -67,6 +78,35 @@ export default {
       }
     },
     methods: {
+       readLogo() {
+      fileStorage
+        .ref("logo")
+        .listAll()
+        .then(result => {
+          result.items[0].getDownloadURL().then(url => {
+            this.imageUrl = url
+          })
+        })
+        .catch(error => {
+          console.log("Error getting logo image: ", error)
+        })
+    },
+
+    readCompanyName(){
+      db.collection("systemConfiguration")
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            this.screenCompany = doc.data().company_name
+            })
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error)
+        })
+
+      
+    },
+      
 
       ...mapActions("auth", ["resetPassword"]),
         go() {
@@ -77,7 +117,11 @@ export default {
         reset () {
         this.email = ''
       }
-    }
+    },
+    mounted() {
+    this.readLogo()
+    this.readCompanyName()
+  }
 }
 
 </script>

@@ -61,7 +61,9 @@
             <v-row justify='center'>
               <v-col class='ms-6 me-6'>
                 <div style="text-align: center;">
-                  <v-btn raised class="primary" @click="uploadLogoButtonClick">Upload logo</v-btn>
+                  <v-btn raised class="primary" @click="uploadLogoButtonClick">Upload logo
+                    <v-icon style="margin-left:8px;">publish</v-icon>
+                  </v-btn>
                   <input 
                     type="file" 
                     style="display: none" 
@@ -79,6 +81,8 @@
                     @click="readConfiguration"
                   > 
                     Carregar padrão
+                    <v-icon style="margin-left:8px;">cloud_download
+                    </v-icon>
                   </v-btn>
                   </v-col>
 
@@ -90,6 +94,7 @@
                     type="submit"
                   > 
                     Salvar
+                    <v-icon style="margin-left:8px;">send</v-icon>
                   </v-btn>
               </v-col>
             </v-row>
