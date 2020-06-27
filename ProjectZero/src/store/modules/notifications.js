@@ -1,4 +1,4 @@
-import { db } from "@/main"
+import { db, moment } from "@/main"
 
 const state = () => ({
     label: '',
@@ -20,7 +20,7 @@ const state = () => ({
         {
             text: "Data",
             align: "start",
-            value: "date"
+            value: "dateFormated"
           },
         {
             text: "Usuários",
@@ -31,7 +31,7 @@ const state = () => ({
         {
           text: "Grupos",
           align: "start",
-          value: "group"
+          value: "groupConcatenated"
         },
         {
           text: "Mensagem",
@@ -63,7 +63,7 @@ const state = () => ({
             state.editingName = state.selected[0]?.name || ''
             state.editingTitle = state.selected[0]?.title || ''
             state.editingDetail = state.selected[0]?.detail || ''
-            state.editingDate =  state.selected[0]?.date || ''
+            state.editingDate =  moment().unix()
             state.editingUser =  state.selected[0]?.user || []
             state.editingGroup =  state.selected[0]?.group || []
             state.editNotification = payload
@@ -94,6 +94,8 @@ const state = () => ({
             let notificationData = notificationSnapShot.data()
             notificationData.id = notificationSnapShot.id
             notificationData.userConcatenated = notificationData.user.map(u => u.name).join(', ')
+            notificationData.groupConcatenated = notificationData.group.map(u => u.name).join(', ')
+            notificationData.dateFormated = moment.unix(notificationData.date).format('DD/MM/YYYY HH:mm:ss')
             notifications.push(notificationData)
         })
         context.commit('updateNotifications', notifications)
@@ -106,7 +108,7 @@ const state = () => ({
                 name: state.editingName || "",
                 title: state.editingTitle || "",
                 detail: state.editingDetail || "",
-                date: state.editingDate || "",
+                date: moment().unix(),
                 user: state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
                 group: state.editingGroup?.map((obj) => { return Object.assign({}, obj) }) || [],
                 read: false
@@ -120,7 +122,7 @@ const state = () => ({
                 title: state.editingTitle || "",
                 name: state.editingName || "",
                 detail: state.editingDetail || "",
-                date: state.editingDate || "",
+                date: moment().unix(),
                 user: state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
                 group: state.editingGroup?.map((obj) => { return Object.assign({}, obj) }) || [],
                 read: false
@@ -202,7 +204,7 @@ const state = () => ({
                 name: payload.name,
                 title: payload.title,
                 detail: payload.detail,
-                date: payload.date,
+                date: moment().unix(),
                 user: payload.user,
                 group: payload.group,
                 read: false

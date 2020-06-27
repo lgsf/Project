@@ -53,16 +53,6 @@
                 ></v-autocomplete>
               </v-col>
               </v-row>
-             <v-row>
-              <v-col cols="12">
-                <DatePicker
-                  dateLabel="Data"
-                  :value="date"
-                  v-on:update="editDate"
-                  ref="DatePicker"
-                />
-              </v-col>
-            </v-row>
           </v-container>
           <small>*Obrigatório</small>
         </v-card-text>
@@ -79,7 +69,6 @@
 </template>
 <script>
 import { mapState, mapActions } from "vuex"
-import DatePicker from "@/components/shared/DatePicker"
 
 const computed = mapState({
   selected: state => state.notifications.selected || [],
@@ -87,7 +76,6 @@ const computed = mapState({
   dialog: state => state.notifications.editNotification,
   name: state => state.notifications.editingName,
   detail: state => state.notifications.editingDetail,
-  date: state => state.notifications.editingDate,
   editingUser: state => state.notifications.editingUser,
   editingGroup: state => state.notifications.editingGroup,
   users: state => state.users.userList,
@@ -103,7 +91,6 @@ const methods = mapActions("notifications", [
   "editTitle",
   "editName",
   "editDetail",
-  "editDate",
   "editUser",
   "editGroup",
   "editNotification",
@@ -112,7 +99,6 @@ const methods = mapActions("notifications", [
 ])
 
 export default {
-  components: {DatePicker},
   data() {
     return {}
   },

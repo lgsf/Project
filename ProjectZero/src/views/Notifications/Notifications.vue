@@ -54,10 +54,10 @@
                         </span>
                       </v-col>
                     </template>
-                    <template #item.date="{item}">
+                    <template #item.dateFormated="{item}">
                       <v-col cols="12">
                         <span >
-                          {{ item.date }}
+                          {{ item.dateFormated }}
                         </span>
                       </v-col>
                     </template>
