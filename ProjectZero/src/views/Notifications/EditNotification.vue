@@ -81,20 +81,18 @@
 import { mapState, mapActions } from "vuex"
 import DatePicker from "@/components/shared/DatePicker"
 
-const computed = mapState("notifications", {
-  selected: state => state.selected || [],
-  title: state => state.editingTitle,
-  dialog: state => state.editNotification,
-  name: state => state.editingName,
-  detail: state => state.editingDetail,
-  date: state => state.editingDate,
+const computed = mapState({
+  selected: state => state.notifications.selected || [],
+  title: state => state.notifications.editingTitle,
+  dialog: state => state.notifications.editNotification,
+  name: state => state.notifications.editingName,
+  detail: state => state.notifications.editingDetail,
+  date: state => state.notifications.editingDate,
+  editingUser: state => state.notifications.editingUser,
+  editingGroup: state => state.notifications.editingGroup,
+  users: state => state.users.userList,
+  groups: state => state.groups.groups
 })
-
-const computedUsers = mapState("users", {
-users: state => state.userList,
-groups: state => state.userGroups
-}
-)
 
 const userMethods = mapActions("users", [
   "readGroups",
@@ -118,13 +116,11 @@ export default {
   data() {
     return {}
   },
-  computed: Object.assign({}, computed, computedUsers) ,
+  computed,
   methods: Object.assign({}, methods, userMethods),
   mounted(){
     this.readUsers()
   }
-
-  
 };
 </script>
 <style lang="stylus"></style>

@@ -26,7 +26,8 @@
         <span>{{task.priority}} prioridade</span>
       </v-tooltip>
       <span class="font-weight-medium">Tarefa: </span>
-      <span class="font-weight-regular">{{task.name}}</span>
+      <span class="font-weight-regular">{{task.name}} </span>
+      <span v-if="task.estimated_duration"><b>({{task.estimated_duration}} horas)</b></span>
     </div>
     <v-row v-if="task.users && task.users.name" style="padding-bottom: 0px; padding-top: 0px">
       <v-col style="padding-bottom: 0px; padding-top: 0px">

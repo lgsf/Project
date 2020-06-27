@@ -58,14 +58,12 @@ const computed = mapState("groups", {
   selected: state => state.selected,
   groupSelected: state => (state.selected?.length > 0 ? state.selected[0] : {}),
   items: state => state.menuItems,
-  selection: function(state) {
-    return state.selectedMenuItems;
-  },
+  selection: state => state.selectedMenuItems,
   dialog: state => state.editGroup
 });
 
 const methods = mapActions("groups", [
-  "loadMeunuOptions",
+  "loadMenuOptions",
   "editGroup",
   "saveGroup",
   "setSelectedMenuItems"
@@ -83,7 +81,7 @@ export default {
   },
   methods,
   mounted() {
-    this.loadMeunuOptions();
+    this.loadMenuOptions();
   }
 };
 </script>

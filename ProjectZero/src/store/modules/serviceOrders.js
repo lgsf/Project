@@ -412,7 +412,7 @@ const actions = {
                             context.state.selectedTask.end_date = ''
                         }
 
-                        if (context.state.selectedTask.users && !context.state.selectedTask.users.lenght) {
+                        if (context.state.selectedTask.users && !context.state.selectedTask.users.lenght && context.state.selectedTask.users.email != auth.currentUser.email) {
                             this.dispatch('notifications/sendNotification', {
                                 name: "Sistema",
                                 title: "Alteração de status de tarefa",

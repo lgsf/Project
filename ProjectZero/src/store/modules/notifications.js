@@ -23,10 +23,11 @@ const state = () => ({
             value: "date"
           },
         {
-          text: "Usuários",
-          align: "start",
-          value: "user"
-        },
+            text: "Usuários",
+            align: "start",
+            value: "userConcatenated",
+            hide: "true"
+          },
         {
           text: "Grupos",
           align: "start",
@@ -64,7 +65,7 @@ const state = () => ({
             state.editingDetail = state.selected[0]?.detail || ''
             state.editingDate =  state.selected[0]?.date || ''
             state.editingUser =  state.selected[0]?.user || []
-            state.editingUser =  state.selected[0]?.group || []
+            state.editingGroup =  state.selected[0]?.group || []
             state.editNotification = payload
         },
         editName(state, payload) {
@@ -92,6 +93,7 @@ const state = () => ({
         payload.forEach(notificationSnapShot => {
             let notificationData = notificationSnapShot.data()
             notificationData.id = notificationSnapShot.id
+            notificationData.userConcatenated = notificationData.user.map(u => u.name).join(', ')
             notifications.push(notificationData)
         })
         context.commit('updateNotifications', notifications)

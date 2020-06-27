@@ -61,10 +61,10 @@
                         </span>
                       </v-col>
                     </template>
-                    <template #item.user="{item}">
+                    <template #item.userConcatenated="{item}">
                       <v-col cols="12">
-                        <span v-for="item1 in item.user" :key="item1.name">
-                          {{ item1.name }}
+                        <span>
+                          {{ item.userConcatenated }}
                           <br>
                         </span>
                       </v-col>

@@ -13,7 +13,7 @@
             <v-icon right class="white--text">receipt</v-icon>
           </v-toolbar>
           <v-row class="ml-5 mt-5 mr-5">
-            <v-col cols="12">
+            <v-col cols="8">
               <v-autocomplete
                 :value="selected.client"
                 @input="updateClient"
@@ -24,6 +24,13 @@
                 return-object
                 dense
               ></v-autocomplete>
+            </v-col>
+            <v-col cols="4">
+              <v-text-field
+                v-model="duration"
+                label="Estimativa em horas:"
+                disabled
+              ></v-text-field>
             </v-col>
           </v-row>
           <v-row class="ml-5 mr-5">
@@ -155,6 +162,14 @@ const computed = mapState({
   columns: state => state.serviceOrders.kanbanColumns,
   clientList: state => state.clients.clients,
   users: state => state.users.userList,
+  duration: function(state) {
+    let accumulatedTime = 0
+    state.serviceOrders.selectedOrderTasks.forEach(task => {
+      accumulatedTime += task.estimated_duration ? parseInt(task.estimated_duration) : 0;
+    })
+
+    return accumulatedTime;
+  } 
 })
 
 const userMethods = mapActions("users", ["readUsers"]);

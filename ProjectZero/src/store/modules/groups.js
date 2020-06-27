@@ -97,7 +97,7 @@ const actions = {
     editGroup(context, payload) {
         context.commit('editGroup', payload);
     },
-    loadMeunuOptions(context) {
+    loadMenuOptions(context) {
         db.collection("menuItems")
             .get()
             .then(function (snapshots) {
