@@ -13,7 +13,7 @@ const state = () => ({
     showTaskDialog: false,
     taskDialogInEditMode: false,
     showCreateOrderDialog: false,
-    newOrder: { name: '', creation_date: new Date().toLocaleString('pt-br'), end_date: '', users: [], userGroups: [] },
+    newOrder: { name: '', creation_date: new Date().toLocaleString('pt-br'), start_date: '', end_date: '', users: [], userGroups: [] },
     taskPriorityList: ['', 'Baixa', 'Media', 'Alta', 'Critica']
 });
 
@@ -34,10 +34,19 @@ const mutations = {
     },
     updateClient(state, payload) {
         state.client = payload;
-        state.selected[0].client = payload;
+        state.selected.client = payload;
+    },
+    updateOrderStartDate(state, payload) {
+        state.selected.start_date = payload;
     },
     updateOrderEndDate(state, payload) {
-        state.selected[0].end_date = payload;
+        state.selected.end_date = payload;
+    },
+    updateNewOrderStartDate(state, payload) {
+        state.newOrder.start_date = payload;
+    },
+    updateNewOrderEndDate(state, payload) {
+        state.newOrder.end_date = payload;
     },
     updateSelectedOrderTasks(state, payload) {
         state.selectedOrderTasks = payload
@@ -78,11 +87,17 @@ function onServiceOrdersLoaded(payload) {
     payload.forEach(orderSnapShot => {
         let orderData = orderSnapShot.data();
         orderData.id = orderSnapShot.id;
-        orderData.creation_date = moment.unix(orderData.creation_date);
+        orderData.dateForSorting = orderData.creation_date;
+        orderData.creation_date = moment.unix(orderData.creation_date).format('DD/MM/YYYY');
+        if (orderData.start_date)
+            orderData.start_date = moment.unix(orderData.start_date).format('DD/MM/YYYY');
         if (orderData.end_date)
-            orderData.end_date = moment.unix(orderData.end_date);
+            orderData.end_date = moment.unix(orderData.end_date).format('DD/MM/YYYY');
         serviceOrders.push(orderData);
     });
+
+    serviceOrders = serviceOrders.sort((a, b) => b.dateForSorting - a.dateForSorting)
+
     return new Promise(function (resolve, reject) {
         if (!serviceOrders)
             reject(serviceOrders);
@@ -204,15 +219,17 @@ const actions = {
         db.collection("serviceOrder").add({
             name: context.state.newOrder.name,
             client: context.state.newOrder.client,
-            creation_date: context.state.newOrder.creation_date,
-            end_date: context.state.newOrder.end_date,
+            creation_date: moment(context.state.newOrder.creation_date, "DD/MM/YYYY").unix(),
+            end_date: context.state.newOrder.end_date ? moment(context.state.newOrder.end_date, "DD/MM/YYYY").unix() : '',
+            start_date: context.state.newOrder.start_date ? moment(context.state.newOrder.start_date, "DD/MM/YYYY").unix() : '',
+            administrator: context.state.newOrder.administrator || '',
             users: context.state.newOrder.users.map((obj) => { return Object.assign({}, obj) }) || [],
             userGroups: context.state.newOrder.userGroups.map((obj) => { return Object.assign({}, obj) }) || [],
             tasks: tasks
         })
-            .then(() => {
-                this.dispatch('serviceOrders/reloadOrders').then(() => { context.commit('updateShowCreateOrderDialog', false) })
-            })
+        .then(() => {
+            this.dispatch('serviceOrders/reloadOrders').then(() => { context.commit('updateShowCreateOrderDialog', false) })
+        })
     },
     selectOrder(context, payload) {
         context.commit('selectOrder', payload)
@@ -223,6 +240,7 @@ const actions = {
     },
     reloadOrders(context) {
         let self = this;
+        context.commit('selectOrder', '')
         db.collection("serviceOrder")
             .get()
             .then(onServiceOrdersLoaded)
@@ -261,8 +279,17 @@ const actions = {
     updateClient(context, payload) {
         context.commit("updateClient", payload)
     },
+    updateOrderStartDate(context, payload) {
+        context.commit('updateOrderStartDate', payload)
+    },
     updateOrderEndDate(context, payload) {
         context.commit('updateOrderEndDate', payload)
+    },
+    updateNewOrderStartDate(context, payload) {
+        context.commit('updateNewOrderStartDate', payload)
+    },
+    updateNewOrderEndDate(context, payload) {
+        context.commit('updateNewOrderEndDate', payload)
     },
     showTaskDialog(context, payload) {
         if (!payload.id) {
@@ -329,7 +356,7 @@ const actions = {
                     console.error("Error updating document: ", error);
                 });
 
-        if (context.state.selectedTask.users && !context.state.selectedTask.users.lenght) {
+        if (context.state.selectedTask.users && !context.state.selectedTask.users.lenght && context.state.selectedTask.users.email != auth.currentUser.email) {
             this.dispatch('notifications/sendNotification', {
                 name: "Sistema",
                 title: "Alteração em tarefa",
@@ -413,11 +440,10 @@ const actions = {
                 name: serviceOrder.name,
                 client: serviceOrder.client || '',
                 creation_date: moment(serviceOrder.creation_date, "DD/MM/YYYY").unix(),
-                end_date: serviceOrder.end_date ? moment(serviceOrder.end_date, "DD/MM/YYYY").unix() : ''
+                end_date: serviceOrder.end_date ? moment(serviceOrder.end_date, "DD/MM/YYYY").unix() : '',
+                start_date: serviceOrder.start_date ? moment(serviceOrder.start_date, "DD/MM/YYYY").unix() : ''
             })
             .then(() => {
-                this.dispatch('general/setSuccessMessage', 'Ordem de serviço salva com sucesso.');
-            }, () => {
                 this.dispatch('general/setSuccessMessage', 'Ordem de serviço salva com sucesso.');
             })
             .catch(error => {

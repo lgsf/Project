@@ -5,37 +5,53 @@
       v-if="errorMessage"
       type="error"
       dismissible
-      v-model="alertError"
-      @input="clearError"
+      v-model="errorMessage"
+      @input="setErrorMessage('')"
     >{{ errorMessage }}</v-alert>
     <v-alert
       class="mb-0"
       v-if="infoMessage"
       type="info"
       dismissible
-      v-model="alertInfo"
-      @input="clearInfo"
+      v-model="infoMessage"
+      @input="setInfoMessage('')"
     >{{ infoMessage }}</v-alert>
     <v-alert
       class="mb-0"
       v-if="successMessage"
       type="success"
       dismissible
-      v-model="alertSuccess"
-      @input="clearSuccess"
+      v-model="successMessage"
+      @input="setSuccessMessage('')"
     >{{ successMessage }}</v-alert>
     <v-alert
       class="mb-0"
       v-if="warningMessage"
       type="warning"
       dismissible
-      v-model="alertWarning"
-      @input="clearWarning"
+      v-model="warningMessage"
+      @input="setWarningMessage('')"
     >{{ warningMessage }}</v-alert>
   </div>
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex"
+
+const computed = mapState({
+  errorMessage: state => state.general.errorMessage,
+  infoMessage: state => state.general.infoMessage,
+  successMessage: state => state.general.successMessage,
+  warningMessage: state => state.general.warningMessage
+})
+
+const methods = mapActions("general", [
+  "setErrorMessage",
+  "setInfoMessage",
+  "setSuccessMessage",
+  "setWarningMessage"
+])
+
 export default {
   data() {
     return {
@@ -45,33 +61,7 @@ export default {
       alertWarning: true
     };
   },
-  computed: {
-    errorMessage() {
-      return this.$store.getters.errorMessage;
-    },
-    infoMessage() {
-      return this.$store.getters.infoMessage;
-    },
-    successMessage() {
-      return this.$store.getters.successMessage;
-    },
-    warningMessage() {
-      return this.$store.getters.warningMessage;
-    }
-  },
-  methods: {
-    clearError() {
-      this.$store.commit("setErrorMessage", "");
-    },
-    clearInfo() {
-      this.$store.commit("setInfoMessage", "");
-    },
-    clearSuccess() {
-      this.$store.commit("setSuccessMessage", "");
-    },
-    clearWarning() {
-      this.$store.commit("setWarningMessage", "");
-    }
-  }
+  computed,
+  methods
 };
 </script>

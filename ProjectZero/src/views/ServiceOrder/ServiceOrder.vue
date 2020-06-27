@@ -88,14 +88,24 @@ export default {
           value: "name"
         },
         {
+          text: "Cliente",
+          align: "start",
+          value: "client.name"
+        },
+        {
           text: "Administrador",
           align: "start",
-          value: "administratorName"
+          value: "administrator.name"
         },
         {
           text: "Data Criação",
           align: "start",
           value: "creation_date"
+        },
+        {
+          text: "Data Início",
+          align: "start",
+          value: "start_date"
         },
         {
           text: "Data Encerramento",

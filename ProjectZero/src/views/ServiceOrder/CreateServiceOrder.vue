@@ -43,13 +43,45 @@
             <v-row>
               <v-col cols="12" class="no-top-bottom-padding">
                 <v-row>
-                  <v-col cols="5" class="no-top-bottom-padding">
-                    <v-text-field label="Data de criação:" disabled v-model="newOrder.creation_date"></v-text-field>
+                  <v-col cols="4" class="no-top-bottom-padding">
+                    <DatePicker
+                      dateLabel="Data de criação:"
+                      :value="newOrder.creation_date"
+                      ref="DatePicker"
+                      :disable="true"
+                    />
                   </v-col>
-                  <v-col cols="5" class="no-top-bottom-padding">
-                    <v-text-field label="Data de encerramento:" v-model="newOrder.end_date"></v-text-field>
+                  <v-col cols="4" class="no-top-bottom-padding">
+                    <DatePicker
+                      dateLabel="Data de Início:"
+                      :value="newOrder.start_date"
+                      ref="DatePicker"
+                      v-on:update="updateNewOrderStartDate"
+                    />
+                  </v-col>
+                  <v-col cols="4" class="no-top-bottom-padding">
+                    <DatePicker
+                     dateLabel="Data de encerramento:"
+                     :value="newOrder.end_date"
+                     ref="DatePicker"
+                     v-on:update="updateNewOrderEndDate"
+                    />
                   </v-col>
                 </v-row>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12">
+                <v-autocomplete
+                  v-model="newOrder.administrator"
+                  :items="users"
+                  color="primary"
+                  item-text="name"
+                  label="Administrador"
+                  return-object
+                  dense
+                  single
+                ></v-autocomplete>
               </v-col>
             </v-row>
             <v-row>
@@ -95,6 +127,7 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+import DatePicker from "@/components/shared/DatePicker"
 
 const computed = mapState({
     dialog: state => state.serviceOrders.showCreateOrderDialog,
@@ -109,7 +142,9 @@ const userMethods = mapActions("users", ["readUsers"]);
 
 const methods = mapActions("serviceOrders", [
   "closeCreateOrderModal",
-  "saveNewOrder"
+  "saveNewOrder",
+  "updateNewOrderStartDate",
+  "updateNewOrderEndDate"
 ]);
 
 const erpMethods = mapActions("erp", [
@@ -121,6 +156,9 @@ const clientsMethods = mapActions("clients", [
 ]);
 
 export default {
+    components: {
+      DatePicker
+    },
     data() {
         return { }
     },

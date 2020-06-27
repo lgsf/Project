@@ -68,13 +68,41 @@
               </v-col>
             </v-row>
             <v-row>
+              <v-col cols="6">
+                <v-autocomplete
+                  v-model="selectedTask.possibleUsers"
+                  :items="users"
+                  color="primary"
+                  item-text="name"
+                  label="Usuários possíveis:"
+                  return-object
+                  dense
+                  multiple
+                  required
+                ></v-autocomplete>
+              </v-col>
+              <v-col cols="6">
+                <v-autocomplete
+                  v-model="selectedTask.possibleGroups"
+                  :items="groups"
+                  color="primary"
+                  item-text="name"
+                  label="Grupos possíveis:"
+                  return-object
+                  dense
+                  multiple
+                  required
+                ></v-autocomplete>
+              </v-col>
+            </v-row>
+            <v-row>
               <v-col cols="12">
                 <v-autocomplete
                   v-model="selectedTask.users"
                   :items="users"
                   color="primary"
                   item-text="name"
-                  label="Usuários"
+                  label="Usuário responsável"
                   return-object
                   dense
                   single
@@ -225,12 +253,15 @@ const computed = mapState({
   dialog: state => state.serviceOrders.showTaskDialog,
   selectedTask: state => state.serviceOrders.selectedTask,
   users: state => state.users.userList,
+  groups: state => state.groups.groups,
   selectedUsers: state => state.serviceOrders.selectedTask.users,
   isInEditMode: state => state.serviceOrders.taskDialogInEditMode,
   taskPriorityList: state => state.serviceOrders.taskPriorityList
 });
 
 const userMethods = mapActions("users", ["readUsers"]);
+
+const userGroupsMethods = mapActions("groups", ["loadGroups"]);
 
 const methods = mapActions("serviceOrders", [
   "closeTaskModal",
@@ -246,7 +277,7 @@ export default {
       files: []
     };
   },
-  methods: Object.assign({}, methods, userMethods, {
+  methods: Object.assign({}, methods, userMethods, userGroupsMethods, {
     appendTaskItem(item) {
       this.counter = this.counter + 1;
       this.selectedTask.items.push({
@@ -280,6 +311,7 @@ export default {
   computed,
   mounted() {
     this.readUsers();
+    this.loadGroups();
   }
 };
 </script>

@@ -27,7 +27,7 @@
             </v-col>
           </v-row>
           <v-row class="ml-5 mr-5">
-            <v-col cols="6">
+            <v-col cols="4">
               <DatePicker
                 dateLabel="Data de criação:"
                 :value="selected.creation_date"
@@ -35,13 +35,35 @@
                 :disable="true"
               />
             </v-col>
-            <v-col cols="6">
+            <v-col cols="4">
+              <DatePicker
+                dateLabel="Data de Início:"
+                :value="selected.start_date"
+                ref="DatePicker"
+                v-on:update="updateOrderStartDate"
+              />
+            </v-col>
+            <v-col cols="4">
               <DatePicker
                 dateLabel="Data de encerramento:"
                 :value="selected.end_date"
                 ref="DatePicker"
                 v-on:update="updateOrderEndDate"
               />
+            </v-col>
+          </v-row>
+          <v-row class="ml-5 mt-5 mr-5">
+            <v-col cols="12">
+              <v-autocomplete
+                  v-model="selected.administrator"
+                  :items="users"
+                  color="primary"
+                  item-text="name"
+                  label="Administrador"
+                  return-object
+                  dense
+                  single
+                ></v-autocomplete>
             </v-col>
           </v-row>
           <v-row class="ml-5 mt-5 mr-5">
@@ -131,14 +153,18 @@ const computed = mapState({
   statusList: state => state.serviceOrders.statusList,
   tasks: state => state.serviceOrders.selectedOrderTasks,
   columns: state => state.serviceOrders.kanbanColumns,
-  clientList: state => state.clients.clients
+  clientList: state => state.clients.clients,
+  users: state => state.users.userList,
 })
+
+const userMethods = mapActions("users", ["readUsers"]);
 
 const orderMethods = mapActions("serviceOrders", [
   "selectOrder",
   "searchFor",
   "reloadOrders",
   "updateClient",
+  "updateOrderStartDate",
   "updateOrderEndDate",
   "showTaskDialog",
   "loadTasksByOrder",
@@ -160,7 +186,7 @@ export default {
     DatePicker
   },
   computed,
-  methods: Object.assign({}, orderMethods, clientMethods, {
+  methods: Object.assign({}, orderMethods, clientMethods, userMethods, {
     filtertasks() {
       this.showOnlyMine = !this.showOnlyMine
       this.loadTasksByOrder(this.showOnlyMine)
@@ -172,6 +198,7 @@ export default {
   mounted() {
     this.loadTasksByOrder()
     this.loadClients()
+    this.readUsers()
   }
 }
 </script>
