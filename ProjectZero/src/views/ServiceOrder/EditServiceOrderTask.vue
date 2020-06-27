@@ -23,7 +23,7 @@
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="12" class="no-top-bottom-padding">
+              <v-col cols="8" class="no-top-bottom-padding">
                 <v-select
                   v-model="selectedTask.priority"
                   :items="taskPriorityList"
@@ -31,6 +31,13 @@
                   :multiple="false"
                   label="Prioridade"
                 ></v-select>
+              </v-col>
+              <v-col cols="4" class="no-top-bottom-padding">
+                <v-text-field
+                      label="Duração estimada (horas):"
+                      :disabled="!isInEditMode"
+                      v-model="selectedTask.estimated_duration"
+                    ></v-text-field>
               </v-col>
             </v-row>
             <v-row>

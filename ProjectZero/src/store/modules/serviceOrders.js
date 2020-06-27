@@ -118,7 +118,7 @@ function getOrderFromDatabase(serviceOrderId) {
 
 function uploadTaskFiles(context, order, resolve) {
     if (!context.state.selectedTask.files?.length)
-        return;
+        return resolve({order});
     let files = context.state.selectedTask.files.filter(m => m.newFile);
     let promises = [];
     files.forEach(file => {
@@ -130,7 +130,7 @@ function uploadTaskFiles(context, order, resolve) {
 }
 
 function updateTaskFilesReference(files, context) {
-    if (!files.length)
+    if (!files || !files.length)
         return;
     context.state.selectedTask.files = context.state.selectedTask.files.filter(m => !m.newFile);
     files.forEach(newFile => {
@@ -295,7 +295,7 @@ const actions = {
                 })
                 .then(({ order, files }) => {
                     updateTaskFilesReference(files, context);
-
+                    
                     return new Promise((resolve) => saveCurrentSelectedTask(order, context, resolve));
                 })
                 .then(() => {
