@@ -190,7 +190,7 @@ export default {
   },
   computed: {
     isLoading() {
-      return this.$store.state.general.isLoading;
+      return this.$store.state.general.isLoading
     },
     title () {
       const { start, end } = this

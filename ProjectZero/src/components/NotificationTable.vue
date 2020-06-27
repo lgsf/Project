@@ -31,8 +31,8 @@
                     <span v-if="item.read">{{item.name}} </span> 
                   </v-col>
                   <v-col cols="4">
-                    <strong v-if="!item.read"> {{item.date}}</strong>
-                    <span v-if="item.read">{{item.date}} </span> 
+                    <strong v-if="!item.read"> {{toMoment(item.date)}}</strong>
+                    <span v-if="item.read">{{toMoment(item.date)}} </span> 
                   </v-col>
                 <template v-slot:actions>
                   <v-icon color ='success' v-show="item.read" >mdi-check</v-icon>
@@ -42,7 +42,7 @@
             </v-row>
                 <v-expansion-panel-content>
                   <v-row>
-                    Data: {{item.date}}
+                    Data: {{toMoment(item.date)}}
                   </v-row>
                   <br>
                   <v-row>
@@ -50,7 +50,7 @@
                   </v-row>
                   <br> 
                   <v-row>
-                    <v-btn color="error" v-if="isAdmin" text @click="deleteNotification(item)">Excluir</v-btn>
+                    <v-btn color="error" v-if="isAdmin" text @click="deleteNotificationItem(item)">Excluir</v-btn>
                     <v-spacer></v-spacer>
                     <v-btn color="blue darken-1" v-show="item.read" text @click="markUnread(item)">Não-lido</v-btn>
                   </v-row>
@@ -74,8 +74,8 @@
 
 <script>
 // @ is an alias to /src
-import { db } from "@/main"
-import { mapActions  } from "vuex"
+import { db, moment } from "@/main"
+import { mapActions, mapState  } from "vuex"
 
 
 export default {
@@ -87,8 +87,6 @@ export default {
       MAX_NUMBER: 6,
       counter: 0,
       screenTitle: 'Notificações',
-      notifications: [],
-      uniqueNotifications: [],
       title: null,
       name: null,
       detail: null,
@@ -104,10 +102,19 @@ export default {
     isAdmin() {
       return this.$store.state.auth.userGroup == "bmyiE5pvx66Ct7Wmj78b"
     },
-    ...mapActions("general", ["setIsLoading", "resetIsLoading"])
+    ...mapActions("general", ["setIsLoading"]),
+    ...mapState("notifications", { uniqueNotifications: state => state.uniqueNotifications})
+
    },
    
    methods: {
+
+     ...mapActions("notifications", ["deleteNotificationItem", "readNotifications"]),
+
+     toMoment(date){
+       return moment.unix(date).format('DD/MM/YYYY, HH:mm:ss')
+       
+    },
 
       orderNotificationDate(){
           this.uniqueNotifications.sort((a, b) => (a.date < b.date) ? 1 : -1)
@@ -141,101 +148,11 @@ export default {
             .update({
                 read: false
             })
-     },
-
-    deleteNotification(item){
-        db.collection("notifications")
-            .doc(item.id)
-            .delete()
-            .then(() => {
-              this.readNotifications()})
-    },
-
-    readNotifications() {
-      this.setIsLoading
-      this.notifications = []
-      db.collection("notifications")
-        .get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(doc => {
-            let userArray = []
-            let groupArray = []
-            userArray = doc.data().user
-            groupArray = doc.data().group
-            if(userArray.length == 0 && groupArray.length == 0){
-              this.notifications.push({
-                id: doc.id,
-                title: doc.data().title,
-                name: doc.data().name,
-                detail: doc.data().detail,
-                date: doc.data().date,
-                read: doc.data().read
-              })
-            }
-            else if (userArray.length > 0 && groupArray.length == 0) {
-              userArray.forEach (item =>  {
-               if(item.id == this.$store.state.auth.user.uid){
-                  this.notifications.push({
-                    id: doc.id,
-                    title: doc.data().title,
-                    name: doc.data().name,
-                    detail: doc.data().detail,
-                    date: doc.data().date,
-                    read: doc.data().read
-                    })
-                   }
-                 })
-                }
-              else if (groupArray.length > 0 && userArray.length == 0){
-                groupArray.forEach (item => {
-                  if(item.id == this.$store.state.auth.userGroup){
-                    this.notifications.push({
-                      id: doc.id,
-                      title: doc.data().title,
-                      name: doc.data().name,
-                      detail: doc.data().detail,
-                      date: doc.data().date,
-                      read: doc.data().read
-                 })
-                }
-               })
-              }
-              else {
-                  userArray.forEach (item =>  {
-                  if(item.id == this.$store.state.auth.user.uid){
-                      this.notifications.push({
-                        id: doc.id,
-                        title: doc.data().title,
-                        name: doc.data().name,
-                        detail: doc.data().detail,
-                        date: doc.data().date,
-                        read: doc.data().read
-                        })
-                      }
-                    })
-                    groupArray.forEach (item => {
-                      if(item.id == this.$store.state.auth.userGroup){
-                        this.notifications.push({
-                          id: doc.id,
-                          title: doc.data().title,
-                          name: doc.data().name,
-                          detail: doc.data().detail,
-                          date: doc.data().date,
-                          read: doc.data().read
-                    })
-                    }
-                  })
-              }
-          })
-        let uniqueSet = new Set (this.notifications.map(e => JSON.stringify(e)))
-        this.uniqueNotifications = Array.from(uniqueSet).map(e => JSON.parse(e))
-        this.uniqueNotifications.sort((a, b) => (a.read > b.read) ? 1 : (a.read === b.read) ? ((a.date < b.date) ? 1 : -1) : -1 )
-        this.resetIsLoading
-        })
-      }
+     }
    },
 
    mounted() {
+    this.setIsLoading
     this.readNotifications()
   }
 }

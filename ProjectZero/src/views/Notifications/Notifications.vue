@@ -95,7 +95,7 @@
                   <v-icon v-show="selected.length == 0">mdi-plus</v-icon>
                   <v-icon v-show="selected.length == 1">mdi-pen</v-icon>
               </v-btn>
-              <v-btn color="error" dark fixed bottom right  v-show="selected.length > 1" fab @click="deleteMultipleNotifications(selected)">
+              <v-btn color="error" dark fixed bottom right  v-show="selected.length > 1" fab @click="deleteMultipleNotifications">
                   <v-icon>mdi-delete</v-icon>
               </v-btn>
             </v-col>
@@ -111,7 +111,7 @@
 
 import { mapState, mapActions } from "vuex"
 import EditNotification from "./EditNotification"
-import { db } from "@/main"
+
 
 const computed = mapState("notifications", {
   selected: state => state.selected || [],
@@ -127,7 +127,8 @@ const methods = mapActions("notifications", [
   "selectNotification",
   "searchFor",
   "loadNotifications",
-  "editNotification"
+  "editNotification",
+  "deleteMultipleNotifications"
 ])
 
 const userMethods = mapActions("users", [
@@ -140,17 +141,7 @@ export default {
     return {}
   },
   computed,
-  methods: Object.assign({}, methods, userMethods, {
-    deleteMultipleNotifications(selected){
-      selected.forEach(doc => {
-          db.collection("notifications")
-            .doc(doc.id)
-            .delete()
-         })
-      this.selectNotification(false)
-      this.loadNotifications()
-      }
-  }),
+  methods: Object.assign({}, methods, userMethods),
   mounted() {
     this.readUsers()
     this.loadNotifications()

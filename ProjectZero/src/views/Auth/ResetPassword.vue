@@ -1,8 +1,8 @@
 <template>
 <div class="resetPassword" >
   <br>
-    <v-banner>
-      <v-img :src="imageUrl"></v-img>
+    <v-banner >
+      <a href="Home"><v-img :src="imageUrl"></v-img></a>
       <template v-slot:actions>
         <h3>{{screenCompany}}</h3>
       </template>
@@ -61,6 +61,9 @@ export default {
     name: 'ResetPassword',
     data() {
         return {
+          links: [
+                    {name:'Home', href: 'https://project42-saas.web.app/#/'}
+                    ],
             imageUrl: "",
             valid: false,
             screenCompany: "",

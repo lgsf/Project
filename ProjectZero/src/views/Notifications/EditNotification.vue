@@ -58,7 +58,7 @@
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
-          <v-btn color="error" v-if="selected.length > 0" text @click="deleteNotification">Deletar</v-btn>
+          <v-btn color="error" v-if="selected.length > 0" text @click="deleteNotification">Excluir</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="editNotification(false)">Fechar</v-btn>
           <v-btn color="blue darken-1" text @click="saveNotification">Salvar</v-btn>

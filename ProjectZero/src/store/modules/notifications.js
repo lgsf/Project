@@ -1,4 +1,5 @@
-import { db, moment } from "@/main"
+import { db, moment, auth } from "@/main"
+
 
 const state = () => ({
     label: '',
@@ -40,6 +41,7 @@ const state = () => ({
         }
         ],
       notifications: [],
+      uniqueNotifications: [],
       editNotification: false,
       editingName: '',
       editingTitle: '',
@@ -58,6 +60,9 @@ const state = () => ({
         },
         updateNotifications(state, payload) {
             state.notifications = payload
+        },
+        updateMyNotifications(state, payload) {
+            state.uniqueNotifications = payload
         },
         editNotification(state, payload) {
             state.editingName = state.selected[0]?.name || ''
@@ -138,13 +143,96 @@ const state = () => ({
             commit('searchFor', payload)
         },
         loadNotifications({ state, commit }) {
+            commit('selectNotification', [])
             db.collection("notifications")
             .get()
             .then(function (snapshots) {
                 onNotificationsLoaded({ state, commit }, snapshots)
-            });
-                
+            })   
         },
+        readNotifications({ commit }) {
+            let notifications = []
+            db.collection("notifications")
+              .get()
+              .then(querySnapshot => {
+                querySnapshot.forEach(doc => {
+                  let userArray = []
+                  let groupArray = []
+                  userArray = doc.data().user
+                  groupArray = doc.data().group
+                  if(userArray.length == 0 && groupArray.length == 0){
+                        notifications.push({
+                          id: doc.id,
+                          title: doc.data().title,
+                          name: doc.data().name,
+                          detail: doc.data().detail,
+                          date: doc.data().date,
+                          read: doc.data().read
+                        })
+                  }
+                  else if (userArray.length > 0 && groupArray.length == 0) {
+                        userArray.forEach (item =>  {
+                        if(item.id == auth.currentUser.uid){
+                            notifications.push({
+                              id: doc.id,
+                              title: doc.data().title,
+                              name: doc.data().name,
+                              detail: doc.data().detail,
+                              date: doc.data().date,
+                              read: doc.data().read
+                              })
+                            }
+                          })
+                      }
+                    else if (groupArray.length > 0 && userArray.length == 0){
+                      groupArray.forEach (item => {
+                        if(item.id == auth.userGroup){
+                          notifications.push({
+                            id: doc.id,
+                            title: doc.data().title,
+                            name: doc.data().name,
+                            detail: doc.data().detail,
+                            date: doc.data().date,
+                            read: doc.data().read
+                       })
+                      }
+                     })
+                    }
+                    else {
+                        userArray.forEach (item =>  {
+                        if(item.id == auth.currentUser.uid){
+                            notifications.push({
+                              id: doc.id,
+                              title: doc.data().title,
+                              name: doc.data().name,
+                              detail: doc.data().detail,
+                              date: doc.data().date,
+                              read: doc.data().read
+                              })
+                            }
+                          })
+                          groupArray.forEach (item => {
+                            if(item.id == auth.userGroup){
+                              notifications.push({
+                                id: doc.id,
+                                title: doc.data().title,
+                                name: doc.data().name,
+                                detail: doc.data().detail,
+                                date: doc.data().date,
+                                read: doc.data().read
+                          })
+                          }
+                        })
+                    }
+                })
+              let uniqueSet = new Set (notifications.map(e => JSON.stringify(e)))
+              let uniqueNotifications = Array.from(uniqueSet).map(e => JSON.parse(e))
+              uniqueNotifications.sort((a, b) => (a.read > b.read) ? 1 : (a.read === b.read) ? ((a.date < b.date) ? 1 : -1) : -1 )
+              commit('updateMyNotifications', uniqueNotifications)
+              this.dispatch('general/resetIsLoading')
+            })
+        },
+        
         editNotification({ state, commit }, payload) {
             if (!state) console.log('Error, state is undifined.')
             commit('editNotification', payload)
@@ -196,6 +284,31 @@ const state = () => ({
             .catch((error) => {
               console.error("Error deleting: ", error)
             })
+        },
+        deleteNotificationItem( { commit }, payload) {
+            db.collection("notifications")
+            .doc(payload.id)
+            .delete()
+            .then(()=>{
+                commit('selectNotification', [])
+                this.dispatch('notifications/readNotifications')
+            })
+            .catch((error) => {
+              console.error("Error deleting: ", error)
+            })
+        },
+        deleteMultipleNotifications({ state }) {
+            state.selected.forEach(doc => {
+            db.collection("notifications")
+            .doc(doc.id)
+            .delete().catch((error) => {
+                console.error("Error deleting: ", error)
+              })
+            .then(()=>{
+                this.dispatch('notifications/loadNotifications')
+                this.dispatch('notifications/editNotification')
+            })
+        })
         },
         sendNotification(context, payload){
             if(context)

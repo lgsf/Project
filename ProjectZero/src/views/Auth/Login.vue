@@ -2,7 +2,7 @@
   <div class="login" >
     <br />
     <v-banner>
-      <v-img :src="imageUrl"></v-img>
+      <a href="Home"><v-img :src="imageUrl"></v-img></a>
       <template v-slot:actions>
         <h3>{{screenCompany}}</h3>
       </template>
