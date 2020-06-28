@@ -66,6 +66,7 @@ const actions = {
 
     userSignOut({ commit, state }) {
         let currentUser = firebase.auth().currentUser
+        console.log(currentUser)
         firebase
             .auth()
             .signOut()
@@ -79,7 +80,7 @@ const actions = {
             }))
             .then(() => new Promise(resolve => {
                 db.collection('userSessionInfo').add({
-                    uid: currentUser.uid,
+                    uid: state.user.uid,
                     sesstion_start: state.sessionStart,
                     session_end: moment().unix()
                 }).then(() => resolve())

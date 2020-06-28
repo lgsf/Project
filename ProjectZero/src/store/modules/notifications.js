@@ -1,4 +1,4 @@
-import { db, moment, auth } from "@/main"
+import { db, moment} from "@/main"
 
 
 const state = () => ({
@@ -150,7 +150,7 @@ const state = () => ({
                 onNotificationsLoaded({ state, commit }, snapshots)
             })   
         },
-        readNotifications({ commit }) {
+        readNotifications({ commit, rootState }) {
             let notifications = []
             db.collection("notifications")
               .get()
@@ -172,7 +172,7 @@ const state = () => ({
                   }
                   else if (userArray.length > 0 && groupArray.length == 0) {
                         userArray.forEach (item =>  {
-                        if(item.id == auth.currentUser.uid){
+                        if(item.id == rootState.auth.user.uid){
                             notifications.push({
                               id: doc.id,
                               title: doc.data().title,
@@ -186,7 +186,7 @@ const state = () => ({
                       }
                     else if (groupArray.length > 0 && userArray.length == 0){
                       groupArray.forEach (item => {
-                        if(item.id == auth.userGroup){
+                        if(item.id == rootState.auth.userGroup){
                           notifications.push({
                             id: doc.id,
                             title: doc.data().title,
@@ -200,7 +200,7 @@ const state = () => ({
                     }
                     else {
                         userArray.forEach (item =>  {
-                        if(item.id == auth.currentUser.uid){
+                        if(item.id == rootState.auth.user.uid){
                             notifications.push({
                               id: doc.id,
                               title: doc.data().title,
@@ -212,7 +212,7 @@ const state = () => ({
                             }
                           })
                           groupArray.forEach (item => {
-                            if(item.id == auth.userGroup){
+                            if(item.id == rootState.auth.userGroup){
                               notifications.push({
                                 id: doc.id,
                                 title: doc.data().title,
@@ -319,10 +319,8 @@ const state = () => ({
             state.selected.forEach(doc => {
             db.collection("notifications")
             .doc(doc.id)
-            .delete().catch((error) => {
-                console.error("Error deleting: ", error)
-              })
-            .then(()=>{
+            .delete()
+            .then( () => {
                 this.dispatch('notifications/loadNotifications')
                 this.dispatch('notifications/editNotification')
             })

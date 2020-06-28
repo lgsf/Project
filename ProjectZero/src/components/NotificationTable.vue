@@ -113,7 +113,6 @@ export default {
 
      toMoment(date){
        return moment.unix(date).format('DD/MM/YYYY, HH:mm:ss')
-       
     },
 
       orderNotificationDate(){
@@ -141,6 +140,7 @@ export default {
        this.unreadItem(item)
        this.changeIcon(item)
      }
+
    },
 
    mounted() {

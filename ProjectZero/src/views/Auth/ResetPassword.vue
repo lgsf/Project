@@ -106,11 +106,7 @@ export default {
         .catch((error) => {
           console.log("Error getting documents: ", error)
         })
-
-      
     },
-      
-
       ...mapActions("auth", ["resetPassword"]),
         go() {
                 this.resetPassword({

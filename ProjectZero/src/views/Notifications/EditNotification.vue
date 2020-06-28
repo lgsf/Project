@@ -79,7 +79,7 @@ const computed = mapState({
   editingUser: state => state.notifications.editingUser,
   editingGroup: state => state.notifications.editingGroup,
   users: state => state.users.userList,
-  groups: state => state.groups.groups
+  groups: state => state.users.userGroups
 })
 
 const userMethods = mapActions("users", [
