@@ -232,6 +232,24 @@ const state = () => ({
               this.dispatch('general/resetIsLoading')
             })
         },
+
+        readItem({ commit }, payload){
+            commit('selectNotification', [])
+               db.collection("notifications")
+                     .doc(payload.id)
+                     .update({
+                         read: true
+                     })
+          },
+     
+          unreadItem({ commit }, payload){
+            commit('selectNotification', [])
+            db.collection("notifications")
+                 .doc(payload.id)
+                 .update({
+                     read: false
+                 })
+          },
         
         editNotification({ state, commit }, payload) {
             if (!state) console.log('Error, state is undifined.')

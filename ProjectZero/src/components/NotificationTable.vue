@@ -74,7 +74,7 @@
 
 <script>
 // @ is an alias to /src
-import { db, moment } from "@/main"
+import { moment } from "@/main"
 import { mapActions, mapState  } from "vuex"
 
 
@@ -109,7 +109,7 @@ export default {
    
    methods: {
 
-     ...mapActions("notifications", ["deleteNotificationItem", "readNotifications"]),
+     ...mapActions("notifications", ["deleteNotificationItem", "readNotifications", "readItem", "unreadItem"]),
 
      toMoment(date){
        return moment.unix(date).format('DD/MM/YYYY, HH:mm:ss')
@@ -132,22 +132,14 @@ export default {
      
      markRead(item){
        if(item.read == false){
-          this.changeIcon(item)
-          db.collection("notifications")
-                .doc(item.id)
-                .update({
-                    read: true
-                })
+         this.readItem(item)
+         this.changeIcon(item)
        }    
      },
 
      markUnread(item){
+       this.unreadItem(item)
        this.changeIcon(item)
-       db.collection("notifications")
-            .doc(item.id)
-            .update({
-                read: false
-            })
      }
    },
 

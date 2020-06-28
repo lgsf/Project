@@ -59,6 +59,7 @@ const actions = {
                 commit('setUser', null)
                 commit('setIsAuthenticated', false)
                 this.dispatch('general/resetIsLoading')
+                this.dispatch('general/setErrorMessage', error)
                 router.push('/')
             })
     },
@@ -72,6 +73,7 @@ const actions = {
                 commit('setUser', null)
                 commit('setIsAuthenticated', false)
                 sessionStorage.clear()
+                this.dispatch('general/setSuccessMessage', 'Você saiu com sucesso!')
                 router.push('/')
                 resolve()
             }))
@@ -98,13 +100,15 @@ const actions = {
                 commit('setUser', null)
                 commit('setIsAuthenticated', false)
                 this.dispatch('general/resetIsLoading')
+                this.dispatch('general/setSuccessMessage', 'Sua senha foi enviada com sucesso!')
                 sessionStorage.clear()
                 router.push('/')
             })
-            .catch(() => {
+            .catch((error) => {
                 commit('setUser', null);
                 commit('setIsAuthenticated', false)
                 this.dispatch('general/resetIsLoading')
+                this.dispatch('general/setSuccessMessage', error)
                 sessionStorage.clear()
             })
     }
