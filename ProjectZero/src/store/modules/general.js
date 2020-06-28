@@ -47,20 +47,27 @@ const actions = {
         commit('setLoadingNavbar', false)
     },
 
-    setSuccessMessage(context, payload) {
-        context.commit("setSuccessMessage", payload)
+    setSuccessMessage({ commit }, payload) {
+        commit("setSuccessMessage", payload)
     },
-    setErrorMessage(context, payload) {
-        context.commit("setErrorMessage", payload)
-    },
-
-    setWarningMessage(context, payload) {
-        context.commit("setWarningMessage", payload)
+    setErrorMessage({ commit }, payload) {
+        commit("setErrorMessage", payload)
     },
 
-    setInfoMessage(context, payload) {
-        context.commit("setInfoMessage", payload)
-    }
+    setWarningMessage({ commit }, payload) {
+        commit("setWarningMessage", payload)
+    },
+
+    setInfoMessage({ commit }, payload) {
+        commit("setInfoMessage", payload)
+    },
+
+    resetAllMessages({ commit }, payload){
+        commit("setSuccessMessage", payload)
+        commit("setErrorMessage", payload)
+        commit("setWarningMessage", payload)
+        commit("setInfoMessage", payload)
+    },
 }
 
 const getters = {

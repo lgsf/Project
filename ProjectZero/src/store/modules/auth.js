@@ -34,10 +34,7 @@ const actions = {
     userLogin({ commit }, { email, password }) {
         sessionStorage.clear()
         this.dispatch('general/setIsLoading')
-        this.dispatch('general/setSuccessMessage', '')
-        this.dispatch('general/setErrorMessage', '')
-        this.dispatch('general/setSuccessMessage', '')
-        this.dispatch('general/setSuccessMessage', '')
+        this.dispatch('general/resetAllMessages', '')
         firebase
             .auth()
             .signInWithEmailAndPassword(email, password)
