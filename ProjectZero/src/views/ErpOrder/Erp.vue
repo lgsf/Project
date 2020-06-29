@@ -2,7 +2,13 @@
   <div class="erp">
     <v-row style="min-width:70vw;">
       <v-col>
-      <v-card class="mx-auto">
+        <div class="text-center screen-margin-top" v-if="isLoading">
+          <v-progress-circular
+            indeterminate
+            color="primary"
+          ></v-progress-circular>
+        </div>
+      <v-card class="mx-auto"  v-if="!isLoading">
         <v-toolbar class="primary white--text" dark>
           <h3>{{ title }}</h3>
           <v-spacer></v-spacer>
@@ -55,6 +61,10 @@ const computed = mapState("erp", {
   erp: state => state.erpOrders,
 })
 
+const computedGeneral = mapState("general", {
+    isLoading: state => state.isLoading
+})
+
 const methods = mapActions("erp", [
   "selectErpOrder",
   "searchFor",
@@ -67,7 +77,7 @@ export default {
   data() {
     return {}
   },
-  computed,
+  computed: Object.assign({}, computed, computedGeneral),
   methods,
   mounted() {
     this.loadErpOrders()

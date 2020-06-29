@@ -64,16 +64,6 @@ const mutations = {
 }
 
 
-function onGroupsLoaded(context, payload) {
-    let clients = []
-    payload.forEach(clientSnapShot => {
-        let clientData = clientSnapShot.data()
-        clientData.id = clientSnapShot.id
-        clients.push(clientData)
-    })
-    context.commit('updateClients', clients)
-}
-
 function createNewClient(state) {
     return db.collection("clients")
         .add({
@@ -100,38 +90,55 @@ const actions = {
         commit('selectClient', selected)
         commit('editClient', true)
     },
+
     closeSelectionClient({ commit }, payload) {
         var selected = payload
         commit('selectClient', selected)
         commit('editClient', false)
     },
+
     searchFor({ state, commit }, payload) {
         if (!state) console.log('Error, state is undifined.')
         commit('searchFor', payload)
     },
-    loadClients({ state, commit }) {
+
+    loadClients({ commit }) {
+        this.dispatch('general/setIsLoading')
+        this.dispatch('general/resetAllMessages', '')
         db.collection("clients")
             .get()
-            .then(function (snapshots) {
-                onGroupsLoaded({ state, commit }, snapshots)
-            });
+            .then((snapshots) => {
+                let clients = []
+                snapshots.forEach(clientSnapShot => {
+                    let clientData = clientSnapShot.data()
+                    clientData.id = clientSnapShot.id
+                    clients.push(clientData)
+                })
+                commit('updateClients', clients)
+                this.dispatch('general/resetIsLoading')
+            })
     },
+
     editClient({ state, commit }, payload) {
         if (!state) console.log('Error, state is undifined.')
         commit('editClient', payload)
     },
+
     editName({ state, commit }, payload) {
         if (!state) console.log('Error, state is undifined.')
         commit('editName', payload)
     },
+
     editEmail({ state, commit }, payload) {
         if (!state) console.log('Error, state is undifined.')
         commit('editEmail', payload)
     },
+
     editCnpj({ state, commit }, payload) {
         if (!state) console.log('Error, state is undifined.')
         commit('editCnpj', payload)
     },
+
     saveClient({ state }) {
         if (!state.selected)
             createNewClient(state).then(() => {
@@ -145,6 +152,7 @@ const actions = {
             })
     }
 }
+
 const getters = {
 }
 

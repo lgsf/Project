@@ -2,7 +2,7 @@
   <div class="notifications">
     <v-row style="min-width:70vw;">
       <v-col>
-        <div class="text-center" v-if="isLoading">
+        <div class="text-center screen-margin-top" v-if="isLoading">
           <v-progress-circular
             indeterminate
             color="primary"
@@ -124,7 +124,7 @@ const computed = mapState("notifications", {
 
 const computedGeneral = mapState("general", {
     isLoading: state => state.isLoading
-  })
+})
 
 const methods = mapActions("notifications", [
   "selectNotification",
@@ -146,10 +146,12 @@ export default {
   computed: Object.assign({}, computed, computedGeneral),
   methods: Object.assign({}, methods, userMethods),
   mounted() {
+    this.loadNotifications().then(() => {
     this.readUsers()
-    this.loadNotifications()
+    })
   }
 }
+
 </script>
 <style>
 

@@ -225,8 +225,5 @@ export default {
 </script>
 
 <style>
-#outer {
-  width: 100%;
-  text-align: center;
-}
+
 </style>

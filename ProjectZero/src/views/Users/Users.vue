@@ -2,7 +2,13 @@
   <div class="users">
       <v-row style="min-width:70vw;">
         <v-col>
-          <v-card >
+          <div class="text-center screen-margin-top" v-if="isLoading">
+          <v-progress-circular
+            indeterminate
+            color="primary"
+          ></v-progress-circular>
+        </div>
+          <v-card class="mx-auto" v-if="!isLoading" >
             <v-toolbar color="primary" dark>
               <h3>Usuários</h3>
               <v-spacer></v-spacer>
@@ -50,6 +56,11 @@ const computed = mapState("users", {
   userGroups: state => state.userGroups
 })
 
+const computedGeneral = mapState("general", {
+    isLoading: state => state.isLoading
+})
+
+
 const methods = mapActions("users", [
   "readUsers",
   "readGroups",
@@ -91,7 +102,7 @@ export default {
      }
   },
   methods,
-  computed,
+  computed: Object.assign({}, computed, computedGeneral),
   mounted() {
     this.readGroups().then(() => {
       this.readUsers()

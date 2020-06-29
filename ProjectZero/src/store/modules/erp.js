@@ -50,17 +50,6 @@ const mutations = {
     }
 }
 
-
-function onErpOrdersLoaded(context, payload) {
-    let erpOrders = []
-    payload.forEach(erpSnapShot => {
-        let erpData = erpSnapShot.data()
-        erpData.id = erpSnapShot.id
-        erpOrders.push(erpData)
-    })
-    context.commit('updateErpOrders', erpOrders)
-}
-
 function createNewErp(state) {
     let admin = mapUser(state.selectedOrder.administrator)
     let users = (state.selectedOrder.users || []).map(m => mapUser(m))
@@ -119,6 +108,7 @@ const actions = {
         commit('selectErpOrder', selected)
         commit('editErpOrder', true)
     },
+    
     closeSelectedErpOrder({ commit }, payload) {
         var selected = payload
         commit('selectErpOrder', selected)
@@ -128,16 +118,28 @@ const actions = {
     searchFor({ commit }, payload) {
         commit('searchFor', payload)
     },
-    loadErpOrders({ state, commit }) {
+
+    loadErpOrders(context) {
+        this.dispatch('general/setIsLoading')
+        this.dispatch('general/resetAllMessages', '')
         db.collection("erp")
             .get()
-            .then(function (snapshots) {
-                onErpOrdersLoaded({ state, commit }, snapshots)
+            .then((snapshots) => {
+                let erpOrders = []
+                snapshots.forEach(erpSnapShot => {
+                    let erpData = erpSnapShot.data()
+                    erpData.id = erpSnapShot.id
+                    erpOrders.push(erpData)
+                })
+                context.commit('updateErpOrders', erpOrders)
+                this.dispatch('general/resetIsLoading')
             })
     },
+
     editErpOrder({ commit }, payload) {
         commit('editErpOrder', payload);
     },
+
     saveErpOrder({ commit, state }) {
         if (!state.selectedOrder.id)
             createNewErp(state).then(() => {
@@ -152,11 +154,13 @@ const actions = {
                 this.dispatch('erp/closeSelectedErpOrder')
             })
     },
+
     getErpOrder(context, payload) {
         console.log(context)
         return db.collection("erp")
             .doc(payload.id)
     },
+
     deleteErp(context) {
         if (context.state.selectedOrder.id)
             db.collection("erp").doc(context.state.selectedOrder.id)

@@ -94,20 +94,6 @@ const state = () => ({
         }
     }
 
-    function onNotificationsLoaded(context, payload) {
-        let notifications = []
-        payload.forEach(notificationSnapShot => {
-            let notificationData = notificationSnapShot.data()
-            notificationData.id = notificationSnapShot.id
-            notificationData.userConcatenated = notificationData.user.map(u => u.name).join(', ')
-            notificationData.groupConcatenated = notificationData.group.map(u => u.name).join(', ')
-            notificationData.dateFormated = moment.unix(notificationData.date).format('DD/MM/YYYY HH:mm:ss')
-            notifications.push(notificationData)
-        })
-        context.commit('updateNotifications', notifications)
-        this.dispatch('general/resetIsLoading')
-    }
-
     function createNewNotification(state) {
         return db.collection("notifications")
             .add({
@@ -145,15 +131,25 @@ const state = () => ({
             commit('searchFor', payload)
         },
 
-        loadNotifications({ state, commit }) {
-            this.dispatch('general/resetIsLoading')
+        loadNotifications({ commit }) {
+            this.dispatch('general/setIsLoading')
             this.dispatch('general/resetAllMessages', '')
             commit('selectNotification', [])
             db.collection("notifications")
             .get()
-            .then(function (snapshots) {
-                onNotificationsLoaded({ state, commit }, snapshots)
-            })   
+            .then((snapshots) => {
+                let notifications = []
+                snapshots.forEach(notificationSnapShot => {
+                    let notificationData = notificationSnapShot.data()
+                    notificationData.id = notificationSnapShot.id
+                    notificationData.userConcatenated = notificationData.user.map(u => u.name).join(', ')
+                    notificationData.groupConcatenated = notificationData.group.map(u => u.name).join(', ')
+                    notificationData.dateFormated = moment.unix(notificationData.date).format('DD/MM/YYYY HH:mm:ss')
+                    notifications.push(notificationData)
+                    })
+                commit('updateNotifications', notifications)
+                this.dispatch('general/resetIsLoading')
+                })   
         },
 
         readNotifications({ commit, rootState }) {

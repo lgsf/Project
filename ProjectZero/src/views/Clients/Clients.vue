@@ -2,7 +2,13 @@
   <div class="groups">
       <v-row style="min-width:70vw;">
         <v-col>
-          <v-card >
+          <div class="text-center screen-margin-top" v-if="isLoading">
+          <v-progress-circular
+            indeterminate
+            color="primary"
+          ></v-progress-circular>
+        </div>
+          <v-card class="mx-auto" v-if="!isLoading">
             <v-toolbar class="primary white--text" dark>
               <h3>{{ title }}</h3>
               <v-spacer></v-spacer>
@@ -56,6 +62,10 @@ const computed = mapState("clients", {
   clients: state => state.clients
 })
 
+const computedGeneral = mapState("general", {
+    isLoading: state => state.isLoading
+})
+
 const methods = mapActions("clients", [
   "selectClient",
   "searchFor",
@@ -68,7 +78,7 @@ export default {
   data() {
     return {}
   },
-  computed,
+  computed: Object.assign({}, computed, computedGeneral),
   methods,
   mounted() {
     this.loadClients()

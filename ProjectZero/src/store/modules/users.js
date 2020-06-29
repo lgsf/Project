@@ -151,6 +151,7 @@ function onUsersLoaded(context, payload) {
         users.push(userData)
     })
     context.commit('setUserList', users)
+    this.dispatch('general/resetIsLoading')
 
 }
 
@@ -189,7 +190,6 @@ function updateUser(state) {
         })
 
 }
-
 
 
 const getters = {
