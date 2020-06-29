@@ -157,6 +157,7 @@ const state = () => ({
         },
 
         readNotifications({ commit, rootState }) {
+            this.dispatch('general/resetAllMessages', '')
             let notifications = []
             db.collection("notifications")
               .get()
