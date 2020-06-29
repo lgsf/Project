@@ -16,6 +16,7 @@ const mutations = {
         state.user = payload
         if (!!payload && !!payload.user) {
             state.user.uid = payload.user.uid
+            state.user.email = payload.user.email
             state.sessionStart = moment().unix()
         }
     },

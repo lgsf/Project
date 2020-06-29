@@ -1,4 +1,4 @@
-import { db, fileStorage, moment, auth } from "@/main";
+import { db, fileStorage, moment } from "@/main";
 import router from '@/router'
 
 const state = () => ({
@@ -261,7 +261,7 @@ const actions = {
                     order.id = window.location.href.split('/')[4]
                     context.commit('selectOrder', [order])
                     this.dispatch('serviceOrders/updateSelectedOrderTask',
-                        snapshot.data().tasks.filter(task => !filterCurrentUser || (task.users && task.users.email == auth.currentUser.email))).then(() => {
+                        snapshot.data().tasks.filter(task => !filterCurrentUser || (task.users && task.users.email == context.rootState.auth.user.email))).then(() => {
                             context.commit('updateKanbanColumns')
                         });
                 })
@@ -270,7 +270,7 @@ const actions = {
             getOrderFromDatabase(context.state.selected.id).get()
                 .then(snapshot => {
                     this.dispatch('serviceOrders/updateSelectedOrderTask',
-                        snapshot.data().tasks.filter(task => !filterCurrentUser || (task.users && task.users.email == auth.currentUser.email))).then(() => {
+                        snapshot.data().tasks.filter(task => !filterCurrentUser || (task.users && task.users.email == context.rootState.auth.user.email))).then(() => {
                             context.commit('updateKanbanColumns')
                         });
                 });
@@ -356,7 +356,7 @@ const actions = {
                     console.error("Error updating document: ", error);
                 });
 
-        if (context.state.selectedTask.users && !context.state.selectedTask.users.lenght && context.state.selectedTask.users.email != auth.currentUser.email) {
+        if (context.state.selectedTask.users && !context.state.selectedTask.users.length && context.state.selectedTask.users.email != context.rootState.auth.user.email) {
             this.dispatch('notifications/sendNotification', {
                 name: "Sistema",
                 title: "Alteração em tarefa",
@@ -412,7 +412,7 @@ const actions = {
                             context.state.selectedTask.end_date = ''
                         }
 
-                        if (context.state.selectedTask.users && !context.state.selectedTask.users.lenght && context.state.selectedTask.users.email != auth.currentUser.email) {
+                        if (context.state.selectedTask.users && !context.state.selectedTask.users.length && context.state.selectedTask.users.email != context.rootState.auth.user.email) {
                             this.dispatch('notifications/sendNotification', {
                                 name: "Sistema",
                                 title: "Alteração de status de tarefa",
