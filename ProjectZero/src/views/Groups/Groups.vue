@@ -46,8 +46,8 @@
   </div>
 </template>
 <script>
-import { mapState, mapActions } from "vuex";
-import EditGroup from "./EditGroup";
+import { mapState, mapActions } from "vuex"
+import EditGroup from "./EditGroup"
 
 const computed = mapState("groups", {
   selected: state => state.selected,
@@ -73,13 +73,13 @@ export default {
           value: "name"
         }
       ]
-    };
+    }
   },
   methods,
   mounted() {
-    this.loadGroups();
+    this.loadGroups()
   }
-};
+}
 </script>
 <style>
 </style>

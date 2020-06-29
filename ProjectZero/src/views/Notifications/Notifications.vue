@@ -2,13 +2,13 @@
   <div class="notifications">
     <v-row style="min-width:70vw;">
       <v-col>
-        <div class="text-center" v-if="loading">
+        <div class="text-center" v-if="isLoading">
           <v-progress-circular
             indeterminate
             color="primary"
           ></v-progress-circular>
         </div>
-      <v-card class="mx-auto" v-if="!loading">
+      <v-card class="mx-auto" v-if="!isLoading">
         <v-toolbar class="primary ">
           <h3 class="white--text">{{ listTitle }}</h3>
             <v-spacer></v-spacer>
@@ -122,6 +122,9 @@ const computed = mapState("notifications", {
   notifications: state => state.notifications,
 })
 
+const computedGeneral = mapState("general", {
+    isLoading: state => state.isLoading
+  })
 
 const methods = mapActions("notifications", [
   "selectNotification",
@@ -140,7 +143,7 @@ export default {
   data() {
     return {}
   },
-  computed,
+  computed: Object.assign({}, computed, computedGeneral),
   methods: Object.assign({}, methods, userMethods),
   mounted() {
     this.readUsers()

@@ -8,6 +8,7 @@
       </template>
     </v-banner>
     <br />
+    <Alert class="mt-2 ml-1 mr-1" />
  <v-row class="dark" justify="center">
       <v-card>
         <v-toolbar class="primary ">
@@ -56,8 +57,11 @@
 import { mapActions  } from "vuex"
 import { fileStorage } from "@/main"
 import { db } from "@/main"
+import catchError from '@/utilities/firebaseErrors'
+import Alert from "@/components/shared/Alert"
 
 export default {
+    components: { Alert },
     name: 'ResetPassword',
     data() {
         return {
@@ -75,24 +79,26 @@ export default {
             ]
         }
     },
+
     computed: {
       isLoading(){
         return this.$store.state.general.isLoading
       }
     },
+    
     methods: {
-       readLogo() {
-      fileStorage
-        .ref("logo")
+      readLogo() {
+        fileStorage.ref("logo")
         .listAll()
         .then(result => {
           result.items[0].getDownloadURL().then(url => {
             this.imageUrl = url
           })
         })
-        .catch(error => {
-          console.log("Error getting logo image: ", error)
-        })
+        .catch((error) => {
+                let errorMessage = catchError(error)
+                this.dispatch('general/setErrorMessage', errorMessage)
+            })
     },
 
     readCompanyName(){
@@ -103,10 +109,12 @@ export default {
             this.screenCompany = doc.data().company_name
             })
         })
-        .catch((error) => {
-          console.log("Error getting documents: ", error)
-        })
+       .catch((error) => {
+                let errorMessage = catchError(error)
+                this.dispatch('general/setErrorMessage', errorMessage)
+            })
     },
+
       ...mapActions("auth", ["resetPassword"]),
         go() {
                 this.resetPassword({
@@ -117,6 +125,7 @@ export default {
         this.email = ''
       }
     },
+
     mounted() {
     this.readLogo()
     this.readCompanyName()

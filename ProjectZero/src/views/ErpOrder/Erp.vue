@@ -72,7 +72,7 @@ export default {
   mounted() {
     this.loadErpOrders()
   }
-};
+}
 </script>
 <style>
 </style>

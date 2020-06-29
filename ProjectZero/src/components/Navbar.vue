@@ -69,7 +69,7 @@
 import { db } from "@/main"
 import { mapActions  } from "vuex"
 import { fileStorage } from '@/main'
-
+import catchError from '@/utilities/firebaseErrors'
 
 const authMethods = mapActions("auth", ["userSignOut"])
 const loadingMethods = mapActions("general", ["setLoadingNavbar", "stopLoadingNavbar"])
@@ -92,6 +92,7 @@ export default {
     logout() {
       this.userSignOut
     },
+
     readLogo() {
       fileStorage
         .ref("logo")
@@ -102,9 +103,11 @@ export default {
           })
         })
         .catch(error => {
-          console.log("Error getting logo image: ", error)
+          let errorMessage = catchError(error)
+          this.dispatch('general/setErrorMessage', errorMessage)
         })
     },
+
     loadMenu() {
       this.setLoadingNavbar
       let groupId = "bmyiE5pvx66Ct7Wmj78b"
@@ -117,6 +120,7 @@ export default {
         })
       
     },
+
     onMenuLoaded(groupSnapshot) {
       let groupData = groupSnapshot.data()
       this.links = groupData.menu.sort(function(a, b) {

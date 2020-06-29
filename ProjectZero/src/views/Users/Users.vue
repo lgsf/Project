@@ -39,8 +39,8 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
-import EditUser from "./EditUser";
+import { mapState, mapActions } from "vuex"
+import EditUser from "./EditUser"
 
 const computed = mapState("users", {
   search: state => state.search,
@@ -55,7 +55,7 @@ const methods = mapActions("users", [
   "readGroups",
   "openEditUserModal",
   "onSelectedUser"
-]);
+])
 
 export default {
   components: { EditUser },
@@ -97,5 +97,5 @@ export default {
       this.readUsers()
     })
   }
-};
+}
 </script>

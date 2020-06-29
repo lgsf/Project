@@ -1,6 +1,7 @@
 import firebase from 'firebase'
 import router from '@/router'
 import { db, moment } from "@/main"
+import catchError from '@/utilities/firebaseErrors'
 
 const state = () => ({
     user: null,
@@ -56,18 +57,17 @@ const actions = {
                 resolve()
             }))
             .catch((error) => {
-                console.log(error)
+                sessionStorage.clear()
                 commit('setUser', null)
                 commit('setIsAuthenticated', false)
                 this.dispatch('general/resetIsLoading')
-                this.dispatch('general/setErrorMessage', error)
-                router.push('/')
+                let errorMessage = catchError(error)
+                this.dispatch('general/setErrorMessage', errorMessage)
             })
     },
 
     userSignOut({ commit, state }) {
         let currentUser = firebase.auth().currentUser
-        console.log(currentUser)
         firebase
             .auth()
             .signOut()
@@ -81,15 +81,18 @@ const actions = {
             }))
             .then(() => new Promise(resolve => {
                 db.collection('userSessionInfo').add({
-                    uid: state.user.uid,
+                    uid: currentUser.uid,
                     sesstion_start: state.sessionStart,
                     session_end: moment().unix()
                 }).then(() => resolve())
             }))
-            .catch(() => {
+            .catch((error) => {
+                sessionStorage.clear()
                 commit('setUser', null)
                 commit('setIsAuthenticated', false)
-                sessionStorage.clear()
+                this.dispatch('general/resetIsLoading')
+                let errorMessage = catchError(error)
+                this.dispatch('general/setErrorMessage', errorMessage)
             })
     },
 
@@ -107,11 +110,12 @@ const actions = {
                 router.push('/')
             })
             .catch((error) => {
-                commit('setUser', null);
+                sessionStorage.clear()
+                commit('setUser', null)
                 commit('setIsAuthenticated', false)
                 this.dispatch('general/resetIsLoading')
-                this.dispatch('general/setSuccessMessage', error)
-                sessionStorage.clear()
+                let errorMessage = catchError(error)
+                this.dispatch('general/setErrorMessage', errorMessage)
             })
     }
 

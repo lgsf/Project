@@ -1,4 +1,5 @@
 import { db, moment} from "@/main"
+import catchError from '@/utilities/firebaseErrors'
 
 
 const state = () => ({
@@ -104,7 +105,7 @@ const state = () => ({
             notifications.push(notificationData)
         })
         context.commit('updateNotifications', notifications)
-    
+        this.dispatch('general/resetIsLoading')
     }
 
     function createNewNotification(state) {
@@ -138,11 +139,15 @@ const state = () => ({
         selectNotification({ commit }, payload) {
             commit('selectNotification', payload)
         },
+
         searchFor({ state, commit }, payload) {
             if (!state) console.log('Error, state is undifined.')
             commit('searchFor', payload)
         },
+
         loadNotifications({ state, commit }) {
+            this.dispatch('general/resetIsLoading')
+            this.dispatch('general/resetAllMessages', '')
             commit('selectNotification', [])
             db.collection("notifications")
             .get()
@@ -150,6 +155,7 @@ const state = () => ({
                 onNotificationsLoaded({ state, commit }, snapshots)
             })   
         },
+
         readNotifications({ commit, rootState }) {
             let notifications = []
             db.collection("notifications")
@@ -242,7 +248,7 @@ const state = () => ({
                      })
           },
      
-          unreadItem({ commit }, payload){
+        unreadItem({ commit }, payload){
             commit('selectNotification', [])
             db.collection("notifications")
                  .doc(payload.id)
@@ -255,30 +261,37 @@ const state = () => ({
             if (!state) console.log('Error, state is undifined.')
             commit('editNotification', payload)
         },
+
         editName({ state, commit }, payload) {
             if (!state) console.log('Error, state is undifined.')
             commit('editName', payload)
         },
+        
         editTitle({ state, commit }, payload) {
             if (!state) console.log('Error, state is undifined.')
             commit('editTitle', payload)
         },
+
         editDetail({ state, commit }, payload) {
             if (!state) console.log('Error, state is undifined.')
             commit('editDetail', payload)
         },
+
         editDate({ state, commit }, payload) {
             if (!state) console.log('Error, state is undifined.')
             commit('editDate', payload)
         },
+
         editUser({ state, commit }, payload) {
             if (!state) console.log('Error, state is undifined.')
             commit('editUser', payload)
         },
+
         editGroup({ state, commit }, payload) {
             if (!state) console.log('Error, state is undifined.')
             commit('editGroup', payload)
         },
+
         saveNotification({ state }) {
             if (state.selected.length == 0 || !state.selected[0].id)
                 createNewNotification(state).then(() => {
@@ -291,6 +304,7 @@ const state = () => ({
                     this.dispatch('notifications/editNotification', false)
                 })
         },
+
         deleteNotification({ state }) {
             db.collection("notifications")
             .doc(state.selected[0].id)
@@ -300,32 +314,40 @@ const state = () => ({
                 this.dispatch('notifications/editNotification')
             })
             .catch((error) => {
-              console.error("Error deleting: ", error)
+                let errorMessage = catchError(error)
+                this.dispatch('general/setErrorMessage', errorMessage)
             })
         },
+
         deleteNotificationItem( { commit }, payload) {
             db.collection("notifications")
             .doc(payload.id)
             .delete()
-            .then(()=>{
+            .then(() =>{
                 commit('selectNotification', [])
                 this.dispatch('notifications/readNotifications')
             })
             .catch((error) => {
-              console.error("Error deleting: ", error)
+                let errorMessage = catchError(error)
+                this.dispatch('general/setErrorMessage', errorMessage)
             })
         },
+        
         deleteMultipleNotifications({ state }) {
             state.selected.forEach(doc => {
             db.collection("notifications")
             .doc(doc.id)
             .delete()
-            .then( () => {
+            .then(() => {
                 this.dispatch('notifications/loadNotifications')
                 this.dispatch('notifications/editNotification')
+            }).catch((error) => {
+                let errorMessage = catchError(error)
+                this.dispatch('general/setErrorMessage', errorMessage)
             })
-        })
+          })
         },
+
         sendNotification(context, payload){
             if(context)
             db.collection("notifications")

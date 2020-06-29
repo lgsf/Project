@@ -61,9 +61,9 @@
 </template>
 
 <script>
-import DatePicker from "@/components/shared/DatePicker";
-import PhoneNumberInput from "@/components/shared/PhoneNumberInput";
-import { mapState, mapActions } from "vuex";
+import DatePicker from "@/components/shared/DatePicker"
+import PhoneNumberInput from "@/components/shared/PhoneNumberInput"
+import { mapState, mapActions } from "vuex"
 
 const computed = mapState("users", {
   dialog: state => state.showEditModal,

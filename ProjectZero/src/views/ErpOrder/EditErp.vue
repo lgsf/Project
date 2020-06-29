@@ -120,7 +120,7 @@ export default {
   computed,
   methods: Object.assign({}, erpMethods, userMethods, {
     addTask() {
-      if (!this.selected.tasks) this.selected.tasks = [];
+      if (!this.selected.tasks) this.selected.tasks = []
       let length = this.selected.tasks.length
       let currentCount = !length
         ? 0

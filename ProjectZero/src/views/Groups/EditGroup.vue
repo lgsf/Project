@@ -51,8 +51,8 @@
   </v-row>
 </template>
 <script>
-import { mapState, mapActions } from "vuex";
-import Email from "@/components/shared/Email";
+import { mapState, mapActions } from "vuex"
+import Email from "@/components/shared/Email"
 
 const computed = mapState("groups", {
   selected: state => state.selected,
@@ -60,14 +60,14 @@ const computed = mapState("groups", {
   items: state => state.menuItems,
   selection: state => state.selectedMenuItems,
   dialog: state => state.editGroup
-});
+})
 
 const methods = mapActions("groups", [
   "loadMenuOptions",
   "editGroup",
   "saveGroup",
   "setSelectedMenuItems"
-]);
+])
 
 export default {
   components: { Email },
@@ -77,12 +77,12 @@ export default {
       rules: {
         required: value => !!value || "Campo obrigatório."
       }
-    };
+    }
   },
   methods,
   mounted() {
-    this.loadMenuOptions();
+    this.loadMenuOptions()
   }
-};
+}
 </script>
 <style lang="stylus"></style>

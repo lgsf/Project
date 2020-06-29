@@ -47,7 +47,6 @@
                   Esqueci a senha  </v-btn>
                 <v-spacer></v-spacer>
                 <v-btn 
-                
                 @click="login" :loading="isLoading" color="primary" :disabled="!valid">
                   Login <v-icon light style="margin-left:8px;">send</v-icon>
                   <template v-slot:loader>
@@ -70,8 +69,7 @@ import Alert from "@/components/shared/Alert"
 import { mapActions  } from "vuex"
 import { fileStorage } from "@/main"
 import { db } from "@/main"
-
-
+import catchError from '@/utilities/firebaseErrors'
 
 
 export default {
@@ -118,7 +116,8 @@ export default {
           })
         })
         .catch(error => {
-          console.log("Error getting logo image: ", error)
+          let errorMessage = catchError(error)
+          this.dispatch('general/setErrorMessage', errorMessage)
         })
     },
 
@@ -130,18 +129,19 @@ export default {
             this.screenCompany = doc.data().company_name
             })
         })
-        .catch((error) => {
-          console.log("Error getting documents: ", error)
+        .catch(error => {
+          let errorMessage = catchError(error)
+          this.dispatch('general/setErrorMessage', errorMessage)
         })
-
-      
     }
   },
+
   computed: {
     isLoading() {
       return this.$store.state.general.isLoading
     }
   },
+
   mounted() {
     this.readLogo()
     this.readCompanyName()

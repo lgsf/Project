@@ -16,6 +16,7 @@
           <v-spacer></v-spacer>
         <v-icon right class="white--text">build</v-icon>
         </v-toolbar>
+        <Alert class="mt-2 ml-1 mr-1" />
             <v-form @submit.prevent="saveConfiguration">
               <v-row>
                 <v-col class='ms-6 me-6'>
@@ -106,12 +107,16 @@
 </template>
 
 <script>
+import Alert from "@/components/shared/Alert"
 import { db } from '@/main'
 import { fileStorage } from '@/main'
 import { mapActions  } from "vuex"
+import catchError from '@/utilities/firebaseErrors'
 
 
 export default {
+  components: { Alert },
+  name: "Configurações",
   data() {
     return {
       screenTitle: 'Configurações',
@@ -150,6 +155,7 @@ export default {
         fileReader.readAsDataURL(inputFile)
         this.image = inputFile
     },
+
     readConfiguration() {
       this.setIsLoading
       db.collection("systemConfiguration")
@@ -166,7 +172,8 @@ export default {
         })
         .catch((error) => {
           this.resetIsLoading
-          console.log("Error getting documents: ", error)
+          let errorMessage = catchError(error)
+          this.dispatch('general/setErrorMessage', errorMessage)
         })
 
         fileStorage.ref('logo').listAll()
@@ -174,10 +181,12 @@ export default {
           result.items[0].getDownloadURL()
           .then((url) => { this.imageUrl = url })
         })
-        .catch((error) => {
-          console.log("Error getting logo image: ", error)
+        .catch(error => {
+          let errorMessage = catchError(error)
+          this.dispatch('general/setErrorMessage', errorMessage)
         })
     },
+
     saveConfiguration() {
       db.collection("systemConfiguration")
         .doc(this.id)
@@ -193,6 +202,7 @@ export default {
           storageRef.put(this.image)
         })
         .then(()=>{
+          this.dispatch('general/setSuccessMessage', 'Suas configurações foram salvas com sucesso!')
           this.readConfiguration()
         })
         .catch((error) => {
@@ -200,12 +210,14 @@ export default {
         })
     },
   },
+
   computed: {
     isLoading() {
        return this.$store.state.general.isLoading
     },
     ...mapActions("general", ["setIsLoading", "resetIsLoading"]),
    },
+
   mounted() {
     this.readConfiguration()
   }
