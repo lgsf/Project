@@ -133,15 +133,29 @@ function getOrderFromDatabase(serviceOrderId) {
 
 function uploadTaskFiles(context, order, resolve) {
     if (!context.state.selectedTask.files?.length)
-        return resolve({order});
+        return resolve({ order });
+    let taskId = context.state.selectedTask.id;
     let files = context.state.selectedTask.files.filter(m => m.newFile);
     let promises = [];
     files.forEach(file => {
-        promises.push(fileStorage.ref(`orders/${order.id}/${file.name}`).put(file.file));
+        let promise = fileStorage.ref(`orders/${order.id}/${taskId}/${file.name}`).put(file.file);
+        promise = promise.then(getFileDownloadUrl);
+        promises.push(promise);
     });
     return Promise.all(promises).then(files => {
         resolve({ order, files });
     });
+}
+
+function getFileDownloadUrl(file) {
+    return new Promise(resolve => {
+        fileStorage.ref(file.metadata.fullPath)
+            .getDownloadURL()
+            .then(url => {
+                file.url = url;
+                resolve(file);
+            })
+    })
 }
 
 function updateTaskFilesReference(files, context) {
@@ -156,6 +170,7 @@ function updateTaskFilesReference(files, context) {
             fullPath: newFile.metadata.fullPath,
             size: newFile.metadata.size,
             name: regex.exec(newFile.metadata.fullPath)[0],
+            url: newFile.url,
             lastModified: moment(newFile.metadata.updated).format('DD/MM/YYYY HH:mm:ss')
         });
     });
@@ -172,6 +187,23 @@ function saveCurrentSelectedTask(order, context, resolve) {
         context.dispatch('loadTasksByOrder');
         resolve();
     });
+}
+
+function addNewTaskToOrder(context, order, resolve) {
+    context.state.selectedTask.status = "Pendente";
+    if (!context.state.selectedTask.priority)
+        context.state.selectedTask.priority = '';
+
+    let orderData = order.data();
+
+    context.state.selectedTask.id = orderData.tasks.length + 1;
+    orderData.tasks.push(context.state.selectedTask);
+
+    getOrderFromDatabase(context.state.selected.id)
+        .update({ tasks: orderData.tasks })
+        .then(() => {
+            context.dispatch('loadTasksByOrder').then(() => resolve(order));
+        });
 }
 
 function formatDate(date) {
@@ -227,9 +259,9 @@ const actions = {
             userGroups: context.state.newOrder.userGroups.map((obj) => { return Object.assign({}, obj) }) || [],
             tasks: tasks
         })
-        .then(() => {
-            this.dispatch('serviceOrders/reloadOrders').then(() => { context.commit('updateShowCreateOrderDialog', false) })
-        })
+            .then(() => {
+                this.dispatch('serviceOrders/reloadOrders').then(() => { context.commit('updateShowCreateOrderDialog', false) })
+            })
     },
     selectOrder(context, payload) {
         context.commit('selectOrder', payload)
@@ -322,7 +354,6 @@ const actions = {
                 })
                 .then(({ order, files }) => {
                     updateTaskFilesReference(files, context);
-                    
                     return new Promise((resolve) => saveCurrentSelectedTask(order, context, resolve));
                 })
                 .then(() => {
@@ -334,20 +365,14 @@ const actions = {
         else
             getOrderFromDatabase(context.state.selected.id).get()
                 .then((order) => {
-                    context.state.selectedTask.status = "Pendente";
-                    if (!context.state.selectedTask.priority)
-                        context.state.selectedTask.priority = ''
-
-                    let orderData = order.data()
-
-                    context.state.selectedTask.id = orderData.tasks.length + 1;
-                    orderData.tasks.push(context.state.selectedTask)
-
-                    getOrderFromDatabase(context.state.selected.id)
-                        .update({ tasks: orderData.tasks })
-                        .then(() => {
-                            this.dispatch('serviceOrders/loadTasksByOrder')
-                        });
+                    return new Promise(resolve => addNewTaskToOrder(context, order, resolve));
+                })
+                .then(order => {
+                    return new Promise(resolve => uploadTaskFiles(context, order, resolve));
+                })
+                .then(({ order, files }) => {
+                    updateTaskFilesReference(files, context);
+                    return new Promise((resolve) => saveCurrentSelectedTask(order, context, resolve));
                 })
                 .then(() => {
                     this.dispatch('serviceOrders/closeTaskModal')

@@ -34,10 +34,10 @@
               </v-col>
               <v-col cols="4" class="no-top-bottom-padding">
                 <v-text-field
-                      label="Duração estimada (horas):"
-                      :disabled="!isInEditMode"
-                      v-model="selectedTask.estimated_duration"
-                    ></v-text-field>
+                  label="Duração estimada (horas):"
+                  :disabled="!isInEditMode"
+                  v-model="selectedTask.estimated_duration"
+                ></v-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -190,6 +190,7 @@
                               v-model="files"
                               placeholder="Adicionar arquivos"
                               label="Anexos"
+                              :messages="filesAlertMessage"
                               multiple
                               prepend-icon="mdi-paperclip"
                             >
@@ -212,13 +213,26 @@
                         </v-row>
                         <v-row>
                           <v-col cols="12">
-                            <v-list three-line>
-                              <v-list-item-group v-model="selectedTask.files" color="primary">
+                            <v-list dense>
+                              <v-list-item-group color="primary">
                                 <v-list-item v-for="(item, i) in selectedTask.files" :key="i">
                                   <v-list-item-content>
                                     <v-list-item-title v-html="item.name"></v-list-item-title>
                                     <v-list-item-subtitle v-html="item.lastModified"></v-list-item-subtitle>
                                   </v-list-item-content>
+                                  <v-list-item-action class="d-flex flex-row">
+                                    <v-btn
+                                      v-if="!item.newFile"
+                                      icon
+                                      :href="item.url"
+                                      target="_blank"
+                                    >
+                                      <v-icon color="primary darken-3">mdi-open-in-new</v-icon>
+                                    </v-btn>
+                                    <v-btn icon @click="removeFile(item)">
+                                      <v-icon color="error lighten-1">mdi-close</v-icon>
+                                    </v-btn>
+                                  </v-list-item-action>
                                 </v-list-item>
                               </v-list-item-group>
                             </v-list>
@@ -274,8 +288,22 @@ export default {
   data() {
     return {
       counter: this.selectedTask?.items?.length || 0,
-      files: []
+      files: [],
+      filesAlertMessage: ""
     };
+  },
+  watch: {
+    files(newValue) {
+      this.filesAlertMessage = "";
+      if (!newValue.length || !this.selectedTask.files?.length) return;
+      let existingFiles = this.selectedTask.files.map(m => m.name);
+      let addedFiles = newValue.map(m => m.name);
+      let changedFiles = existingFiles.filter(m => addedFiles.includes(m));
+      if (changedFiles.length)
+        this.filesAlertMessage = `Os seguintes arquivos serão substituídos: ${changedFiles.join(
+          ", "
+        )}`;
+    }
   },
   methods: Object.assign({}, methods, userMethods, userGroupsMethods, {
     appendTaskItem(item) {
@@ -296,16 +324,22 @@ export default {
     addFiles() {
       this.selectedTask.files = this.selectedTask.files || [];
       this.files.forEach(element => {
-        console.log(element);
+        this.selectedTask.files = this.selectedTask.files.filter(
+          m => m.name != element.name
+        );
         this.selectedTask.files.push({
           newFile: true,
           name: element.name,
-          addedDate: moment().format("DD/MM/YYYY"),
-          lastModified: element.lastModifiedDate.toLocaleDateString(),
+          lastModified: moment().format("DD/MM/YYYY HH:mm:ss"),
           file: element
         });
       });
       this.files = [];
+    },
+    removeFile(file) {
+      this.selectedTask.files = this.selectedTask.files.filter(
+        item => item.name != file.name
+      );
     }
   }),
   computed,
