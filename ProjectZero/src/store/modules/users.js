@@ -63,7 +63,7 @@ const mutations = {
 }
 
 const actions = {
-    readGroups({ commit }) { //Move to groups module
+    readGroups({ commit }) { 
         db.collection("groups")
             .get()
             .then(querySnapshot => {
@@ -90,6 +90,25 @@ const actions = {
                 })
                 .catch(error => {
                     console.log("Error getting documents: ", error);
+                })
+            })  
+    },
+
+    loadUsers( context ) {
+        this.dispatch('general/setIsLoading')
+        this.dispatch('general/resetAllMessages', '')
+        this.dispatch('users/readGroups').then(() => {
+            db.collection("users")
+                .get()
+                .then((snapshots) => {
+                    let users = []
+                    snapshots.forEach(userSnapShot => {
+                        let userData = userSnapShot.data()
+                        userData.id = userSnapShot.id
+                        users.push(userData)
+                    })
+                    context.commit('setUserList', users) 
+                    this.dispatch('general/resetIsLoading')
                 })
             })  
     },
@@ -151,8 +170,6 @@ function onUsersLoaded(context, payload) {
         users.push(userData)
     })
     context.commit('setUserList', users)
-    this.dispatch('general/resetIsLoading')
-
 }
 
 

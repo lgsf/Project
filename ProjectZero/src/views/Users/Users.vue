@@ -62,8 +62,7 @@ const computedGeneral = mapState("general", {
 
 
 const methods = mapActions("users", [
-  "readUsers",
-  "readGroups",
+  "loadUsers",
   "openEditUserModal",
   "onSelectedUser"
 ])
@@ -104,9 +103,7 @@ export default {
   methods,
   computed: Object.assign({}, computed, computedGeneral),
   mounted() {
-    this.readGroups().then(() => {
-      this.readUsers()
-    })
+      this.loadUsers()
   }
 }
 </script>
