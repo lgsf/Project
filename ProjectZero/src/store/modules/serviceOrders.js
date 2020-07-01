@@ -189,6 +189,13 @@ function saveCurrentSelectedTask(order, context, resolve) {
     });
 }
 
+function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
 function addNewTaskToOrder(context, order, resolve) {
     context.state.selectedTask.status = "Pendente";
     if (!context.state.selectedTask.priority)
@@ -196,14 +203,47 @@ function addNewTaskToOrder(context, order, resolve) {
 
     let orderData = order.data();
 
-    context.state.selectedTask.id = orderData.tasks.length + 1;
-    orderData.tasks.push(context.state.selectedTask);
+    context.state.selectedTask.id = uuidv4();
+    let newTask = Object.assign({}, context.state.selectedTask, { files: [] });
+    orderData.tasks.push(newTask);
 
     getOrderFromDatabase(context.state.selected.id)
         .update({ tasks: orderData.tasks })
         .then(() => {
-            context.dispatch('loadTasksByOrder').then(() => resolve(order));
+            context.dispatch('loadTasksByOrder').then(() => getOrderFromDatabase(order.id).get().then(order => resolve(order)));
         });
+}
+
+function loadTasksByOrder(context, filterCurrentUser, resolve) {
+    if (!context.state.selected) {
+        getOrderFromDatabase(window.location.href.split('/')[4]).get()
+            .then(snapshot => {
+                let order = snapshot.data();
+                order.id = window.location.href.split('/')[4];
+                context.commit('selectOrder', [order]);
+                let selectedOrderTasks = snapshot.data()
+                    .tasks
+                    .filter(task => !filterCurrentUser || (task.users && task.users.email == context.rootState.auth.user.email));
+                context.dispatch('updateSelectedOrderTask', selectedOrderTasks)
+                    .then(() => {
+                        context.commit('updateKanbanColumns');
+                        resolve();
+                    });
+            });
+    }
+    else {
+        getOrderFromDatabase(context.state.selected.id).get()
+            .then(snapshot => {
+                let selectedOrderTasks = snapshot.data()
+                    .tasks
+                    .filter(task => !filterCurrentUser || (task.users && task.users.email == context.rootState.auth.user.email));
+                context.dispatch('updateSelectedOrderTask', selectedOrderTasks)
+                    .then(() => {
+                        context.commit('updateKanbanColumns');
+                        resolve();
+                    });
+            });
+    }
 }
 
 function formatDate(date) {
@@ -286,27 +326,7 @@ const actions = {
             })
     },
     loadTasksByOrder(context, filterCurrentUser) {
-        if (!context.state.selected) {
-            getOrderFromDatabase(window.location.href.split('/')[4]).get()
-                .then(snapshot => {
-                    let order = snapshot.data()
-                    order.id = window.location.href.split('/')[4]
-                    context.commit('selectOrder', [order])
-                    this.dispatch('serviceOrders/updateSelectedOrderTask',
-                        snapshot.data().tasks.filter(task => !filterCurrentUser || (task.users && task.users.email == context.rootState.auth.user.email))).then(() => {
-                            context.commit('updateKanbanColumns')
-                        });
-                })
-        }
-        else {
-            getOrderFromDatabase(context.state.selected.id).get()
-                .then(snapshot => {
-                    this.dispatch('serviceOrders/updateSelectedOrderTask',
-                        snapshot.data().tasks.filter(task => !filterCurrentUser || (task.users && task.users.email == context.rootState.auth.user.email))).then(() => {
-                            context.commit('updateKanbanColumns')
-                        });
-                });
-        }
+        return new Promise(resolve => loadTasksByOrder(context, filterCurrentUser, resolve));
     },
     updateClient(context, payload) {
         context.commit("updateClient", payload)
