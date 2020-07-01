@@ -1,5 +1,5 @@
 
-import { db } from "@/main";
+import { db } from "@/main"
 
 const state = () => ({
     label: '',
@@ -28,7 +28,7 @@ const state = () => ({
     ,
     erpOrders: [],
     editErp: false
-});
+})
 
 const mutations = {
     selectErpOrder(state, payload) {

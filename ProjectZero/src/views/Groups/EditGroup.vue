@@ -10,12 +10,12 @@
           <v-container>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Grupo*" v-model="groupSelected.name" :rules="[rules.required]"></v-text-field>
+                <v-text-field label="Grupo*" v-model="selected.name" :rules="[rules.required]"></v-text-field>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12">
-                <Email label="Email" v-model="groupSelected.email" ref="EmalCmp"></Email>
+                <Email label="Email" v-model="selected.email" ref="EmalCmp"></Email>
               </v-col>
             </v-row>
             <v-row>
@@ -27,7 +27,7 @@
               <v-col cols="12">
                 <v-treeview
                   :items="items"
-                  :value="selection"
+                  :value="items"
                   @input="setSelectedMenuItems"
                   dense
                   selectable
@@ -56,7 +56,6 @@ import Email from "@/components/shared/Email"
 
 const computed = mapState("groups", {
   selected: state => state.selected,
-  groupSelected: state => (state.selected?.length > 0 ? state.selected[0] : {}),
   items: state => state.menuItems,
   selection: state => state.selectedMenuItems,
   dialog: state => state.editGroup

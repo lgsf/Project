@@ -2,7 +2,13 @@
   <div class="groups">
     <v-row style="min-width:70vw;">
       <v-col>
-      <v-card class="mx-auto">
+         <div class="text-center screen-margin-top" v-if="isLoading">
+          <v-progress-circular
+            indeterminate
+            color="primary"
+          ></v-progress-circular>
+        </div>
+      <v-card class="mx-auto" v-if="!isLoading">
         <v-toolbar class="primary white--text" dark>
           <h3>{{ title }}</h3>
           <v-spacer></v-spacer>
@@ -25,17 +31,13 @@
                   :headers="headers"
                   :items="groups"
                   :search="search"
-                  show-select
-                  single-select
-                  item-key="id"
-                  :value="selected"
-                  @input="select"
+                  :value="item"
+                  @click:row="select"
                 ></v-data-table>
               </v-col>
             </v-row>
-            <v-btn color="error" dark fixed bottom right fab @click="editGroup(true)">
-              <v-icon v-show="!showFabEditGroups">mdi-plus</v-icon>
-              <v-icon v-show="showFabEditGroups">mdi-pen</v-icon>
+            <v-btn color="error" dark fixed bottom right v-show="!selected" fab @click="editGroup(true)">
+              <v-icon>mdi-plus</v-icon>
             </v-btn>
           </v-col>
         </v-row>
@@ -52,15 +54,16 @@ import EditGroup from "./EditGroup"
 const computed = mapState("groups", {
   selected: state => state.selected,
   groups: state => state.groups,
-  groupSelected: state => (state.selected.length > 0 ? state.selected[0] : {}),
-  showFabEditGroups: state => !!state.selected && !!state.selected.length
-});
+})
 
-const methods = mapActions("groups", ["select", "loadGroups", "editGroup"]);
+const computedGeneral = mapState("general", {
+    isLoading: state => state.isLoading
+})
+
+const methods = mapActions("groups", ["select", "loadGroups", "editGroup"])
 
 export default {
   components: { EditGroup },
-  computed,
   data() {
     return {
       search: "",
@@ -75,6 +78,7 @@ export default {
       ]
     }
   },
+  computed: Object.assign({}, computed, computedGeneral),
   methods,
   mounted() {
     this.loadGroups()

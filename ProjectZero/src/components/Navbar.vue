@@ -107,27 +107,24 @@ export default {
           this.dispatch('general/setErrorMessage', errorMessage)
         })
     },
-
+    
     loadMenu() {
       this.setLoadingNavbar
-      let groupId = "bmyiE5pvx66Ct7Wmj78b"
-          db.collection("groups")
-              .doc(groupId)
+          db.collection("menuItems")
+              .orderBy("id","asc")
               .get()
               .then((snapshots) => {
-                this.onMenuLoaded(snapshots)
+                let likes = []
+                snapshots.forEach(menuSnapShot => {
+                    let linkData = menuSnapShot.data()
+                    likes.push(linkData)
+                })
+                this.links = likes
                 this.stopLoadingNavbar
         })
-      
     },
-
-    onMenuLoaded(groupSnapshot) {
-      let groupData = groupSnapshot.data()
-      this.links = groupData.menu.sort(function(a, b) {
-        return a.id < b.id ? -1 : 1
-      })
-    }
   },
+
   mounted() {
     this.loadMenu()
     this.readLogo()
