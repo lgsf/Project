@@ -82,18 +82,22 @@ function comparePriorities(a, b) {
     return priorityB - priorityA
 }
 
-function onServiceOrdersLoaded(payload) {
+function onServiceOrdersLoaded(context, payload) {
     let serviceOrders = [];
     payload.forEach(orderSnapShot => {
         let orderData = orderSnapShot.data();
-        orderData.id = orderSnapShot.id;
-        orderData.dateForSorting = orderData.creation_date;
-        orderData.creation_date = moment.unix(orderData.creation_date).format('DD/MM/YYYY');
-        if (orderData.start_date)
-            orderData.start_date = moment.unix(orderData.start_date).format('DD/MM/YYYY');
-        if (orderData.end_date)
-            orderData.end_date = moment.unix(orderData.end_date).format('DD/MM/YYYY');
-        serviceOrders.push(orderData);
+
+        if(orderData.users.some(u => u.email == context.rootState.auth.user.email))
+        {
+            orderData.id = orderSnapShot.id;
+            orderData.dateForSorting = orderData.creation_date;
+            orderData.creation_date = moment.unix(orderData.creation_date).format('DD/MM/YYYY');
+            if (orderData.start_date)
+                orderData.start_date = moment.unix(orderData.start_date).format('DD/MM/YYYY');
+            if (orderData.end_date)
+                orderData.end_date = moment.unix(orderData.end_date).format('DD/MM/YYYY');
+            serviceOrders.push(orderData);
+        }
     });
 
     serviceOrders = serviceOrders.sort((a, b) => b.dateForSorting - a.dateForSorting)
@@ -315,8 +319,8 @@ const actions = {
         context.commit('selectOrder', '')
         db.collection("serviceOrder")
             .get()
-            .then(onServiceOrdersLoaded)
-            .then(function (serviceOrders) {
+            .then((orders) => {onServiceOrdersLoaded(context, orders)
+                .then((serviceOrders) => {
                 self.dispatch('users/readUsers').then(function () {
                     let userIds = getOrderUsersIds(serviceOrders);
                     let users = context.rootGetters['users/filterUsersById'](userIds)
@@ -324,6 +328,7 @@ const actions = {
                     context.commit('updateOrders', serviceOrders)
                 })
             })
+        })
     },
     loadTasksByOrder(context, filterCurrentUser) {
         return new Promise(resolve => loadTasksByOrder(context, filterCurrentUser, resolve));

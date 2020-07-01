@@ -170,7 +170,7 @@
                             <v-text-field v-model="item.description" />
                           </template>
                           <template v-slot:append="{ item }">
-                            <v-btn icon color="green" @click="appendTaskItem(item)">
+                            <v-btn icon color="green" @click="appendTaskItem()">
                               <v-icon>mdi-plus</v-icon>
                             </v-btn>
                             <v-btn icon color="red" @click="removeTaskOrItem(item)">
@@ -306,10 +306,10 @@ export default {
     }
   },
   methods: Object.assign({}, methods, userMethods, userGroupsMethods, {
-    appendTaskItem(item) {
+    appendTaskItem() {
       this.counter = this.counter + 1;
       this.selectedTask.items.push({
-        description: item?.description,
+        description: '',
         id: this.counter
       });
     },

@@ -7,7 +7,7 @@
           <v-toolbar class="primary white--text" dark>
             <h3>{{ selected.name }}</h3>
             <v-spacer></v-spacer>
-             <v-btn color="primary" class="white--text" small dark @click="deleteOrder">Excluir Ordem
+             <v-btn v-if="isAdmin" color="primary" class="white--text" small dark @click="deleteOrder">Excluir Ordem
                <v-icon right class="white--text">mdi-delete</v-icon>
              </v-btn>
             <v-icon right class="white--text">receipt</v-icon>
@@ -23,6 +23,7 @@
                 label="Cliente"
                 return-object
                 dense
+                :disabled="!isAdmin"
               ></v-autocomplete>
             </v-col>
             <v-col cols="4">
@@ -48,6 +49,7 @@
                 :value="selected.start_date"
                 ref="DatePicker"
                 v-on:update="updateOrderStartDate"
+                :disable="!isAdmin"
               />
             </v-col>
             <v-col cols="4">
@@ -56,6 +58,7 @@
                 :value="selected.end_date"
                 ref="DatePicker"
                 v-on:update="updateOrderEndDate"
+                :disable="!isAdmin"
               />
             </v-col>
           </v-row>
@@ -70,7 +73,36 @@
                   return-object
                   dense
                   single
+                  :disabled="!isAdmin"
                 ></v-autocomplete>
+            </v-col>
+          </v-row>
+          <v-row class="ml-5 mr-5">
+            <v-col cols="6">
+              <v-autocomplete
+                v-model="selected.users"
+                :items="users"
+                color="primary"
+                item-text="name"
+                label="Usuários:"
+                return-object
+                dense
+                multiple
+                :disabled="!isAdmin"
+              ></v-autocomplete>
+            </v-col>
+            <v-col cols="6">
+              <v-autocomplete
+                v-model="selected.groups"
+                :items="groups"
+                color="primary"
+                item-text="name"
+                label="Grupos:"
+                return-object
+                dense
+                multiple
+                :disabled="!isAdmin"
+              ></v-autocomplete>
             </v-col>
           </v-row>
           <v-row class="ml-5 mt-5 mr-5">
@@ -162,6 +194,8 @@ const computed = mapState({
   columns: state => state.serviceOrders.kanbanColumns,
   clientList: state => state.clients.clients,
   users: state => state.users.userList,
+  groups: state => state.groups.groups,
+  isAdmin: state => state.auth.user.email == state.serviceOrders.selected.administrator?.email,
   duration: function(state) {
     let accumulatedTime = 0
     state.serviceOrders.selectedOrderTasks.forEach(task => {
@@ -173,6 +207,7 @@ const computed = mapState({
 })
 
 const userMethods = mapActions("users", ["readUsers"]);
+const groupMethods = mapActions("groups", ["loadGroups"]);
 
 const orderMethods = mapActions("serviceOrders", [
   "selectOrder",
@@ -201,7 +236,7 @@ export default {
     DatePicker
   },
   computed,
-  methods: Object.assign({}, orderMethods, clientMethods, userMethods, {
+  methods: Object.assign({}, orderMethods, clientMethods, userMethods, groupMethods, {
     filtertasks() {
       this.showOnlyMine = !this.showOnlyMine
       this.loadTasksByOrder(this.showOnlyMine)
@@ -214,6 +249,7 @@ export default {
     this.loadTasksByOrder()
     this.loadClients()
     this.readUsers()
+    this.loadGroups()
   }
 }
 </script>
