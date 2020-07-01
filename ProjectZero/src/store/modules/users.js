@@ -81,34 +81,23 @@ const actions = {
             })
     },
 
-    readUsers({ state, commit }) {
-        this.dispatch('users/readGroups').then(() => {
+    readUsers(context, showLoading) {
+        context = this.dispatch ? this : context;
+        if(showLoading){
+            context.dispatch('general/setIsLoading')
+            context.dispatch('general/resetAllMessages', '')
+        }
+        
+        context.dispatch('users/readGroups').then(() => {
             db.collection("users")
                 .get()
                 .then(function (snapshots) {
-                    onUsersLoaded({ state, commit }, snapshots)
+                    onUsersLoaded(context, snapshots)
+                    if(showLoading)
+                    context.dispatch('general/resetIsLoading')
                 })
                 .catch(error => {
                     console.log("Error getting documents: ", error);
-                })
-            })  
-    },
-
-    loadUsers( context ) {
-        this.dispatch('general/setIsLoading')
-        this.dispatch('general/resetAllMessages', '')
-        this.dispatch('users/readGroups').then(() => {
-            db.collection("users")
-                .get()
-                .then((snapshots) => {
-                    let users = []
-                    snapshots.forEach(userSnapShot => {
-                        let userData = userSnapShot.data()
-                        userData.id = userSnapShot.id
-                        users.push(userData)
-                    })
-                    context.commit('setUserList', users) 
-                    this.dispatch('general/resetIsLoading')
                 })
             })  
     },
@@ -169,7 +158,7 @@ function onUsersLoaded(context, payload) {
         userData.id = userSnapShot.id
         users.push(userData)
     })
-    context.commit('setUserList', users)
+    context.commit('users/setUserList', users)
 }
 
 
