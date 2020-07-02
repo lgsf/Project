@@ -111,7 +111,7 @@ export default {
     loadMenu() {
       this.setLoadingNavbar
           db.collection("menuItems")
-              .orderBy("id","asc")
+              .orderBy("order","asc")
               .get()
               .then((snapshots) => {
                 let likes = []

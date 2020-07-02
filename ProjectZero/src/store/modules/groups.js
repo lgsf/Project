@@ -33,9 +33,17 @@ const mutations = {
 }
 
 
+function getMenuSelectedItems(context) {
+    return context.state.menuItems.filter(
+        m =>
+            context.state.selectedMenuItems.includes(m.id) ||
+            (!!m.children &&
+                m.children.filter(n => context.state.selectedMenuItems.includes(n.id)).length > 0)
+    )
+}
 
 function createNewGroup(context, selectedGroup) {
-    let menu = context.state.selectedMenuItems
+    let menu = getMenuSelectedItems(context)
     return db.collection("groups")
         .add({
             name: selectedGroup.name || "",
@@ -48,7 +56,7 @@ function createNewGroup(context, selectedGroup) {
 
 function updateExistingGroup(context, selectedGroup) {
     if (!selectedGroup.name) return
-    let menu = context.state.selectedMenuItems
+    let menu = getMenuSelectedItems(context)
     return db.collection("groups")
         .doc(selectedGroup.id)
         .set({
@@ -112,7 +120,7 @@ const actions = {
             recordActionPromise = updateExistingGroup(context, selectedGroup)
         recordActionPromise?.then(() => {
             this.dispatch('groups/loadGroups')
-            context.commit('selectGroup', [])
+            context.commit('selectGroup', '')
             context.commit("editGroup", false)
         })
     }

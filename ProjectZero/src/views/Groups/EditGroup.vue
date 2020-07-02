@@ -27,7 +27,7 @@
               <v-col cols="12">
                 <v-treeview
                   :items="items"
-                  :value="items"
+                  :value="selection"
                   @input="setSelectedMenuItems"
                   dense
                   selectable
