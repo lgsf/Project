@@ -491,7 +491,10 @@ const actions = {
                 client: serviceOrder.client || '',
                 creation_date: moment(serviceOrder.creation_date, "DD/MM/YYYY").unix(),
                 end_date: serviceOrder.end_date ? moment(serviceOrder.end_date, "DD/MM/YYYY").unix() : '',
-                start_date: serviceOrder.start_date ? moment(serviceOrder.start_date, "DD/MM/YYYY").unix() : ''
+                start_date: serviceOrder.start_date ? moment(serviceOrder.start_date, "DD/MM/YYYY").unix() : '',
+                users: serviceOrder.users || [],
+                administrator: serviceOrder.administrator || '',
+                groups: serviceOrder.groups || []
             })
             .then(() => {
                 this.dispatch('general/setSuccessMessage', 'Ordem de serviço salva com sucesso.');
