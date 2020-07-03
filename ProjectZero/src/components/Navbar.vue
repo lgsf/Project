@@ -67,12 +67,16 @@
 
 <script>
 import { db } from "@/main"
-import { mapActions  } from "vuex"
+import { mapState, mapActions  } from "vuex"
 import { fileStorage } from '@/main'
 import catchError from '@/utilities/firebaseErrors'
 
 const authMethods = mapActions("auth", ["userSignOut"])
 const loadingMethods = mapActions("general", ["setLoadingNavbar", "stopLoadingNavbar"])
+
+const computed = mapState("auth", {
+  group: state => state.userGroup,
+})
 
 export default {
   data() {
@@ -82,10 +86,10 @@ export default {
       imageUrl: ""
     }
   },
-  computed: Object.assign({}, loadingMethods, authMethods, {
+  computed: Object.assign({}, computed, loadingMethods, authMethods, {
   isLoading(){
     return this.$store.state.general.loadingNavbar
-  }
+      }
   }),
 
   methods: {
@@ -110,24 +114,26 @@ export default {
     
     loadMenu() {
       this.setLoadingNavbar
-          db.collection("menuItems")
-              .orderBy("order","asc")
+          db.collection("groups")
+              .doc(this.group)
               .get()
               .then((snapshots) => {
-                let likes = []
-                snapshots.forEach(menuSnapShot => {
-                    let linkData = menuSnapShot.data()
-                    likes.push(linkData)
-                })
-                this.links = likes
+                this.onMenuLoaded(snapshots)
                 this.stopLoadingNavbar
         })
     },
+
+    onMenuLoaded(groupSnapshot) {
+      let groupData = groupSnapshot.data()
+      this.links = groupData.menu.sort(function(a, b) {
+        return a.order < b.order ? -1 : 1
+      })
+    }
   },
 
   mounted() {
-    this.loadMenu()
     this.readLogo()
+    this.loadMenu()
   }
 }
 </script>

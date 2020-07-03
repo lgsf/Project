@@ -1,6 +1,6 @@
 <template>
   <v-app class="grey lighten-4">
-    <Navbar v-if="isAuthenticated" />
+    <Navbar v-if="isAuthenticated && isGroupSet" />
     <v-content class="mx-5 mb-5">
       <ModalIdle v-if="isIdle && isAuthenticated" />
       <router-view></router-view>
@@ -10,9 +10,9 @@
 </template>
 
 <script>
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import ModalIdle from "@/components/ModalIdle";
+import Navbar from "./components/Navbar"
+import Footer from "./components/Footer"
+import ModalIdle from "@/components/ModalIdle"
 
 export default {
   components: { Navbar, Footer, ModalIdle },
@@ -20,14 +20,17 @@ export default {
   name: "App",
 
   data() {
-    return {};
+    return {}
   },
   computed: {
     isAuthenticated() {
-      return this.$store.state.auth.isAuthenticated;
+      return this.$store.state.auth.isAuthenticated
+    },
+    isGroupSet() {
+      return this.$store.state.auth.userGroup != ''
     },
     isIdle() {
-      return this.$store.state.idleVue.isIdle;
+      return this.$store.state.idleVue.isIdle
     }
   }
 };

@@ -34,7 +34,6 @@ const mutations = {
 
 const actions = {
     userLogin({ commit }, { email, password }) {
-        sessionStorage.clear()
         this.dispatch('general/setIsLoading')
         this.dispatch('general/resetAllMessages', '')
         firebase
@@ -53,10 +52,9 @@ const actions = {
                     })
                 this.dispatch('general/resetIsLoading')
             })
-            .then(() => new Promise(function (resolve) {
+            .then(() => {
                 router.push('/home')
-                resolve()
-            }))
+            })
             .catch((error) => {
                 sessionStorage.clear()
                 commit('setUser', null)
@@ -75,7 +73,7 @@ const actions = {
             .then(() => new Promise(resolve => {
                 commit('setUser', null)
                 commit('setIsAuthenticated', false)
-                sessionStorage.clear()
+                commit('setUserGroup', '')
                 this.dispatch('general/setSuccessMessage', 'Você saiu com sucesso!')
                 router.push('/')
                 resolve()
@@ -85,7 +83,10 @@ const actions = {
                     uid: currentUser.uid,
                     sesstion_start: state.sessionStart,
                     session_end: moment().unix()
-                }).then(() => resolve())
+                }).then(() => {
+                    window.sessionStorage.clear()
+                    resolve()
+                })
             }))
             .catch((error) => {
                 sessionStorage.clear()
