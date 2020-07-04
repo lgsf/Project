@@ -3,10 +3,10 @@
     <v-app-bar app flat>
       <v-app-bar-nav-icon @click="drawer = !drawer" class></v-app-bar-nav-icon>
       <v-toolbar-title >
-        <v-img :src="imageUrl" ></v-img>
+        <v-img :src="imgUrl"></v-img>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn @click="logout" color="grey-2">
+      <v-btn @click="userSignOut" color="grey-2">
         <span>Sair</span>
         <v-icon right>exit_to_app</v-icon>
       </v-btn>
@@ -66,70 +66,31 @@
 </template>
 
 <script>
-import { db } from "@/main"
+
 import { mapState, mapActions  } from "vuex"
-import { fileStorage } from '@/main'
-import catchError from '@/utilities/firebaseErrors'
 
-const authMethods = mapActions("auth", ["userSignOut"])
-const loadingMethods = mapActions("general", ["setLoadingNavbar", "stopLoadingNavbar"])
+const methods = mapActions("auth", ["userSignOut"])
 
-const computed = mapState("auth", {
-  group: state => state.userGroup,
+const generalMethods = mapActions("general", ["readLogo", "loadMenu" ])
+
+const computed = mapState("general", {
+  imgUrl: state => state.imgUrl,
+  links: state => state.links
+})
+
+const computedGeneral = mapState("general", {
+    isLoading: state => state.loadingNavbar
 })
 
 export default {
   data() {
     return {
-      drawer: true,
-      links: [],
-      imageUrl: ""
+      drawer: true
     }
   },
-  computed: Object.assign({}, computed, loadingMethods, authMethods, {
-  isLoading(){
-    return this.$store.state.general.loadingNavbar
-      }
-  }),
+  computed: Object.assign({}, computed, computedGeneral),
 
-  methods: {
-    logout() {
-      this.userSignOut
-    },
-
-    readLogo() {
-      fileStorage
-        .ref("logo")
-        .listAll()
-        .then(result => {
-          result.items[0].getDownloadURL().then(url => {
-            this.imageUrl = url
-          })
-        })
-        .catch(error => {
-          let errorMessage = catchError(error)
-          this.dispatch('general/setErrorMessage', errorMessage)
-        })
-    },
-    
-    loadMenu() {
-      this.setLoadingNavbar
-          db.collection("groups")
-              .doc(this.group)
-              .get()
-              .then((snapshots) => {
-                this.onMenuLoaded(snapshots)
-                this.stopLoadingNavbar
-        })
-    },
-
-    onMenuLoaded(groupSnapshot) {
-      let groupData = groupSnapshot.data()
-      this.links = groupData.menu.sort(function(a, b) {
-        return a.order < b.order ? -1 : 1
-      })
-    }
-  },
+  methods: Object.assign({}, methods, generalMethods),
 
   mounted() {
     this.readLogo()

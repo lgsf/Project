@@ -1,10 +1,15 @@
+import { db } from "@/main"
+import { fileStorage } from '@/main'
+
 const state = () => ({
     isLoading: false,
     loadingNavbar: false,
     successMessage: '',
     errorMessage: '',
     warningMessage: '',
-    infoMessage: ''
+    infoMessage: '',
+    links: [],
+    imgUrl: ''
 })
 
 const mutations = {
@@ -27,6 +32,12 @@ const mutations = {
     ,
     setInfoMessage(state, payload) {
         state.infoMessage = payload
+    },
+    setLinks(state, payload) {
+        state.links = payload
+    },
+    setImgUrl(state, payload) {
+        state.imgUrl = payload
     }
 }
 
@@ -37,14 +48,6 @@ const actions = {
 
     resetIsLoading({ commit }) {
         commit('setIsLoading', false)
-    },
-
-    setLoadingNavbar({ commit }) {
-        commit('setLoadingNavbar', true)
-    },
-
-    stopLoadingNavbar({ commit }) {
-        commit('setLoadingNavbar', false)
     },
 
     setSuccessMessage({ commit }, payload) {
@@ -68,7 +71,43 @@ const actions = {
         commit("setWarningMessage", payload)
         commit("setInfoMessage", payload)
     },
+
+    loadMenu({ context, commit, rootState }) {
+        context = this.dispatch ? this : context
+        commit('setLoadingNavbar', true)
+        db.collection("groups")
+        .doc(rootState.auth.userGroup)
+        .get()
+        .then((snapshots) => {
+          onMenuLoaded(context, snapshots)
+          commit('setLoadingNavbar', false)
+        })
+    },
+
+    readLogo({ commit }) {
+        let imgUrl = ''
+        fileStorage
+        .ref("logo")
+        .listAll()
+        .then(result => {
+          result.items[0].getDownloadURL().then(url => {
+            imgUrl = url
+            commit('setImgUrl', imgUrl)
+          })
+        })
+    },
+    
 }
+
+function onMenuLoaded(context, payload) {
+    let links = []
+    let groupData = payload.data()
+    links = groupData.menu.sort(function(a, b) {
+      return a.order < b.order ? -1 : 1
+    })
+    context.commit('general/setLinks', links)
+  }
+
 
 const getters = {
     isLoading(state) {

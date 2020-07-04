@@ -65,9 +65,6 @@ export default {
     name: 'ResetPassword',
     data() {
         return {
-          links: [
-                    {name:'Home', href: 'https://project42-saas.web.app/#/'}
-                    ],
             imageUrl: "",
             valid: false,
             screenCompany: "",

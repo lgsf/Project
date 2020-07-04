@@ -74,6 +74,7 @@ const actions = {
                 commit('setUser', null)
                 commit('setIsAuthenticated', false)
                 commit('setUserGroup', '')
+                commit('setUserName', '')
                 this.dispatch('general/setSuccessMessage', 'Você saiu com sucesso!')
                 router.push('/')
                 resolve()
