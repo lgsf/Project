@@ -94,7 +94,7 @@ const actions = {
                 .then(function (snapshots) {
                     onUsersLoaded(context, snapshots)
                     if(showLoading)
-                    context.dispatch('general/resetIsLoading')
+                        context.dispatch('general/resetIsLoading')
                 })
                 .catch(error => {
                     console.log("Error getting documents: ", error);

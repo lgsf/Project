@@ -3,7 +3,13 @@
     <Alert class="mt-2"></Alert>
     <v-row dense>
       <v-col cols="12">
-        <v-card class="mx-auto mt-5">
+        <div class="text-center screen-margin-top" v-if="isLoading">
+          <v-progress-circular
+            indeterminate
+            color="primary"
+          ></v-progress-circular>
+        </div>
+        <v-card v-if="!isLoading" class="mx-auto mt-5">
           <v-toolbar class="primary white--text" dark>
             <h3>{{ selected.name }}</h3>
             <v-spacer></v-spacer>
@@ -189,6 +195,7 @@ import TaskCard from "@/components/shared/TaskCard.vue"
 import EditServiceOrderTask from "./EditServiceOrderTask.vue"
 
 const computed = mapState({
+  isLoading: state => state.general.isLoading,
   selected: state => state.serviceOrders.selected || {},
   statusList: state => state.serviceOrders.statusList,
   tasks: state => state.serviceOrders.selectedOrderTasks,

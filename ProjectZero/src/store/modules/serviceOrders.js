@@ -321,7 +321,9 @@ const actions = {
     reloadOrders(context) {
         let self = this;
         context.commit('selectOrder', '')
-        db.collection("serviceOrder")
+        this.dispatch('general/resetAllMessages', '')
+        this.dispatch('general/setIsLoading').then(() => {
+            db.collection("serviceOrder")
             .get()
             .then((orders) => {
                 onServiceOrdersLoaded(context, orders)
@@ -331,12 +333,19 @@ const actions = {
                             let users = context.rootGetters['users/filterUsersById'](userIds)
                             completeOrdersWithUsersInformation(serviceOrders, users)
                             context.commit('updateOrders', serviceOrders)
+                            context.dispatch('general/resetIsLoading')
                         })
+                })
             })
         })
     },
     loadTasksByOrder(context, filterCurrentUser) {
-        return new Promise(resolve => loadTasksByOrder(context, filterCurrentUser, resolve));
+        this.dispatch('general/resetAllMessages', '')
+        this.dispatch('general/setIsLoading').then(() => {
+            let promise = new Promise(resolve => loadTasksByOrder(context, filterCurrentUser, resolve));
+            promise.then(() => this.dispatch('general/resetIsLoading'))
+            return promise;
+        })
     },
     updateClient(context, payload) {
         context.commit("updateClient", payload)
