@@ -31,6 +31,7 @@
                 v-model="duration"
                 label="Estimativa em horas:"
                 disabled
+                dense
               ></v-text-field>
             </v-col>
           </v-row>
@@ -148,8 +149,8 @@
                 <!-- Draggable component comes from vuedraggable. It provides drag & drop functionality -->
                 <draggable
                   :list="column.tasks"
-                  @end="onMoveTask"
                   :animation="200"
+                  :move="onMoveTask"
                   ghost-class="ghost-card"
                   class="kanban-column"
                   group="status"
@@ -195,7 +196,10 @@ const computed = mapState({
   clientList: state => state.clients.clients,
   users: state => state.users.userList,
   groups: state => state.groups.groups,
-  isAdmin: state => state.auth.user.email == state.serviceOrders.selected.administrator?.email,
+  currentUserEmail: state => state.auth.user.email,
+  isAdmin: function (state) { 
+    return state.auth.userGroup.id == 'bmyiE5pvx66Ct7Wmj78b' || state.auth.user.email == state.serviceOrders.selected.administrator?.email
+  },
   duration: function(state) {
     let accumulatedTime = 0
     state.serviceOrders.selectedOrderTasks.forEach(task => {
@@ -240,6 +244,10 @@ export default {
     filtertasks() {
       this.showOnlyMine = !this.showOnlyMine
       this.loadTasksByOrder(this.showOnlyMine)
+    },
+    onMoveTask(evt) {
+      if(this.currentUserEmail != evt.draggedContext.element.users?.email)
+        return false;
     }
   }),
   data: () => ({

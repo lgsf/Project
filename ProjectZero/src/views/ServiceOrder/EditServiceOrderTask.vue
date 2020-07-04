@@ -19,7 +19,11 @@
                 <v-text-field label="Nome: " :disabled="!isInEditMode" v-model="selectedTask.name"></v-text-field>
               </v-col>
               <v-col cols="2" class="no-top-bottom-padding">
-                <v-btn color="gray" @click="setOrUnsetEditMode">Edit</v-btn>
+                <v-btn 
+                  color="gray" 
+                  @click="setOrUnsetEditMode"
+                  :disabled="userRole != 'SystemAdmin' && userRole != 'OrdemAdmin' && userRole != 'TaskCreator'"
+                >Edit</v-btn>
               </v-col>
             </v-row>
             <v-row>
@@ -79,6 +83,7 @@
                   dense
                   multiple
                   required
+                  :disabled="!isInEditMode"
                 ></v-autocomplete>
               </v-col>
               <v-col cols="6">
@@ -92,27 +97,41 @@
                   dense
                   multiple
                   required
+                  :disabled="!isInEditMode"
                 ></v-autocomplete>
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="12">
+              <v-col cols="6">
                 <v-autocomplete
                   v-model="selectedTask.users"
-                  :items="users"
+                  :items="allowedUsers"
                   color="primary"
                   item-text="name"
-                  label="Usuário responsável"
+                  label="Usuário responsável:"
                   return-object
                   dense
                   single
                   required
+                  :disabled="userRole == 'NotRelated'"
                 ></v-autocomplete>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field
+                  label="Criado por:"
+                  disabled
+                  v-model="createdBy"
+                  dense
+                ></v-text-field>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12">
-                <v-textarea v-model="selectedTask.comments" label="Comentários"></v-textarea>
+                <v-textarea 
+                  v-model="selectedTask.comments" 
+                  label="Descrição"
+                  :disabled="!isInEditMode"
+                ></v-textarea>
               </v-col>
             </v-row>
 
@@ -151,7 +170,12 @@
                           color="primary"
                         >
                           <template v-slot:label="{ item }">
-                            <v-checkbox v-model="item.done" class="mr-2" :label="item.description"></v-checkbox>
+                                <v-checkbox 
+                                  v-model="item.done" 
+                                  class="mr-2; text-wrap" 
+                                  :label="item.description"
+                                  :disabled="userRole == 'PossibleUser' || userRole == 'NotRelated'"
+                                ></v-checkbox>
                           </template>
                         </v-treeview>
                         <v-treeview
@@ -248,7 +272,7 @@
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
-          <v-btn color="error" text @click="deleteTask">Deletar</v-btn>
+          <v-btn color="error" text @click="deleteTask" :disabled="!isInEditMode">Deletar</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="closeTaskModal">Fechar</v-btn>
           <v-btn color="blue darken-1" text @click="saveTask">Salvar</v-btn>
@@ -259,7 +283,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions, mapGetters } from "vuex";
 
 const moment = require("moment");
 
@@ -267,11 +291,51 @@ const computed = mapState({
   dialog: state => state.serviceOrders.showTaskDialog,
   selectedTask: state => state.serviceOrders.selectedTask,
   users: state => state.users.userList,
+  allowedUsers: function(state) {
+    let permission = [];
+    
+    if(state.serviceOrders.selectedTask.possibleUsers){
+      let permissionByUser = state.users.userList.find(user => state.serviceOrders.selectedTask.possibleUsers.some(possibleUser => possibleUser.email == user.email))
+      if(permissionByUser.isArray)
+        permission.concat(permissionByUser);
+      else
+        permission.push(permissionByUser)
+    }
+
+    if(state.serviceOrders.selectedTask.possibleGroups){
+      let permissionByGroup = state.users.userList.find(user => state.serviceOrders.selectedTask.possibleGroups?.some(possibleGroup => possibleGroup.id == user.group_id.id))
+      if(permissionByGroup.isArray)
+        permission.concat(permissionByGroup);
+      else
+        permission.push(permissionByGroup)
+    }
+    
+    return permission.length > 0 ? permission : state.users.userList;
+  },
   groups: state => state.groups.groups,
   selectedUsers: state => state.serviceOrders.selectedTask.users,
   isInEditMode: state => state.serviceOrders.taskDialogInEditMode,
-  taskPriorityList: state => state.serviceOrders.taskPriorityList
+  taskPriorityList: state => state.serviceOrders.taskPriorityList,
+  createdBy: state => state.serviceOrders.selectedTask.created_by?.name || '',
+  userRole: function(state) {
+    let role = "NotRelated";
+    if(state.auth.userGroup.id == 'bmyiE5pvx66Ct7Wmj78b')
+      role = "SystemAdmin";
+    if(state.auth.user.email == state.serviceOrders.selected.administrator?.email)
+      role = "OrdemAdmin";
+    else if(state.auth.user.email == state.serviceOrders.selectedTask.created_by?.email || !state.serviceOrders.selectedTask.id)
+      role = "TaskCreator";
+    else if(state.serviceOrders.selectedTask.users?.email == state.auth.user.email)
+      role = "Responsible";
+    else if((!state.serviceOrders.selectedTask.possibleUsers && !state.serviceOrders.selectedTask.possibleGroups) || 
+      state.serviceOrders.selectedTask.possibleUsers?.some(possibleUser => possibleUser.email == state.auth.user.email) ||
+      state.serviceOrders.selectedTask.possibleGroups?.some(group => group.id == state.auth.userGroup.id))
+      role = "PossibleUser";
+    return role;
+  }
 });
+
+const getters = mapGetters("users", ["getUserByEmail"]);
 
 const userMethods = mapActions("users", ["readUsers"]);
 
@@ -314,9 +378,6 @@ export default {
       });
     },
     removeTaskOrItem(item) {
-      console.log(this.selectedTask.items);
-      console.log(this.selectedTask.items.filter(m => m.id != item.id));
-      console.log(this.selectedTask.items.filter(m => m.id == item.id));
       this.selectedTask.items = this.selectedTask.items.filter(
         m => m.id != item.id
       );
@@ -343,6 +404,7 @@ export default {
     }
   }),
   computed,
+  getters,
   mounted() {
     this.readUsers();
     this.loadGroups();

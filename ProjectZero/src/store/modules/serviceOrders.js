@@ -87,7 +87,8 @@ function onServiceOrdersLoaded(context, payload) {
     payload.forEach(orderSnapShot => {
         let orderData = orderSnapShot.data();
 
-        if(orderData.users.some(u => u.email == context.rootState.auth.user.email))
+        if(context.rootState.auth.userGroup == 'bmyiE5pvx66Ct7Wmj78b' || orderData.administrator?.email == context.rootState.auth.user.email || 
+            orderData.users.some(u => u.email == context.rootState.auth.user.email))
         {
             orderData.id = orderSnapShot.id;
             orderData.dateForSorting = orderData.creation_date;
@@ -186,7 +187,7 @@ function saveCurrentSelectedTask(order, context, resolve) {
         context.state.selectedTask.priority = '';
     var index = orderData.tasks.indexOf(orderData.tasks.find(t => t.id == context.state.selectedTask.id));
     orderData.tasks[index] = context.state.selectedTask;
-
+    
     getOrderFromDatabase(context.state.selected.id).update({ tasks: orderData.tasks }).then(() => {
         context.dispatch('loadTasksByOrder');
         resolve();
@@ -209,6 +210,9 @@ function addNewTaskToOrder(context, order, resolve) {
 
     context.state.selectedTask.id = uuidv4();
     let newTask = Object.assign({}, context.state.selectedTask, { files: [] });
+    let user = context.rootGetters['users/getUserByEmail'](context.rootState.auth.user.email)
+    newTask.created_by = user[0];
+    context.state.selectedTask.created_by = user[0];
     orderData.tasks.push(newTask);
 
     getOrderFromDatabase(context.state.selected.id)
@@ -224,7 +228,7 @@ function loadTasksByOrder(context, filterCurrentUser, resolve) {
             .then(snapshot => {
                 let order = snapshot.data();
                 order.id = window.location.href.split('/')[4];
-                context.commit('selectOrder', [order]);
+                context.commit('selectOrder', order);
                 let selectedOrderTasks = snapshot.data()
                     .tasks
                     .filter(task => !filterCurrentUser || (task.users && task.users.email == context.rootState.auth.user.email));
@@ -294,7 +298,7 @@ const actions = {
 
         db.collection("serviceOrder").add({
             name: context.state.newOrder.name,
-            client: context.state.newOrder.client,
+            client: context.state.newOrder.client || '',
             creation_date: moment(context.state.newOrder.creation_date, "DD/MM/YYYY").unix(),
             end_date: context.state.newOrder.end_date ? moment(context.state.newOrder.end_date, "DD/MM/YYYY").unix() : '',
             start_date: context.state.newOrder.start_date ? moment(context.state.newOrder.start_date, "DD/MM/YYYY").unix() : '',
@@ -319,14 +323,15 @@ const actions = {
         context.commit('selectOrder', '')
         db.collection("serviceOrder")
             .get()
-            .then((orders) => {onServiceOrdersLoaded(context, orders)
-                .then((serviceOrders) => {
-                self.dispatch('users/readUsers').then(function () {
-                    let userIds = getOrderUsersIds(serviceOrders);
-                    let users = context.rootGetters['users/filterUsersById'](userIds)
-                    completeOrdersWithUsersInformation(serviceOrders, users)
-                    context.commit('updateOrders', serviceOrders)
-                })
+            .then((orders) => {
+                onServiceOrdersLoaded(context, orders)
+                    .then((serviceOrders) => {
+                        self.dispatch('users/readUsers').then(function () {
+                            let userIds = getOrderUsersIds(serviceOrders);
+                            let users = context.rootGetters['users/filterUsersById'](userIds)
+                            completeOrdersWithUsersInformation(serviceOrders, users)
+                            context.commit('updateOrders', serviceOrders)
+                        })
             })
         })
     },
@@ -368,6 +373,7 @@ const actions = {
         context.commit('updateSelectedTask', payload)
     },
     closeTaskModal(context) {
+        this.dispatch('serviceOrders/loadTasksByOrder')
         context.commit('updateTaskDialogInEditMode', false)
         context.commit('updateShowTaskDialog', false)
     },
@@ -406,7 +412,7 @@ const actions = {
                     console.error("Error updating document: ", error);
                 });
 
-        if (context.state.selectedTask.users && !context.state.selectedTask.users.length && context.state.selectedTask.users.email != context.rootState.auth.user.email) {
+        if (context.state.selectedTask.users && context.state.selectedTask.users.email && context.state.selectedTask.users.email != context.rootState.auth.user.email) {
             this.dispatch('notifications/sendNotification', {
                 name: "Sistema",
                 title: "Alteração em tarefa",
@@ -462,7 +468,7 @@ const actions = {
                             context.state.selectedTask.end_date = ''
                         }
 
-                        if (context.state.selectedTask.users && !context.state.selectedTask.users.length && context.state.selectedTask.users.email != context.rootState.auth.user.email) {
+                        if (context.state.selectedTask.users && context.state.selectedTask.users.email && context.state.selectedTask.users.email != context.rootState.auth.user.email) {
                             this.dispatch('notifications/sendNotification', {
                                 name: "Sistema",
                                 title: "Alteração de status de tarefa",

@@ -201,8 +201,10 @@ function updateUser(state) {
 const getters = {
     filterUsersById(state) {
         return (ids) => state.userList.filter(user => ids.includes(user.id))
+    },
+    getUserByEmail(state) {
+        return (email) => state.userList.filter(user => email == user.email)
     }
-    
 }
 
 export default {
