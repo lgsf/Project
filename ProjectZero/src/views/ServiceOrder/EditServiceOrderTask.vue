@@ -128,7 +128,7 @@
             <v-row>
               <v-col cols="12">
                 <v-textarea 
-                  v-model="selectedTask.comments" 
+                  v-model="selectedTask.description" 
                   label="Descrição"
                   :disabled="!isInEditMode"
                 ></v-textarea>
