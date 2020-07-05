@@ -134,7 +134,6 @@
                 ></v-textarea>
               </v-col>
             </v-row>
-
             <v-row>
               <v-col cols="12">
                 <v-tabs>
@@ -268,6 +267,36 @@
                 </v-tabs>
               </v-col>
             </v-row>
+            <v-row>
+              <v-col cols="12">
+                <v-textarea 
+                  v-model="comment" 
+                  label="Adicionar comentário"
+                  :disabled="!isInEditMode"
+                ></v-textarea>
+              </v-col>
+            </v-row>
+            <v-row v-if="comment && comment != ''">
+              <v-col cols="12">
+                <v-btn icon color="green" @click="saveComment()">
+                  <v-icon>mdi-plus</v-icon>
+                </v-btn>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12">
+                <v-list dense>
+                  <v-list-item-group color="primary">
+                    <v-list-item v-for="(item, i) in selectedTask.comments" :key="i">
+                      <v-list-item-content>
+                        <v-list-item-title v-html="item.user.name"></v-list-item-title>
+                        <v-list-item-subtitle v-html="item.lastModified"></v-list-item-subtitle>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </v-list-item-group>
+                </v-list>
+              </v-col>
+            </v-row>
           </v-container>
         </v-card-text>
         <v-divider></v-divider>
@@ -353,7 +382,8 @@ export default {
     return {
       counter: this.selectedTask?.items?.length || 0,
       files: [],
-      filesAlertMessage: ""
+      filesAlertMessage: "",
+      comment: ""
     };
   },
   watch: {
@@ -401,6 +431,9 @@ export default {
       this.selectedTask.files = this.selectedTask.files.filter(
         item => item.name != file.name
       );
+    },
+    saveComment(){
+      console.log(this.comment)
     }
   }),
   computed,

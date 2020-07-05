@@ -250,7 +250,7 @@ export default {
   methods: Object.assign({}, orderMethods, clientMethods, userMethods, groupMethods, {
     filtertasks() {
       this.showOnlyMine = !this.showOnlyMine
-      this.loadTasksByOrder(this.showOnlyMine)
+      this.loadTasksByOrder({ filterCurrentUser: this.showOnlyMine })
     },
     onMoveTask(evt) {
       if(this.currentUserEmail != evt.draggedContext.element.users?.email)

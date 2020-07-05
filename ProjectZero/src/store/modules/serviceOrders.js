@@ -339,10 +339,14 @@ const actions = {
             })
         })
     },
-    loadTasksByOrder(context, filterCurrentUser) {
+    loadTasksByOrder(context, payload) {
+        if(payload && payload.skipLoading){
+            return new Promise(resolve => loadTasksByOrder(context, payload.filterCurrentUser, resolve));
+        }
+
         this.dispatch('general/resetAllMessages', '')
         this.dispatch('general/setIsLoading').then(() => {
-            let promise = new Promise(resolve => loadTasksByOrder(context, filterCurrentUser, resolve));
+            let promise = new Promise(resolve => loadTasksByOrder(context, payload?.filterCurrentUser, resolve));
             promise.then(() => this.dispatch('general/resetIsLoading'))
             return promise;
         })
@@ -382,7 +386,7 @@ const actions = {
         context.commit('updateSelectedTask', payload)
     },
     closeTaskModal(context) {
-        this.dispatch('serviceOrders/loadTasksByOrder')
+        this.dispatch('serviceOrders/loadTasksByOrder', { skipLoading: true })
         context.commit('updateTaskDialogInEditMode', false)
         context.commit('updateShowTaskDialog', false)
     },
