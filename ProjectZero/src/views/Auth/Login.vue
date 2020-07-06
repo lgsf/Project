@@ -97,7 +97,6 @@ export default {
     };
   },
 
-
   methods: {
     ...mapActions("auth", ["userLogin"]),
 
@@ -118,5 +117,6 @@ export default {
     this.readLogo()
     this.readCompanyName()
   }
-};
+  
+}
 </script>

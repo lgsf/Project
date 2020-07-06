@@ -58,11 +58,11 @@ const methods = mapActions("clients", [
 ])
 
 export default {
-  computed,
-  methods,
   data() {
     return {}
-  }
+  }, 
+  computed,
+  methods
 }
 </script>
 <style lang="stylus"></style>

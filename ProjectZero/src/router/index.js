@@ -141,7 +141,7 @@ router.beforeEach((to, from, next) => {
         path: '/'
       })
     } else {
-          if (!hasPermissionsNeeded(to, store.state.general.links, from)){
+          if (!hasPermissionsNeeded(to, from, store.state.general.links)){
             next({ 
               path: '/home' 
             })

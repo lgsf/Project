@@ -16,7 +16,7 @@ import createPersistedState from "vuex-persistedstate"
 Vue.use(Vuex)
 
 export const store = new Vuex.Store({
-  modules: { auth, groups, clients, users, erp, serviceOrders, general, notifications, productivity, management, setup},
+  modules: { auth, groups, clients, users, erp, serviceOrders, general, notifications, productivity, management, setup },
   plugins: [
     createPersistedState({
       storage: window.sessionStorage,

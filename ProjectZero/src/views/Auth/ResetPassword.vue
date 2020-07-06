@@ -107,8 +107,8 @@ export default {
     this.readLogo()
     this.readCompanyName()
   }
-}
 
+}
 </script>
 <style>
 

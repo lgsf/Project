@@ -78,11 +78,15 @@ export default {
   data() {
     return {}
   },
+
   computed: Object.assign({}, computed, computedGeneral),
+
   methods,
+  
   mounted() {
     this.loadClients()
   }
+
 }
 </script>
 <style>

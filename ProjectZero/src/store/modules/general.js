@@ -1,6 +1,5 @@
 import { db } from "@/main"
 
-
 const state = () => ({
     isLoading: false,
     loadingNavbar: false,
@@ -116,7 +115,7 @@ const getters = {
     infoMessage(state) {
         return state.infoMessage
     },
-    
+
     links(state) {
         return state.links
     }
