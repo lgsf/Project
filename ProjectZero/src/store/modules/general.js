@@ -1,5 +1,5 @@
 import { db } from "@/main"
-import { fileStorage } from '@/main'
+
 
 const state = () => ({
     isLoading: false,
@@ -8,8 +8,7 @@ const state = () => ({
     errorMessage: '',
     warningMessage: '',
     infoMessage: '',
-    links: [],
-    imgUrl: ''
+    links: []
 })
 
 const mutations = {
@@ -35,9 +34,6 @@ const mutations = {
     },
     setLinks(state, payload) {
         state.links = payload
-    },
-    setImgUrl(state, payload) {
-        state.imgUrl = payload
     }
 }
 
@@ -82,20 +78,7 @@ const actions = {
           onMenuLoaded(context, snapshots)
           commit('setLoadingNavbar', false)
         })
-    },
-
-    readLogo({ commit }) {
-        let imgUrl = ''
-        fileStorage
-        .ref("logo")
-        .listAll()
-        .then(result => {
-          result.items[0].getDownloadURL().then(url => {
-            imgUrl = url
-            commit('setImgUrl', imgUrl)
-          })
-        })
-    },
+    }
     
 }
 

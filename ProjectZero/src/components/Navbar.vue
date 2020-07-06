@@ -71,11 +71,13 @@ import { mapState, mapActions  } from "vuex"
 
 const methods = mapActions("auth", ["userSignOut"])
 
-const generalMethods = mapActions("general", ["readLogo", "loadMenu" ])
+const generalMethods = mapActions("general", ["loadMenu" ])
 
-const computed = mapState("general", {
-  imgUrl: state => state.imgUrl,
-  links: state => state.links
+const setupMethods = mapActions("setup", ["readLogo"])
+
+const computed = mapState( {
+  imgUrl: state => state.setup.imgUrl,
+  links: state => state.general.links
 })
 
 const computedGeneral = mapState("general", {
@@ -90,7 +92,7 @@ export default {
   },
   computed: Object.assign({}, computed, computedGeneral),
 
-  methods: Object.assign({}, methods, generalMethods),
+  methods: Object.assign({}, methods, generalMethods, setupMethods),
 
   mounted() {
     this.readLogo()

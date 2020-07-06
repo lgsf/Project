@@ -55,7 +55,7 @@
             <v-row justify='center'>
               <v-col class='ms-6 me-6'>
                 <div style="text-align: center;">
-                  <img :src="imageUrl" height="50"/>
+                  <img :src="imgUrl" height="50"/>
                 </div>
               </v-col>
             </v-row>
@@ -86,10 +86,8 @@
                     </v-icon>
                   </v-btn>
                   </v-col>
-
                   <v-col  class="d-flex justify-end ms-6 me-6">
                    <v-btn
-                   
                     color="primary"
                     depressed
                     type="submit"
@@ -108,11 +106,28 @@
 
 <script>
 import Alert from "@/components/shared/Alert"
-import { db } from '@/main'
-import { fileStorage } from '@/main'
-import { mapActions  } from "vuex"
-import catchError from '@/utilities/firebaseErrors'
+import { mapActions, mapState  } from "vuex"
 
+
+const computed = mapState("setup", {
+  id: state => state.id,
+  selectedTheme: state => state.selectedTheme,
+  companyName: state => state.companyName,
+  companyContact: state => state.companyContact,
+  companyEmail: state => state.companyEmail,
+  imgUrl: state => state.imgUrl,
+  image: state => state.image
+})
+
+const computedGeneral = mapState("general", {
+    isLoading: state => state.isLoading
+})
+
+const methods = mapActions("setup", [
+  "readConfiguration",
+  "onFilePicked",
+  "saveConfiguration"
+])
 
 export default {
   components: { Alert },
@@ -128,95 +143,20 @@ export default {
       companyNameLabel: 'Razão social',
       companyContactLabel: 'Contato',
       companyEmailLabel: 'E-mail',
-      id: '',
-      selectedTheme: 'Light',
-      companyName: '',
-      companyContact: '',
-      companyEmail: '',
-      image: null,
-      imageUrl: ''
     } 
   },
-  methods: {
+  
+  methods: Object.assign({}, methods, {
     uploadLogoButtonClick(){
         this.$refs.uploadLogo.click()
       },
     setSelectedTheme(value) {
         this.$vuetify.theme.light = value == 'Light'
         this.$vuetify.theme.dark = value == 'Dark'
-      },
-    onFilePicked (event){
-        const inputFile = event.target.files[0];
-        const fileReader = new FileReader()
-        fileReader.onload = (e) => {
-          this.imageUrl = e.target.result
-        };
+      }
+  }),
 
-        fileReader.readAsDataURL(inputFile)
-        this.image = inputFile
-    },
-
-    readConfiguration() {
-      this.setIsLoading
-      db.collection("systemConfiguration")
-        .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            this.id = doc.id
-            this.companyName = doc.data().company_name
-            this.companyContact = doc.data().company_phone
-            this.companyEmail = doc.data().company_email
-            this.selectedTheme = doc.data().theme_code
-            })
-            this.resetIsLoading
-        })
-        .catch((error) => {
-          this.resetIsLoading
-          let errorMessage = catchError(error)
-          this.dispatch('general/setErrorMessage', errorMessage)
-        })
-
-        fileStorage.ref('logo').listAll()
-        .then(result => {
-          result.items[0].getDownloadURL()
-          .then((url) => { this.imageUrl = url })
-        })
-        .catch(error => {
-          let errorMessage = catchError(error)
-          this.dispatch('general/setErrorMessage', errorMessage)
-        })
-    },
-
-    saveConfiguration() {
-      db.collection("systemConfiguration")
-        .doc(this.id)
-        .update({
-          company_name: this.companyName,
-          company_phone: this.companyContact,
-          company_email: this.companyEmail,
-          theme_code: this.selectedTheme,
-        })
-        .then(() => {
-          const fileName = 'logo' + this.image.name.slice(this.image.name.lastIndexOf('.'))
-          const storageRef = fileStorage.ref(fileName)
-          storageRef.put(this.image)
-        })
-        .then(()=>{
-          this.dispatch('general/setSuccessMessage', 'Suas configurações foram salvas com sucesso!')
-          this.readConfiguration()
-        })
-        .catch((error) => {
-          console.error("Error updating document: ", error)
-        })
-    },
-  },
-
-  computed: {
-    isLoading() {
-       return this.$store.state.general.isLoading
-    },
-    ...mapActions("general", ["setIsLoading", "resetIsLoading"]),
-   },
+  computed: Object.assign({}, computed, computedGeneral),
 
   mounted() {
     this.readConfiguration()
