@@ -43,6 +43,22 @@ const mutations = {
 }
 
 const actions = {
+
+  readCompanyName({ commit }){
+    db.collection("systemConfiguration")
+      .get()
+      .then((querySnapshot) => {
+        let companyName = ''
+        querySnapshot.forEach((doc) => {
+          companyName = doc.data().company_name
+          })
+          commit('setName', companyName)
+      })
+      .catch(error => {
+        let errorMessage = catchError(error)
+        this.dispatch('general/setErrorMessage', errorMessage)
+      })
+    },
     
     readLogo({ commit }) {
         let imgUrl = ''

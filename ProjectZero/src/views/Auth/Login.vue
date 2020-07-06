@@ -2,7 +2,7 @@
   <div class="login" >
     <br />
     <v-banner>
-      <a href="Home"><v-img :src="imageUrl"></v-img></a>
+      <a href="Home"><v-img :src="imgUrl"></v-img></a>
       <template v-slot:actions>
         <h3>{{screenCompany}}</h3>
       </template>
@@ -66,21 +66,24 @@
 
 <script>
 import Alert from "@/components/shared/Alert"
-import { mapActions  } from "vuex"
-import { fileStorage } from "@/main"
-import { db } from "@/main"
-import catchError from '@/utilities/firebaseErrors'
+import { mapActions, mapState  } from "vuex"
 
+const computed = mapState("setup", {
+  screenCompany: state => state.companyName,
+  imgUrl: state => state.imgUrl
+})
+
+const computedGeneral = mapState("general", {
+    isLoading: state => state.isLoading
+})
 
 export default {
   components: { Alert },
   name: "Login",
   data() {
     return {
-      imageUrl: "",
       valid: false,
       screenTitle: "Login",
-      screenCompany: "",
       email: "",
       password: "",
       emailRules: [
@@ -96,51 +99,20 @@ export default {
 
 
   methods: {
-
     ...mapActions("auth", ["userLogin"]),
+
+    ...mapActions("setup", ["readLogo", "readCompanyName"]),
 
     login() {
       this.userLogin( {
         email: this.email,
         password: this.password
       })
-    },
-
-    readLogo() {
-      fileStorage
-        .ref("logo")
-        .listAll()
-        .then(result => {
-          result.items[0].getDownloadURL().then(url => {
-            this.imageUrl = url
-          })
-        })
-        .catch(error => {
-          let errorMessage = catchError(error)
-          this.dispatch('general/setErrorMessage', errorMessage)
-        })
-    },
-
-    readCompanyName(){
-      db.collection("systemConfiguration")
-        .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            this.screenCompany = doc.data().company_name
-            })
-        })
-        .catch(error => {
-          let errorMessage = catchError(error)
-          this.dispatch('general/setErrorMessage', errorMessage)
-        })
     }
+    
   },
 
-  computed: {
-    isLoading() {
-      return this.$store.state.general.isLoading
-    }
-  },
+  computed: Object.assign({}, computed, computedGeneral),
 
   mounted() {
     this.readLogo()

@@ -218,4 +218,4 @@ function verifyErrorCode(errorCode){
         }
     }
 
-    export default catchError
+export default catchError

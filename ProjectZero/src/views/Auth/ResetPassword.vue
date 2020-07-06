@@ -2,7 +2,7 @@
 <div class="resetPassword" >
   <br>
     <v-banner >
-      <a href="Home"><v-img :src="imageUrl"></v-img></a>
+      <a href="Home"><v-img :src="imgUrl"></v-img></a>
       <template v-slot:actions>
         <h3>{{screenCompany}}</h3>
       </template>
@@ -54,20 +54,24 @@
 </template>
 
 <script>
-import { mapActions  } from "vuex"
-import { fileStorage } from "@/main"
-import { db } from "@/main"
-import catchError from '@/utilities/firebaseErrors'
+import { mapActions, mapState  } from "vuex"
 import Alert from "@/components/shared/Alert"
+
+const computed = mapState("setup", {
+  screenCompany: state => state.companyName,
+  imgUrl: state => state.imgUrl
+})
+
+const computedGeneral = mapState("general", {
+    isLoading: state => state.isLoading
+})
 
 export default {
     components: { Alert },
     name: 'ResetPassword',
     data() {
         return {
-            imageUrl: "",
             valid: false,
-            screenCompany: "",
             screenTitle: 'Esqueci a senha',
             email: '',
             emailRules: [
@@ -77,53 +81,29 @@ export default {
         }
     },
 
-    computed: {
-      isLoading(){
-        return this.$store.state.general.isLoading
-      }
-    },
+    computed: Object.assign({}, computed, computedGeneral),
     
     methods: {
-      readLogo() {
-        fileStorage.ref("logo")
-        .listAll()
-        .then(result => {
-          result.items[0].getDownloadURL().then(url => {
-            this.imageUrl = url
-          })
-        })
-        .catch((error) => {
-                let errorMessage = catchError(error)
-                this.dispatch('general/setErrorMessage', errorMessage)
-            })
-    },
+      ...mapActions("setup", ["readLogo", "readCompanyName"]),
 
-    readCompanyName(){
-      db.collection("systemConfiguration")
-        .get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            this.screenCompany = doc.data().company_name
-            })
-        })
-       .catch((error) => {
-                let errorMessage = catchError(error)
-                this.dispatch('general/setErrorMessage', errorMessage)
-            })
-    },
+      ...mapActions("general", ["resetAllMessages"]),
 
       ...mapActions("auth", ["resetPassword"]),
-        go() {
-                this.resetPassword({
-                    email: this.email
-                })
-        },
-        reset () {
+
+      go() {
+        this.resetPassword({
+            email: this.email
+        })
+      },
+
+      reset() {
         this.email = ''
       }
+
     },
 
     mounted() {
+    this.resetAllMessages()
     this.readLogo()
     this.readCompanyName()
   }

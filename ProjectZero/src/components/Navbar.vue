@@ -95,6 +95,7 @@ export default {
   methods: Object.assign({}, methods, generalMethods, setupMethods),
 
   mounted() {
+    if(this.links.length == 0)
     this.readLogo()
     this.loadMenu()
   }

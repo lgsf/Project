@@ -14,6 +14,7 @@ import Groups from '../views/Groups/Groups.vue'
 import Notifications from '../views/Notifications/Notifications.vue'
 import OverallProductivity from '../views/Reports/OverallProductivity.vue'
 import ManagementTaskView from '../views/Management/ManagementTaskView.vue'
+import hasPermissionsNeeded from '@/utilities/permissionRouterGuard.js'
 
 Vue.use(VueRouter)
 
@@ -138,9 +139,15 @@ router.beforeEach((to, from, next) => {
     if (!store.state.auth.isAuthenticated) {
       next({
         path: '/'
-      });
+      })
     } else {
-      next()
+          if (!hasPermissionsNeeded(to, store.state.general.links)){
+            next({ 
+              path: '/home' 
+            })
+          } else {
+            next()
+          }
     }
   } else {
     next()

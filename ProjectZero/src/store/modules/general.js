@@ -96,20 +96,29 @@ const getters = {
     isLoading(state) {
         return state.isLoading
     },
+
     loadingNavbar(state) {
         return state.loadingNavbar
     },
+
     successMessage(state) {
         return state.successMessage
     },
+
     errorMessage(state) {
         return state.errorMessage
     },
+
     warningMessage(state) {
         return state.warningMessage
     },
+
     infoMessage(state) {
         return state.infoMessage
+    },
+    
+    links(state) {
+        return state.links
     }
 }
 
