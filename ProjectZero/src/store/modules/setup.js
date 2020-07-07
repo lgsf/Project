@@ -70,6 +70,9 @@ const actions = {
             imgUrl = url
             commit('setImgUrl', imgUrl)
           })
+        }).catch(error => {
+          let errorMessage = catchError(error)
+          this.dispatch('general/setErrorMessage', errorMessage)
         })
     },
     
@@ -148,8 +151,10 @@ const actions = {
             this.dispatch('setup/readConfiguration')
           })
           .catch((error) => {
-            console.error("Error updating document: ", error)
-          })
+            this.dispatch('general/resetIsLoading')
+            let errorMessage = catchError(error)
+            this.dispatch('general/setErrorMessage', errorMessage)
+        })
       }
 }
 
