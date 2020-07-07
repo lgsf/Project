@@ -1,8 +1,11 @@
-function hasPermissionsNeeded(route, from, permission) {
-    if (permission.some(e => e.route === route.path)) {
+function hasPermissionsNeeded(to, from, permission) {
+    if (permission.some(e => e.route === to.path)) {
         return true
-      }
-    else if(from.path === "/serviceOrder") {
+    }
+    else if (from.path === "/" && to.path === "/home" && permission.length === 0) {
+        return true
+    }
+    else if (to.path.includes("/EditServiceOrder/") && permission.some(e => e.route === "/serviceOrder")) {
         return true
     }
     else {

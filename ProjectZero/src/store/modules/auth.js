@@ -52,9 +52,10 @@ const actions = {
                     })
                 this.dispatch('general/resetIsLoading')
             })
-            .then(() => {
+            .then(() => new Promise(function (resolve) {
                 router.push('/home')
-            })
+                resolve()
+            }))
             .catch((error) => {
                 sessionStorage.clear()
                 commit('setUser', null)

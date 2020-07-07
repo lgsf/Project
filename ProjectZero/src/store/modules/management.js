@@ -6,7 +6,7 @@ const state = () => ({
     selectedOrderTasks: [],
     kanbanColumns: [],
     taskPriorityList: ['', 'Baixa', 'Media', 'Alta', 'Critica']
-});
+})
 
 const mutations = {
     updateOrders(state, payload) {
@@ -22,9 +22,9 @@ const mutations = {
         state.kanbanColumns = state.statusList.map(status => ({
             title: status == 'Pendente' ? 'Tarefas não iniciadas' : status == 'Em progresso' ? 'Tarefas em andamento' : 'Tarefas finalizadas',
             tasks: taskList.sort((a, b) => comparePriorities(a, b)).filter(task => task.status == status) || []
-        }));
+        }))
     }
-};
+}
 
 function comparePriorities(a, b){
     let priorityLevel = [
@@ -43,15 +43,15 @@ function comparePriorities(a, b){
 function onServiceOrdersLoaded(payload) {
     let serviceOrders = [];
     payload.forEach(orderSnapShot => {
-        let orderData = orderSnapShot.data();
-        orderData.id = orderSnapShot.id;
-        serviceOrders.push(orderData);
-    });
+        let orderData = orderSnapShot.data()
+        orderData.id = orderSnapShot.id
+        serviceOrders.push(orderData)
+    })
     return new Promise(function (resolve, reject) {
         if (!serviceOrders)
-            reject(serviceOrders);
+            reject(serviceOrders)
         else
-            resolve(serviceOrders);
+            resolve(serviceOrders)
     })
 }
 
@@ -64,9 +64,9 @@ const actions = {
             .then(() => {context.commit('updateKanbanColumns', payload)})
         
     }
-};
+}
 
-const getters = {};
+const getters = {}
 
 export default {
     namespaced: true,
