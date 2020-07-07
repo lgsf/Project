@@ -161,7 +161,7 @@
                     :key="task.id"
                     :task="task"
                     class="mt-3 cursor-move"
-                    v-on:click.native="showTaskDialog(task)"
+                    :action="function(){ showTaskDialog(task); }"
                   ></task-card>
                   <!-- </transition-group> -->
                 </draggable>

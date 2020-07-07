@@ -87,9 +87,8 @@ function onServiceOrdersLoaded(context, payload) {
     payload.forEach(orderSnapShot => {
         let orderData = orderSnapShot.data();
 
-        if(context.rootState.auth.userGroup == 'bmyiE5pvx66Ct7Wmj78b' || orderData.administrator?.email == context.rootState.auth.user.email || 
-            orderData.users.some(u => u.email == context.rootState.auth.user.email))
-        {
+        if (context.rootState.auth.userGroup == 'bmyiE5pvx66Ct7Wmj78b' || orderData.administrator?.email == context.rootState.auth.user.email ||
+            orderData.users.some(u => u.email == context.rootState.auth.user.email)) {
             orderData.id = orderSnapShot.id;
             orderData.dateForSorting = orderData.creation_date;
             orderData.creation_date = moment.unix(orderData.creation_date).format('DD/MM/YYYY');
@@ -183,15 +182,19 @@ function updateTaskFilesReference(files, context) {
 
 function saveCurrentSelectedTask(order, context, resolve) {
     let orderData = order.data();
-    if (!context.state.selectedTask.priority)
-        context.state.selectedTask.priority = '';
+    context.state.selectedTask.priority = context.state.selectedTask.priority || '';
+    context.state.selectedTask.tags = context.state.selectedTask.tags || [];
     var index = orderData.tasks.indexOf(orderData.tasks.find(t => t.id == context.state.selectedTask.id));
     orderData.tasks[index] = context.state.selectedTask;
-    
-    getOrderFromDatabase(context.state.selected.id).update({ tasks: orderData.tasks }).then(() => {
-        context.dispatch('loadTasksByOrder');
-        resolve();
-    });
+    let tags = (orderData.tags || []).concat(context.state.selectedTask.tags || []);
+    tags = tags.unique((a, b) => a.color == b.color);
+    context.state.selected.tags = tags;
+
+    getOrderFromDatabase(context.state.selected.id)
+        .update({ tasks: orderData.tasks, tags: tags }).then(() => {
+            context.dispatch('loadTasksByOrder');
+            resolve();
+        });
 }
 
 function uuidv4() {
@@ -261,11 +264,11 @@ function formatDate(date) {
     return `${day}/${month}/${year}`;
 }
 
-Array.prototype.unique = function () {
+Array.prototype.unique = function (compare) {
     var a = this.concat();
     for (var i = 0; i < a.length; ++i) {
         for (var j = i + 1; j < a.length; ++j) {
-            if (a[i] === a[j])
+            if (!compare && a[i] === a[j] || compare && compare(a[i], a[j]))
                 a.splice(j--, 1);
         }
     }
@@ -324,23 +327,23 @@ const actions = {
         this.dispatch('general/resetAllMessages', '')
         this.dispatch('general/setIsLoading').then(() => {
             db.collection("serviceOrder")
-            .get()
-            .then((orders) => {
-                onServiceOrdersLoaded(context, orders)
-                    .then((serviceOrders) => {
-                        self.dispatch('users/readUsers').then(function () {
-                            let userIds = getOrderUsersIds(serviceOrders);
-                            let users = context.rootGetters['users/filterUsersById'](userIds)
-                            completeOrdersWithUsersInformation(serviceOrders, users)
-                            context.commit('updateOrders', serviceOrders)
-                            context.dispatch('general/resetIsLoading')
+                .get()
+                .then((orders) => {
+                    onServiceOrdersLoaded(context, orders)
+                        .then((serviceOrders) => {
+                            self.dispatch('users/readUsers').then(function () {
+                                let userIds = getOrderUsersIds(serviceOrders);
+                                let users = context.rootGetters['users/filterUsersById'](userIds)
+                                completeOrdersWithUsersInformation(serviceOrders, users)
+                                context.commit('updateOrders', serviceOrders)
+                                context.dispatch('general/resetIsLoading')
+                            })
                         })
                 })
-            })
         })
     },
     loadTasksByOrder(context, payload) {
-        if(payload && payload.skipLoading){
+        if (payload && payload.skipLoading) {
             return new Promise(resolve => loadTasksByOrder(context, payload.filterCurrentUser, resolve));
         }
 

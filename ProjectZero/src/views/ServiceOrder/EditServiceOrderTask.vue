@@ -19,10 +19,13 @@
                 <v-text-field label="Nome: " :disabled="!isInEditMode" v-model="selectedTask.name"></v-text-field>
               </v-col>
               <v-col cols="1" md="1">
-                <v-icon color="error" v-if="selectedTask.priority == 'Critica'">arrow_upward</v-icon>
-                <v-icon color="success" v-if="selectedTask.priority == 'Baixa'">expand_less</v-icon>
-                <v-icon color="yellow" v-if="selectedTask.priority == 'Media'">expand_less</v-icon>
-                <v-icon color="error" v-if="selectedTask.priority == 'Alta'">expand_less</v-icon>
+                <v-icon
+                  color="error"
+                  v-if="selectedTask.priority == 'Critica'"
+                >mdi-chevron-triple-up</v-icon>
+                <v-icon color="success" v-if="selectedTask.priority == 'Baixa'">mdi-chevron-down</v-icon>
+                <v-icon color="yellow" v-if="selectedTask.priority == 'Media'">mdi-chevron-up</v-icon>
+                <v-icon color="error" v-if="selectedTask.priority == 'Alta'">mdi-chevron-double-up</v-icon>
               </v-col>
               <v-col cols="1" md="2">
                 <v-btn
@@ -34,12 +37,18 @@
                 <v-btn
                   icon
                   class="d-md-none"
-                  color="gray"
+                  color="grey"
                   @click="setOrUnsetEditMode"
                   :disabled="userRole != 'SystemAdmin' && userRole != 'OrdemAdmin' && userRole != 'TaskCreator'"
                 >
                   <v-icon>mdi-pencil-circle-outline</v-icon>
                 </v-btn>
+              </v-col>
+            </v-row>
+
+            <v-row>
+              <v-col cols="12">
+                <input-tag v-model="selectedTask.tags" :available-tags="selectedOrder.tags"></input-tag>
               </v-col>
             </v-row>
 
@@ -340,12 +349,14 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from "vuex";
+import InputTag from "@/components/shared/InputTag";
 
 const moment = require("moment");
 
 const computed = mapState({
   dialog: state => state.serviceOrders.showTaskDialog,
   selectedTask: state => state.serviceOrders.selectedTask,
+  selectedOrder: state => state.serviceOrders.selected,
   users: state => state.users.userList,
   allowedUsers: function(state) {
     let permission = [];
@@ -423,8 +434,14 @@ const methods = mapActions("serviceOrders", [
 ]);
 
 export default {
+  components: { InputTag },
   data() {
     return {
+      tags: [{ text: "marco", color: "pink" }],
+      availableTags: [
+        { text: "marco", color: "pink" },
+        { text: "desenvolvimento", color: "red" }
+      ],
       counter: this.selectedTask?.items?.length || 0,
       files: [],
       filesAlertMessage: "",
@@ -479,6 +496,9 @@ export default {
     },
     saveComment() {
       console.log(this.comment);
+    },
+    saveOrderTask() {
+      console.log(this.saveTask);
     }
   }),
   computed,
