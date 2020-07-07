@@ -4,18 +4,23 @@
     <v-row dense>
       <v-col cols="12">
         <div class="text-center screen-margin-top" v-if="isLoading">
-          <v-progress-circular
-            indeterminate
-            color="primary"
-          ></v-progress-circular>
+          <v-progress-circular indeterminate color="primary"></v-progress-circular>
         </div>
         <v-card v-if="!isLoading" class="mx-auto mt-5">
           <v-toolbar class="primary white--text" dark>
             <h3>{{ selected.name }}</h3>
             <v-spacer></v-spacer>
-             <v-btn v-if="isAdmin" color="primary" class="white--text" small dark @click="deleteOrder">Excluir Ordem
-               <v-icon right class="white--text">mdi-delete</v-icon>
-             </v-btn>
+            <v-btn
+              v-if="isAdmin"
+              color="primary"
+              class="white--text"
+              small
+              dark
+              @click="deleteOrder"
+            >
+              Excluir Ordem
+              <v-icon right class="white--text">mdi-delete</v-icon>
+            </v-btn>
             <v-icon right class="white--text">receipt</v-icon>
           </v-toolbar>
           <v-row class="ml-5 mt-5 mr-5">
@@ -33,12 +38,7 @@
               ></v-autocomplete>
             </v-col>
             <v-col cols="4">
-              <v-text-field
-                v-model="duration"
-                label="Estimativa em horas:"
-                disabled
-                dense
-              ></v-text-field>
+              <v-text-field v-model="duration" label="Estimativa em horas:" disabled dense></v-text-field>
             </v-col>
           </v-row>
           <v-row class="ml-5 mr-5">
@@ -72,16 +72,16 @@
           <v-row class="ml-5 mt-5 mr-5">
             <v-col cols="12">
               <v-autocomplete
-                  v-model="selected.administrator"
-                  :items="users"
-                  color="primary"
-                  item-text="name"
-                  label="Administrador"
-                  return-object
-                  dense
-                  single
-                  :disabled="!isAdmin"
-                ></v-autocomplete>
+                v-model="selected.administrator"
+                :items="users"
+                color="primary"
+                item-text="name"
+                label="Administrador"
+                return-object
+                dense
+                single
+                :disabled="!isAdmin"
+              ></v-autocomplete>
             </v-col>
           </v-row>
           <v-row class="ml-5 mr-5">
@@ -115,7 +115,7 @@
           <v-row class="ml-5 mt-5 mr-5">
             <v-col>
               <v-btn
-                class=" mt-1"
+                class="mt-1"
                 color="success"
                 dark
                 @click="showTaskDialog({name: ''})"
@@ -123,28 +123,21 @@
               >
                 <v-icon>mdi-plus</v-icon>Tarefa
               </v-btn>
-              <v-btn color="blue" dark @click="filtertasks()" class=" mt-1"
-               >
-                Filtrar <v-icon style="padding-left:8px;">filter_list</v-icon>
+              <v-btn color="blue" dark @click="filtertasks()" class="mt-1">
+                Filtrar
+                <v-icon style="padding-left:8px;">filter_list</v-icon>
               </v-btn>
-              </v-col>
-              <v-col
-               class="d-flex justify-end">
-              <v-btn
-                color="primary"
-                dark
-                @click="returnToServiceOrders"
-                class=" mt-1"
-              >
+            </v-col>
+            <v-col class="d-flex justify-end">
+              <v-btn color="primary" dark @click="returnToServiceOrders" class="mt-1">
                 <v-icon style="padding-right:8px; padding-left:0px;">keyboard_return</v-icon>Voltar
               </v-btn>
-              </v-col>
-           
+            </v-col>
           </v-row>
           <v-row>
             <v-col
               cols="12"
-              :sm="columns.length > 0 ? 12 / columns.length : 12"
+              :md="columns.length > 0 ? 12 / columns.length : 12"
               v-for="column in columns"
               :key="column.title"
             >
@@ -187,12 +180,12 @@
 </template>
 
 <script>
-import DatePicker from "@/components/shared/DatePicker"
-import { mapState, mapActions } from "vuex"
-import draggable from "vuedraggable"
-import Alert from "@/components/shared/Alert"
-import TaskCard from "@/components/shared/TaskCard.vue"
-import EditServiceOrderTask from "./EditServiceOrderTask.vue"
+import DatePicker from "@/components/shared/DatePicker";
+import { mapState, mapActions } from "vuex";
+import draggable from "vuedraggable";
+import Alert from "@/components/shared/Alert";
+import TaskCard from "@/components/shared/TaskCard.vue";
+import EditServiceOrderTask from "./EditServiceOrderTask.vue";
 
 const computed = mapState({
   isLoading: state => state.general.isLoading,
@@ -204,18 +197,23 @@ const computed = mapState({
   users: state => state.users.userList,
   groups: state => state.groups.groups,
   currentUserEmail: state => state.auth.user.email,
-  isAdmin: function (state) { 
-    return state.auth.userGroup.id == 'bmyiE5pvx66Ct7Wmj78b' || state.auth.user.email == state.serviceOrders.selected.administrator?.email
+  isAdmin: function(state) {
+    return (
+      state.auth.userGroup.id == "bmyiE5pvx66Ct7Wmj78b" ||
+      state.auth.user.email == state.serviceOrders.selected.administrator?.email
+    );
   },
   duration: function(state) {
-    let accumulatedTime = 0
+    let accumulatedTime = 0;
     state.serviceOrders.selectedOrderTasks.forEach(task => {
-      accumulatedTime += task.estimated_duration ? parseInt(task.estimated_duration) : 0;
-    })
+      accumulatedTime += task.estimated_duration
+        ? parseInt(task.estimated_duration)
+        : 0;
+    });
 
     return accumulatedTime;
-  } 
-})
+  }
+});
 
 const userMethods = mapActions("users", ["readUsers"]);
 const groupMethods = mapActions("groups", ["loadGroups"]);
@@ -233,9 +231,9 @@ const orderMethods = mapActions("serviceOrders", [
   "saveServiceOrder",
   "deleteOrder",
   "returnToServiceOrders"
-])
+]);
 
-const clientMethods = mapActions("clients", ["loadClients"])
+const clientMethods = mapActions("clients", ["loadClients"]);
 
 export default {
   props: ["id"],
@@ -247,26 +245,33 @@ export default {
     DatePicker
   },
   computed,
-  methods: Object.assign({}, orderMethods, clientMethods, userMethods, groupMethods, {
-    filtertasks() {
-      this.showOnlyMine = !this.showOnlyMine
-      this.loadTasksByOrder({ filterCurrentUser: this.showOnlyMine })
-    },
-    onMoveTask(evt) {
-      if(this.currentUserEmail != evt.draggedContext.element.users?.email)
-        return false;
+  methods: Object.assign(
+    {},
+    orderMethods,
+    clientMethods,
+    userMethods,
+    groupMethods,
+    {
+      filtertasks() {
+        this.showOnlyMine = !this.showOnlyMine;
+        this.loadTasksByOrder({ filterCurrentUser: this.showOnlyMine });
+      },
+      onMoveTask(evt) {
+        if (this.currentUserEmail != evt.draggedContext.element.users?.email)
+          return false;
+      }
     }
-  }),
+  ),
   data: () => ({
     showOnlyMine: false
   }),
   mounted() {
-    this.loadTasksByOrder()
-    this.loadClients()
-    this.readUsers()
-    this.loadGroups()
+    this.loadTasksByOrder();
+    this.loadClients();
+    this.readUsers();
+    this.loadGroups();
   }
-}
+};
 </script>
 
 <style scoped>

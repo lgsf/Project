@@ -14,135 +14,156 @@
         <v-divider></v-divider>
         <v-card-text>
           <v-container>
-            <v-row>
-              <v-col cols="10" style="padding-bottom: 0px">
+            <v-row justify="start" align="center">
+              <v-col cols="9" md="9">
                 <v-text-field label="Nome: " :disabled="!isInEditMode" v-model="selectedTask.name"></v-text-field>
               </v-col>
-              <v-col cols="2" class="no-top-bottom-padding">
-                <v-btn 
-                  color="gray" 
+              <v-col cols="1" md="1">
+                <v-icon color="error" v-if="selectedTask.priority == 'Critica'">arrow_upward</v-icon>
+                <v-icon color="success" v-if="selectedTask.priority == 'Baixa'">expand_less</v-icon>
+                <v-icon color="yellow" v-if="selectedTask.priority == 'Media'">expand_less</v-icon>
+                <v-icon color="error" v-if="selectedTask.priority == 'Alta'">expand_less</v-icon>
+              </v-col>
+              <v-col cols="1" md="2">
+                <v-btn
+                  class="d-none d-md-block"
+                  color="gray"
                   @click="setOrUnsetEditMode"
                   :disabled="userRole != 'SystemAdmin' && userRole != 'OrdemAdmin' && userRole != 'TaskCreator'"
                 >Edit</v-btn>
+                <v-btn
+                  icon
+                  class="d-md-none"
+                  color="gray"
+                  @click="setOrUnsetEditMode"
+                  :disabled="userRole != 'SystemAdmin' && userRole != 'OrdemAdmin' && userRole != 'TaskCreator'"
+                >
+                  <v-icon>mdi-pencil-circle-outline</v-icon>
+                </v-btn>
               </v-col>
             </v-row>
-            <v-row>
-              <v-col cols="8" class="no-top-bottom-padding">
-                <v-select
-                  v-model="selectedTask.priority"
-                  :items="taskPriorityList"
-                  :disabled="!isInEditMode"
-                  :multiple="false"
-                  label="Prioridade"
-                ></v-select>
-              </v-col>
-              <v-col cols="4" class="no-top-bottom-padding">
-                <v-text-field
-                  label="Duração estimada (horas):"
-                  :disabled="!isInEditMode"
-                  v-model="selectedTask.estimated_duration"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" class="no-top-bottom-padding">
-                <v-row>
-                  <v-col cols="4" class="no-top-bottom-padding">
-                    <v-text-field
-                      label="Data de criação:"
-                      disabled
-                      v-model="selectedTask.creation_date"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="4" class="no-top-bottom-padding">
-                    <v-text-field
-                      label="Data de início:"
-                      disabled
-                      v-model="selectedTask.started_date"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="4" class="no-top-bottom-padding">
-                    <v-text-field
-                      label="Data de encerramento:"
-                      disabled
-                      v-model="selectedTask.end_date"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="6">
-                <v-autocomplete
-                  v-model="selectedTask.possibleUsers"
-                  :items="users"
-                  color="primary"
-                  item-text="name"
-                  label="Usuários possíveis:"
-                  return-object
-                  dense
-                  multiple
-                  required
-                  :disabled="!isInEditMode"
-                ></v-autocomplete>
-              </v-col>
-              <v-col cols="6">
-                <v-autocomplete
-                  v-model="selectedTask.possibleGroups"
-                  :items="groups"
-                  color="primary"
-                  item-text="name"
-                  label="Grupos possíveis:"
-                  return-object
-                  dense
-                  multiple
-                  required
-                  :disabled="!isInEditMode"
-                ></v-autocomplete>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="6">
-                <v-autocomplete
-                  v-model="selectedTask.users"
-                  :items="allowedUsers"
-                  color="primary"
-                  item-text="name"
-                  label="Usuário responsável:"
-                  return-object
-                  dense
-                  single
-                  required
-                  :disabled="userRole == 'NotRelated'"
-                ></v-autocomplete>
-              </v-col>
-              <v-col cols="6">
-                <v-text-field
-                  label="Criado por:"
-                  disabled
-                  v-model="createdBy"
-                  dense
-                ></v-text-field>
-              </v-col>
-            </v-row>
+
             <v-row>
               <v-col cols="12">
-                <v-textarea 
-                  v-model="selectedTask.description" 
+                <v-textarea
+                  v-model="selectedTask.description"
                   label="Descrição"
                   :disabled="!isInEditMode"
                 ></v-textarea>
               </v-col>
             </v-row>
+
             <v-row>
               <v-col cols="12">
                 <v-tabs>
+                  <v-tab>
+                    <v-icon left>mdi-file</v-icon>Detalhes
+                  </v-tab>
                   <v-tab>
                     <v-icon left>mdi-check</v-icon>Checklist
                   </v-tab>
                   <v-tab>
                     <v-icon left>mdi-paperclip</v-icon>Anexos
                   </v-tab>
+                  <v-tab>
+                    <v-icon left>mdi-chat</v-icon>Comentários
+                  </v-tab>
+                  <v-tab-item>
+                    <v-card flat>
+                      <v-cart-text>
+                        <v-row>
+                          <v-col cols="12" md="8">
+                            <v-select
+                              v-model="selectedTask.priority"
+                              :items="taskPriorityList"
+                              :disabled="!isInEditMode"
+                              :multiple="false"
+                              label="Prioridade"
+                            ></v-select>
+                          </v-col>
+                          <v-col cols="12" md="4">
+                            <v-text-field
+                              label="Duração estimada (horas):"
+                              :disabled="!isInEditMode"
+                              v-model="selectedTask.estimated_duration"
+                            ></v-text-field>
+                          </v-col>
+                        </v-row>
+                        <v-row>
+                          <v-col cols="12" md="4">
+                            <v-text-field
+                              label="Data de criação:"
+                              disabled
+                              v-model="selectedTask.creation_date"
+                            ></v-text-field>
+                          </v-col>
+                          <v-col cols="12" md="4">
+                            <v-text-field
+                              label="Data de início:"
+                              disabled
+                              v-model="selectedTask.started_date"
+                            ></v-text-field>
+                          </v-col>
+                          <v-col cols="12" md="4">
+                            <v-text-field
+                              label="Data de encerramento:"
+                              disabled
+                              v-model="selectedTask.end_date"
+                            ></v-text-field>
+                          </v-col>
+                        </v-row>
+                        <v-row>
+                          <v-col cols="12" md="6">
+                            <v-autocomplete
+                              v-model="selectedTask.possibleUsers"
+                              :items="users"
+                              color="primary"
+                              item-text="name"
+                              label="Usuários possíveis:"
+                              return-object
+                              dense
+                              multiple
+                              required
+                              :disabled="!isInEditMode"
+                            ></v-autocomplete>
+                          </v-col>
+                          <v-col cols="12" md="6">
+                            <v-autocomplete
+                              v-model="selectedTask.possibleGroups"
+                              :items="groups"
+                              color="primary"
+                              item-text="name"
+                              label="Grupos possíveis:"
+                              return-object
+                              dense
+                              multiple
+                              required
+                              :disabled="!isInEditMode"
+                            ></v-autocomplete>
+                          </v-col>
+                        </v-row>
+                        <v-row>
+                          <v-col cols="12" md="6">
+                            <v-autocomplete
+                              v-model="selectedTask.users"
+                              :items="allowedUsers"
+                              color="primary"
+                              item-text="name"
+                              label="Usuário responsável:"
+                              return-object
+                              dense
+                              single
+                              required
+                              :disabled="userRole == 'NotRelated'"
+                            ></v-autocomplete>
+                          </v-col>
+                          <v-col cols="12" md="6">
+                            <v-text-field label="Criado por:" disabled v-model="createdBy" dense></v-text-field>
+                          </v-col>
+                        </v-row>
+                      </v-cart-text>
+                    </v-card>
+                  </v-tab-item>
                   <v-tab-item>
                     <v-card flat>
                       <v-card-text>
@@ -169,12 +190,12 @@
                           color="primary"
                         >
                           <template v-slot:label="{ item }">
-                                <v-checkbox 
-                                  v-model="item.done" 
-                                  class="mr-2; text-wrap" 
-                                  :label="item.description"
-                                  :disabled="userRole == 'PossibleUser' || userRole == 'NotRelated'"
-                                ></v-checkbox>
+                            <v-checkbox
+                              v-model="item.done"
+                              class="mr-2; text-wrap"
+                              :label="item.description"
+                              :disabled="userRole == 'PossibleUser' || userRole == 'NotRelated'"
+                            ></v-checkbox>
                           </template>
                         </v-treeview>
                         <v-treeview
@@ -207,8 +228,8 @@
                   <v-tab-item>
                     <v-card flat>
                       <v-card-text>
-                        <v-row>
-                          <v-col cols="9">
+                        <v-row align="center" justify="center">
+                          <v-col cols="12" sm="9">
                             <v-file-input
                               v-model="files"
                               placeholder="Adicionar arquivos"
@@ -222,7 +243,7 @@
                               </template>
                             </v-file-input>
                           </v-col>
-                          <v-col cols="3">
+                          <v-col cols="12" sm="3">
                             <v-btn
                               v-if="!isInEditMode"
                               dark
@@ -264,37 +285,43 @@
                       </v-card-text>
                     </v-card>
                   </v-tab-item>
+                  <v-tab-item>
+                    <v-card>
+                      <v-card-text>
+                        <v-row>
+                          <v-col cols="12">
+                            <v-textarea
+                              v-model="comment"
+                              label="Adicionar comentário"
+                              :disabled="!isInEditMode"
+                            ></v-textarea>
+                          </v-col>
+                        </v-row>
+                        <v-row v-if="comment && comment != ''">
+                          <v-col cols="12">
+                            <v-btn icon color="green" @click="saveComment()">
+                              <v-icon>mdi-plus</v-icon>
+                            </v-btn>
+                          </v-col>
+                        </v-row>
+                        <v-row>
+                          <v-col cols="12">
+                            <v-list dense>
+                              <v-list-item-group color="primary">
+                                <v-list-item v-for="(item, i) in selectedTask.comments" :key="i">
+                                  <v-list-item-content>
+                                    <v-list-item-title v-html="item.user.name"></v-list-item-title>
+                                    <v-list-item-subtitle v-html="item.lastModified"></v-list-item-subtitle>
+                                  </v-list-item-content>
+                                </v-list-item>
+                              </v-list-item-group>
+                            </v-list>
+                          </v-col>
+                        </v-row>
+                      </v-card-text>
+                    </v-card>
+                  </v-tab-item>
                 </v-tabs>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12">
-                <v-textarea 
-                  v-model="comment" 
-                  label="Adicionar comentário"
-                  :disabled="!isInEditMode"
-                ></v-textarea>
-              </v-col>
-            </v-row>
-            <v-row v-if="comment && comment != ''">
-              <v-col cols="12">
-                <v-btn icon color="green" @click="saveComment()">
-                  <v-icon>mdi-plus</v-icon>
-                </v-btn>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12">
-                <v-list dense>
-                  <v-list-item-group color="primary">
-                    <v-list-item v-for="(item, i) in selectedTask.comments" :key="i">
-                      <v-list-item-content>
-                        <v-list-item-title v-html="item.user.name"></v-list-item-title>
-                        <v-list-item-subtitle v-html="item.lastModified"></v-list-item-subtitle>
-                      </v-list-item-content>
-                    </v-list-item>
-                  </v-list-item-group>
-                </v-list>
               </v-col>
             </v-row>
           </v-container>
@@ -322,43 +349,61 @@ const computed = mapState({
   users: state => state.users.userList,
   allowedUsers: function(state) {
     let permission = [];
-    
-    if(state.serviceOrders.selectedTask.possibleUsers){
-      let permissionByUser = state.users.userList.find(user => state.serviceOrders.selectedTask.possibleUsers.some(possibleUser => possibleUser.email == user.email))
-      if(permissionByUser.isArray)
-        permission.concat(permissionByUser);
-      else
-        permission.push(permissionByUser)
+
+    if (state.serviceOrders.selectedTask.possibleUsers) {
+      let permissionByUser = state.users.userList.find(user =>
+        state.serviceOrders.selectedTask.possibleUsers.some(
+          possibleUser => possibleUser.email == user.email
+        )
+      );
+      if (permissionByUser.isArray) permission.concat(permissionByUser);
+      else permission.push(permissionByUser);
     }
 
-    if(state.serviceOrders.selectedTask.possibleGroups){
-      let permissionByGroup = state.users.userList.find(user => state.serviceOrders.selectedTask.possibleGroups?.some(possibleGroup => possibleGroup.id == user.group_id.id))
-      if(permissionByGroup.isArray)
-        permission.concat(permissionByGroup);
-      else
-        permission.push(permissionByGroup)
+    if (state.serviceOrders.selectedTask.possibleGroups) {
+      let permissionByGroup = state.users.userList.find(user =>
+        state.serviceOrders.selectedTask.possibleGroups?.some(
+          possibleGroup => possibleGroup.id == user.group_id.id
+        )
+      );
+      if (permissionByGroup.isArray) permission.concat(permissionByGroup);
+      else permission.push(permissionByGroup);
     }
-    
+
     return permission.length > 0 ? permission : state.users.userList;
   },
   groups: state => state.groups.groups,
   selectedUsers: state => state.serviceOrders.selectedTask.users,
   isInEditMode: state => state.serviceOrders.taskDialogInEditMode,
   taskPriorityList: state => state.serviceOrders.taskPriorityList,
-  createdBy: state => state.serviceOrders.selectedTask.created_by?.name || '',
+  createdBy: state => state.serviceOrders.selectedTask.created_by?.name || "",
   userRole: function(state) {
     let role = "NotRelated";
-    if(state.auth.userGroup.id == 'bmyiE5pvx66Ct7Wmj78b')
-      role = "SystemAdmin";
-    if(state.auth.user.email == state.serviceOrders.selected.administrator?.email)
+    if (state.auth.userGroup.id == "bmyiE5pvx66Ct7Wmj78b") role = "SystemAdmin";
+    if (
+      state.auth.user.email == state.serviceOrders.selected.administrator?.email
+    )
       role = "OrdemAdmin";
-    else if(state.auth.user.email == state.serviceOrders.selectedTask.created_by?.email || !state.serviceOrders.selectedTask.id)
+    else if (
+      state.auth.user.email ==
+        state.serviceOrders.selectedTask.created_by?.email ||
+      !state.serviceOrders.selectedTask.id
+    )
       role = "TaskCreator";
-    else if(state.serviceOrders.selectedTask.users?.email == state.auth.user.email)
+    else if (
+      state.serviceOrders.selectedTask.users?.email == state.auth.user.email
+    )
       role = "Responsible";
-    else if((!state.serviceOrders.selectedTask.possibleUsers && !state.serviceOrders.selectedTask.possibleGroups) || 
-      state.serviceOrders.selectedTask.possibleUsers?.some(possibleUser => possibleUser.email == state.auth.user.email) ||
-      state.serviceOrders.selectedTask.possibleGroups?.some(group => group.id == state.auth.userGroup.id))
+    else if (
+      (!state.serviceOrders.selectedTask.possibleUsers &&
+        !state.serviceOrders.selectedTask.possibleGroups) ||
+      state.serviceOrders.selectedTask.possibleUsers?.some(
+        possibleUser => possibleUser.email == state.auth.user.email
+      ) ||
+      state.serviceOrders.selectedTask.possibleGroups?.some(
+        group => group.id == state.auth.userGroup.id
+      )
+    )
       role = "PossibleUser";
     return role;
   }
@@ -403,7 +448,7 @@ export default {
     appendTaskItem() {
       this.counter = this.counter + 1;
       this.selectedTask.items.push({
-        description: '',
+        description: "",
         id: this.counter
       });
     },
@@ -432,8 +477,8 @@ export default {
         item => item.name != file.name
       );
     },
-    saveComment(){
-      console.log(this.comment)
+    saveComment() {
+      console.log(this.comment);
     }
   }),
   computed,
