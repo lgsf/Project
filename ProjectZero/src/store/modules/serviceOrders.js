@@ -538,7 +538,18 @@ const actions = {
     }
 };
 
-const getters = {};
+const getters = {
+    getAllTasksByOrderBut(state) {
+        return (filters) => {
+            let selectedOrder = state.serviceOrders
+                .reduce((a, b) => b.id == filters.orderId ? b : a, undefined);
+            if (!selectedOrder)
+                return [];
+            let filteredTasks = selectedOrder.tasks?.filter(m => m.id != filters.taskId);
+            return filteredTasks || [];
+        }
+    }
+};
 
 export default {
     namespaced: true,

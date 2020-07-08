@@ -33,7 +33,7 @@
                     <v-icon
                       v-bind="attrs"
                       v-on="on"
-                      color="yellow"
+                      color="amber"
                       v-if="selectedTask.priority == 'Media'"
                     >mdi-chevron-up</v-icon>
                     <v-icon
@@ -190,6 +190,20 @@
                           </v-col>
                           <v-col cols="12" md="6">
                             <v-text-field label="Criado por:" disabled v-model="createdBy" dense></v-text-field>
+                          </v-col>
+                        </v-row>
+                        <v-row>
+                          <v-col cols="12">
+                            <v-select
+                              v-model="selectedTask.dependencyTask"
+                              :items="allOrderTasksBut"
+                              :multiple="false"
+                              item-text="name"
+                              item-value="id"
+                              clearable
+                              :disabled="!isInEditMode"
+                              label="Dependência"
+                            ></v-select>
                           </v-col>
                         </v-row>
                       </v-cart-text>
@@ -375,72 +389,86 @@ import InputTag from "@/components/shared/InputTag";
 
 const moment = require("moment");
 
-const computed = mapState({
-  dialog: state => state.serviceOrders.showTaskDialog,
-  selectedTask: state => state.serviceOrders.selectedTask,
-  selectedOrder: state => state.serviceOrders.selected,
-  users: state => state.users.userList,
-  allowedUsers: function(state) {
-    let permission = [];
+const computed = Object.assign(
+  {},
+  mapState({
+    dialog: state => state.serviceOrders.showTaskDialog,
+    selectedTask: state => state.serviceOrders.selectedTask,
+    selectedOrder: state => state.serviceOrders.selected,
+    users: state => state.users.userList,
+    allowedUsers: function(state) {
+      let permission = [];
 
-    if (state.serviceOrders.selectedTask.possibleUsers) {
-      let permissionByUser = state.users.userList.find(user =>
-        state.serviceOrders.selectedTask.possibleUsers.some(
-          possibleUser => possibleUser.email == user.email
-        )
-      );
-      if (permissionByUser.isArray) permission.concat(permissionByUser);
-      else permission.push(permissionByUser);
-    }
+      if (state.serviceOrders.selectedTask.possibleUsers) {
+        let permissionByUser = state.users.userList.find(user =>
+          state.serviceOrders.selectedTask.possibleUsers.some(
+            possibleUser => possibleUser.email == user.email
+          )
+        );
+        if (permissionByUser.isArray) permission.concat(permissionByUser);
+        else permission.push(permissionByUser);
+      }
 
-    if (state.serviceOrders.selectedTask.possibleGroups) {
-      let permissionByGroup = state.users.userList.find(user =>
-        state.serviceOrders.selectedTask.possibleGroups?.some(
-          possibleGroup => possibleGroup.id == user.group_id.id
-        )
-      );
-      if (permissionByGroup.isArray) permission.concat(permissionByGroup);
-      else permission.push(permissionByGroup);
-    }
+      if (state.serviceOrders.selectedTask.possibleGroups) {
+        let permissionByGroup = state.users.userList.find(user =>
+          state.serviceOrders.selectedTask.possibleGroups?.some(
+            possibleGroup => possibleGroup.id == user.group_id.id
+          )
+        );
+        if (permissionByGroup.isArray) permission.concat(permissionByGroup);
+        else permission.push(permissionByGroup);
+      }
 
-    return permission.length > 0 ? permission : state.users.userList;
-  },
-  groups: state => state.groups.groups,
-  selectedUsers: state => state.serviceOrders.selectedTask.users,
-  isInEditMode: state => state.serviceOrders.taskDialogInEditMode,
-  taskPriorityList: state => state.serviceOrders.taskPriorityList,
-  createdBy: state => state.serviceOrders.selectedTask.created_by?.name || "",
-  userRole: function(state) {
-    let role = "NotRelated";
-    if (state.auth.userGroup.id == "bmyiE5pvx66Ct7Wmj78b") role = "SystemAdmin";
-    if (
-      state.auth.user.email == state.serviceOrders.selected.administrator?.email
-    )
-      role = "OrdemAdmin";
-    else if (
-      state.auth.user.email ==
-        state.serviceOrders.selectedTask.created_by?.email ||
-      !state.serviceOrders.selectedTask.id
-    )
-      role = "TaskCreator";
-    else if (
-      state.serviceOrders.selectedTask.users?.email == state.auth.user.email
-    )
-      role = "Responsible";
-    else if (
-      (!state.serviceOrders.selectedTask.possibleUsers &&
-        !state.serviceOrders.selectedTask.possibleGroups) ||
-      state.serviceOrders.selectedTask.possibleUsers?.some(
-        possibleUser => possibleUser.email == state.auth.user.email
-      ) ||
-      state.serviceOrders.selectedTask.possibleGroups?.some(
-        group => group.id == state.auth.userGroup.id
+      return permission.length > 0 ? permission : state.users.userList;
+    },
+    groups: state => state.groups.groups,
+    selectedUsers: state => state.serviceOrders.selectedTask.users,
+    isInEditMode: state => state.serviceOrders.taskDialogInEditMode,
+    taskPriorityList: state => state.serviceOrders.taskPriorityList,
+    createdBy: state => state.serviceOrders.selectedTask.created_by?.name || "",
+    userRole: function(state) {
+      let role = "NotRelated";
+      if (state.auth.userGroup.id == "bmyiE5pvx66Ct7Wmj78b")
+        role = "SystemAdmin";
+      if (
+        state.auth.user.email ==
+        state.serviceOrders.selected.administrator?.email
       )
-    )
-      role = "PossibleUser";
-    return role;
-  }
-});
+        role = "OrdemAdmin";
+      else if (
+        state.auth.user.email ==
+          state.serviceOrders.selectedTask.created_by?.email ||
+        !state.serviceOrders.selectedTask.id
+      )
+        role = "TaskCreator";
+      else if (
+        state.serviceOrders.selectedTask.users?.email == state.auth.user.email
+      )
+        role = "Responsible";
+      else if (
+        (!state.serviceOrders.selectedTask.possibleUsers &&
+          !state.serviceOrders.selectedTask.possibleGroups) ||
+        state.serviceOrders.selectedTask.possibleUsers?.some(
+          possibleUser => possibleUser.email == state.auth.user.email
+        ) ||
+        state.serviceOrders.selectedTask.possibleGroups?.some(
+          group => group.id == state.auth.userGroup.id
+        )
+      )
+        role = "PossibleUser";
+      return role;
+    },
+    allOrderTasksBut: function(state, store) {
+      let filters = {
+        orderId: state.serviceOrders.selected.id,
+        taskId: state.serviceOrders.selectedTask.id
+      };
+      let getAllTasksByOrderBut = store["serviceOrders/getAllTasksByOrderBut"];
+      return getAllTasksByOrderBut(filters);
+    }
+  }),
+  mapGetters("serviceOrders", ["getAllTasksByOrderBut"])
+);
 
 const getters = mapGetters("users", ["getUserByEmail"]);
 

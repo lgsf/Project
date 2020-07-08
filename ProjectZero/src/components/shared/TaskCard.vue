@@ -31,7 +31,7 @@
                 <v-icon
                   v-bind="attrs"
                   v-on="on"
-                  color="yellow"
+                  color="amber"
                   v-if="task.priority == 'Media'"
                 >mdi-chevron-up</v-icon>
               </template>
@@ -180,6 +180,21 @@
                 </v-btn>
               </template>
               <span>{{(!task.files ? '' : task.files.length == 1 ? '1 anexo' : `${task.files.length} anexos`)}}</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  icon
+                  v-if="task.dependencyTask"
+                  v-bind="attrs"
+                  v-on="on"
+                  color="gray lighten-2 small-button"
+                  @click="executeAction"
+                >
+                  <v-icon small>mdi-lock-open-outline</v-icon>
+                </v-btn>
+              </template>
+              <span>Possui dependência</span>
             </v-tooltip>
           </v-col>
         </v-row>

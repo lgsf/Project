@@ -11,33 +11,29 @@
             <h3>{{ selected.name }}</h3>
             <v-spacer></v-spacer>
             <div class="text-center">
-            <v-menu>
-              <template v-slot:activator="{ on: menu, attrs }">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on: tooltip }">
-                    <v-btn
-                      color="primary"
-                      dark
-                      v-bind="attrs"
-                      v-on="{ ...tooltip, ...menu }"
-                    >Opções da Ordem
-                    <v-icon right class="white--text">mdi-format-line-weight</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Iniciar, Finalizar, Cancelar e Apagar a Ordem</span>
-                </v-tooltip>
-              </template>
-              <v-list>
-                <v-list-item
-                  v-for="(item, index) in items"
-                  :key="index"
-                  @click="checkOrderMethod(item.title)"
-                >
-                  <v-list-item-title>{{ item.title }}</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </div>
+              <v-menu>
+                <template v-slot:activator="{ on: menu, attrs }">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on: tooltip }">
+                      <v-btn color="primary" dark v-bind="attrs" v-on="{ ...tooltip, ...menu }">
+                        Opções da Ordem
+                        <v-icon right class="white--text">mdi-format-line-weight</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Iniciar, Finalizar, Cancelar e Apagar a Ordem</span>
+                  </v-tooltip>
+                </template>
+                <v-list>
+                  <v-list-item
+                    v-for="(item, index) in items"
+                    :key="index"
+                    @click="checkOrderMethod(item.title)"
+                  >
+                    <v-list-item-title>{{ item.title }}</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </div>
             <v-icon right class="white--text">receipt</v-icon>
           </v-toolbar>
           <v-row class="ml-5 mt-5 mr-5">
@@ -277,19 +273,28 @@ export default {
         this.loadTasksByOrder({ filterCurrentUser: this.showOnlyMine });
       },
       onMoveTask(evt) {
-        if (this.currentUserEmail != evt.draggedContext.element.users?.email)
-          return false;
+        let selectedTask = evt.draggedContext.element;
+        if (this.currentUserEmail != selectedTask.users?.email) return false;
+        if (!selectedTask.dependencyTask) return true;
+        let dependencyTask = this.selected.tasks.reduce(
+          (a, b) => (b.id == selectedTask.dependencyTask ? b : a),
+          undefined
+        );
+        if (!dependencyTask) return true;
+        if (["Finalizada", "Cancelada"].includes(dependencyTask.status))
+          return true;
+        return false;
       },
-      checkOrderMethod(title){
-        switch (title){
+      checkOrderMethod(title) {
+        switch (title) {
           case "Iniciar":
-            return 
+            return;
           case "Finalizar":
-            return
+            return;
           case "Cancelar":
-            return
+            return;
           case "Apagar":
-            return this.deleteOrder()
+            return this.deleteOrder();
         }
       }
     }
@@ -297,17 +302,17 @@ export default {
   data: () => ({
     showOnlyMine: false,
     items: [
-        { title: 'Iniciar' },
-        { title: 'Finalizar' },
-        { title: 'Cancelar' },
-        { title: 'Apagar' },
-      ],
+      { title: "Iniciar" },
+      { title: "Finalizar" },
+      { title: "Cancelar" },
+      { title: "Apagar" }
+    ]
   }),
   mounted() {
-    this.loadTasksByOrder()
-    this.loadClients()    
-    this.readUsers()
-    this.loadGroups()
+    this.loadTasksByOrder();
+    this.loadClients();
+    this.readUsers();
+    this.loadGroups();
   }
 };
 </script>
