@@ -265,7 +265,7 @@
                           </v-col>
                         </v-row>
                         <v-row>
-                          <v-col cols="12">
+                          <v-col v-if="showFiles" cols="12">
                             <v-list dense>
                               <v-list-item-group color="primary">
                                 <v-list-item v-for="(item, i) in selectedTask.files" :key="i">
@@ -339,8 +339,8 @@
         <v-card-actions>
           <v-btn color="error" text @click="deleteTask" :disabled="!isInEditMode">Deletar</v-btn>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="closeTaskModal">Fechar</v-btn>
-          <v-btn color="blue darken-1" text @click="saveTask">Salvar</v-btn>
+          <v-btn color="blue darken-1" text @click="close">Fechar</v-btn>
+          <v-btn color="blue darken-1" text @click="saveAndClose">Salvar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -445,6 +445,7 @@ export default {
       counter: this.selectedTask?.items?.length || 0,
       files: [],
       filesAlertMessage: "",
+      showFiles: true,
       comment: ""
     };
   },
@@ -488,17 +489,27 @@ export default {
         });
       });
       this.files = [];
+      this.showFiles =
+        this.selectedTask.files && this.selectedTask.files.length;
     },
     removeFile(file) {
       this.selectedTask.files = this.selectedTask.files.filter(
         item => item.name != file.name
       );
+      this.showFiles =
+        this.selectedTask.files && this.selectedTask.files.length;
+      console.log(this.showFiles);
     },
     saveComment() {
       console.log(this.comment);
     },
-    saveOrderTask() {
-      console.log(this.saveTask);
+    close() {
+      this.showFiles = true;
+      this.closeTaskModal();
+    },
+    saveAndClose() {
+      this.showFiles = true;
+      this.saveTask();
     }
   }),
   computed,
