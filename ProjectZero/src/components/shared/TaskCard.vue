@@ -1,5 +1,5 @@
 <template>
-  <v-card class="pa-0" raised min-height="225px">
+  <v-card class="pa-0" raised min-height="150px">
     <v-row class="ml-1 mr-1">
       <v-col cols="12">
         <!-- <v-container style="min-height: 200px; background-color:red;"> -->

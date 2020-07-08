@@ -35,17 +35,34 @@
         v-model="editing.text"
         autofocus
         flat
+        label="Tag"
         background-color="transparent"
         hide-details
         solo
         @keyup.enter="edit(index, item)"
       ></v-text-field>
+      <v-text-field
+        v-else-if="editingColor === item"
+        v-model="editingColor.color"
+        autofocus
+        flat
+        label="Cor"
+        background-color="transparent"
+        hide-details
+        solo
+        @keyup.enter="editColor(index, item)"
+      ></v-text-field>
       <v-chip v-else :color="`${item.color} lighten-2`" dark label small>{{ item.text }}</v-chip>
       <v-spacer></v-spacer>
       <v-list-item-action @click.stop>
-        <v-btn icon @click.stop.prevent="edit(index, item)">
-          <v-icon>{{ editing !== item ? 'mdi-pencil' : 'mdi-check' }}</v-icon>
-        </v-btn>
+        <div class="d-flex">
+          <v-btn icon @click.stop.prevent="edit(index, item)">
+            <v-icon>{{ editing !== item ? 'mdi-pencil' : 'mdi-check' }}</v-icon>
+          </v-btn>
+          <v-btn icon @click.stop.prevent="editColor(index, item)">
+            <v-icon>{{ editingColor !== item ? 'mdi-palette' : 'mdi-check' }}</v-icon>
+          </v-btn>
+        </div>
       </v-list-item-action>
     </template>
   </v-combobox>
@@ -77,6 +94,7 @@ export default {
       "brown"
     ],
     editing: null,
+    editingColor: null,
     index: -1,
     nonce: 1,
     menu: false,
@@ -109,10 +127,23 @@ export default {
   methods: {
     edit(index, item) {
       if (!this.editing) {
+        this.editingColor = null;
         this.editing = item;
         this.index = index;
       } else {
         this.editing = null;
+        this.editingColor = null;
+        this.index = -1;
+      }
+    },
+    editColor(index, item) {
+      if (!this.editingColor) {
+        this.editing = null;
+        this.editingColor = item;
+        this.index = index;
+      } else {
+        this.editing = null;
+        this.editingColor = null;
         this.index = -1;
       }
     },

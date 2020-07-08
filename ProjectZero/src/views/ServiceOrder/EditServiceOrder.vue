@@ -134,14 +134,17 @@
               </v-btn>
             </v-col>
           </v-row>
-          <v-row>
+          <v-row class="ml-1 mr-1">
             <v-col
               cols="12"
-              :md="columns.length > 0 ? 12 / columns.length : 12"
+              style="min-width:325px"
+              class="pl-0 pr-0"
+              :lg="columns.length > 0 ? 12 / columns.length : 12"
+              :md="columns.length > 0 ? 24 / columns.length : 12"
               v-for="column in columns"
               :key="column.title"
             >
-              <div class="grey lighten-4 kanban-column ma-1 pa-5">
+              <div class="grey lighten-4 kanban-column ma-1 pa-2">
                 <p
                   class="text-gray-700 font-semibold font-sans tracking-wide text-sm"
                 >{{column.title}}</p>
