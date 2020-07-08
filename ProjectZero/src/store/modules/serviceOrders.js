@@ -304,7 +304,7 @@ const actions = {
 
         db.collection("serviceOrder").add({
             name: context.state.newOrder.name,
-            status: context.state.newOrder.status || '',
+            status: context.state.newOrder.status || 'Pendente',
             client: context.state.newOrder.client || '',
             creation_date: moment(context.state.newOrder.creation_date, "DD/MM/YYYY").unix(),
             end_date: context.state.newOrder.end_date ? moment(context.state.newOrder.end_date, "DD/MM/YYYY").unix() : '',
@@ -525,7 +525,7 @@ const actions = {
                 users: serviceOrder.users || [],
                 administrator: serviceOrder.administrator || '',
                 groups: serviceOrder.groups || [],
-                status: serviceOrder.status || ''
+                status: serviceOrder.status || 'Pendente'
             })
             .then(() => {
                 this.dispatch('general/setSuccessMessage', 'Ordem de serviço salva com sucesso.');

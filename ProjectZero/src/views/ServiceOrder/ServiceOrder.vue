@@ -111,6 +111,11 @@ export default {
           text: "Data Encerramento",
           align: "start",
           value: "end_date"
+        },
+        {
+          text: "Estado atual",
+          align: "start",
+          value: "status"
         }
       ]
     };

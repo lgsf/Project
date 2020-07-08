@@ -16,6 +16,7 @@
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on: tooltip }">
                     <v-btn
+                      :disabled="!isAdmin"
                       color="primary"
                       dark
                       v-bind="attrs"
