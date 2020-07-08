@@ -291,7 +291,7 @@ export default {
             return this.checkIfTasksDone(this.selected)
           case "Cancelar":
             return this.updateStatus('Cancelada')
-          case "Apagar":
+          case "Excluir":
             return this.deleteOrder()
         }
       },
@@ -302,7 +302,7 @@ export default {
           case "Em progresso":
             return this.items[0].title='Finalizar'
           case "Finalizada":
-            return this.items.shift()
+            return this.items = this.items.slice(2)
             case "Cancelada":
             return this.items = this.items.slice(2)
         }
@@ -320,7 +320,7 @@ export default {
     items: [
         { title: 'Iniciar' },
         { title: 'Cancelar' },
-        { title: 'Apagar' },
+        { title: 'Excluir' },
       ],
 
   }),
