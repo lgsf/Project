@@ -15,19 +15,41 @@
         <v-card-text>
           <v-container>
             <v-row justify="start" align="center">
-              <v-col cols="9" md="9">
+              <v-col cols="1" md="1" class="pt-0 pb-0">
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-icon
+                      v-bind="attrs"
+                      v-on="on"
+                      color="error"
+                      v-if="selectedTask.priority == 'Critica'"
+                    >mdi-chevron-triple-up</v-icon>
+                    <v-icon
+                      v-bind="attrs"
+                      v-on="on"
+                      color="success"
+                      v-if="selectedTask.priority == 'Baixa'"
+                    >mdi-chevron-down</v-icon>
+                    <v-icon
+                      v-bind="attrs"
+                      v-on="on"
+                      color="yellow"
+                      v-if="selectedTask.priority == 'Media'"
+                    >mdi-chevron-up</v-icon>
+                    <v-icon
+                      v-bind="attrs"
+                      v-on="on"
+                      color="error"
+                      v-if="selectedTask.priority == 'Alta'"
+                    >mdi-chevron-double-up</v-icon>
+                  </template>
+                  <span>{{selectedTask.priority}} prioridade</span>
+                </v-tooltip>
+              </v-col>
+              <v-col cols="9" md="9" class="pt-0 pb-0">
                 <v-text-field label="Nome: " :disabled="!isInEditMode" v-model="selectedTask.name"></v-text-field>
               </v-col>
-              <v-col cols="1" md="1">
-                <v-icon
-                  color="error"
-                  v-if="selectedTask.priority == 'Critica'"
-                >mdi-chevron-triple-up</v-icon>
-                <v-icon color="success" v-if="selectedTask.priority == 'Baixa'">mdi-chevron-down</v-icon>
-                <v-icon color="yellow" v-if="selectedTask.priority == 'Media'">mdi-chevron-up</v-icon>
-                <v-icon color="error" v-if="selectedTask.priority == 'Alta'">mdi-chevron-double-up</v-icon>
-              </v-col>
-              <v-col cols="1" md="2">
+              <v-col cols="1" md="2" class="pt-0 pb-0">
                 <v-btn
                   class="d-none d-md-block"
                   color="gray"
@@ -47,13 +69,13 @@
             </v-row>
 
             <v-row>
-              <v-col cols="12">
+              <v-col cols="12" class="pt-0 pb-0">
                 <input-tag v-model="selectedTask.tags" :available-tags="selectedOrder.tags"></input-tag>
               </v-col>
             </v-row>
 
             <v-row>
-              <v-col cols="12">
+              <v-col cols="12" class="pt-0 pb-0">
                 <v-textarea
                   v-model="selectedTask.description"
                   label="Descrição"
@@ -64,7 +86,7 @@
 
             <v-row>
               <v-col cols="12">
-                <v-tabs>
+                <v-tabs center-active show-arrows>
                   <v-tab>
                     <v-icon left>mdi-file</v-icon>Detalhes
                   </v-tab>
