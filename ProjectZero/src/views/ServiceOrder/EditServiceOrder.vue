@@ -254,7 +254,7 @@ const orderMethods = mapActions("serviceOrders", [
   "saveServiceOrder",
   "deleteOrder",
   "returnToServiceOrders"
-]);
+])
 
 const clientMethods = mapActions("clients", ["loadClients"]);
 

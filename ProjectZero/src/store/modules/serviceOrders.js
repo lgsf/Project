@@ -340,7 +340,7 @@ const actions = {
                                 let users = context.rootGetters['users/filterUsersById'](userIds)
                                 completeOrdersWithUsersInformation(serviceOrders, users)
                                 context.commit('updateOrders', serviceOrders)
-                                context.dispatch('general/resetIsLoading')
+                                self.dispatch('general/resetIsLoading')
                             })
                         })
                 })

@@ -113,7 +113,7 @@ export default {
           value: "end_date"
         },
         {
-          text: "Estado atual",
+          text: "Estado Atual",
           align: "start",
           value: "status"
         }
@@ -126,8 +126,7 @@ export default {
   computed: Object.assign({}, computed, computedServiceOrders),
   methods: Object.assign({}, methods, generalMethods),
   mounted() {
-    this.setIsLoading()
-    this.reloadOrders().then(() => {this.resetIsLoading() });
+    this.reloadOrders()
   }
 };
 </script>
