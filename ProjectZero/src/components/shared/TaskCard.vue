@@ -1,10 +1,9 @@
 <template>
-  <v-card class="pa-0" raised min-height="150px">
+  <v-card class="pa-0 body-2" raised min-height="120px">
     <v-row class="ml-1 mr-1">
       <v-col cols="12">
-        <!-- <v-container style="min-height: 200px; background-color:red;"> -->
         <v-row>
-          <v-col cols="12" class="pt-2 mt-3">
+          <v-col cols="12" class="pt-2 mt-3 text-lg-h3 text-md-h4">
             <v-tooltip bottom v-if="task.priority == 'Critica'">
               <template v-slot:activator="{ on, attrs }">
                 <v-icon
@@ -54,22 +53,6 @@
             <span class="font-weight-regular">{{task.name}}</span>
           </v-col>
         </v-row>
-        <v-row v-if="task.users && task.users.name">
-          <v-col cols="12" sm="8" md="12" lg="8" class="pt-0 pb-0 pr-0">
-            <span class="font-weight-medium">Responsável:</span>
-            {{task.users.name}}
-          </v-col>
-          <v-col
-            cols="12"
-            sm="4"
-            md="12"
-            lg="4"
-            class="pt-0 pb-0 pr-1 text-sm-right text-md-left text-lg-right"
-            v-if="task.estimated_duration"
-          >
-            <b>({{task.estimated_duration}} horas)</b>
-          </v-col>
-        </v-row>
         <v-row>
           <v-col
             v-if="!!task.started_date"
@@ -77,7 +60,7 @@
             sm="6"
             md="12"
             lg="6"
-            class="text-lg-left body-2 pr-0 mr-0"
+            class="text-lg-left body-2 pt-0 pb-0 pr-0 mr-0"
           >
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -97,7 +80,7 @@
             sm="6"
             md="12"
             lg="6"
-            class="text-sm-right text-md-left text-lg-right body-2 pl-lg-0 ml-lg-0"
+            class="text-sm-right text-md-left text-lg-right body-2 pt-0 pb-0 pl-lg-0 ml-lg-0"
           >
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -147,7 +130,58 @@
             </v-btn>
           </v-col>
         </v-row>
-        <!-- </v-container> -->
+        <v-row>
+          <v-col class="justify-start pt-1 pb-0" cols="12">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  icon
+                  v-if="task.users && task.users.name"
+                  v-bind="attrs"
+                  v-on="on"
+                  color="gray lighten-2 small-button"
+                  @click="executeAction"
+                >
+                  <v-icon small>mdi-account-check</v-icon>
+                </v-btn>
+              </template>
+              <span>
+                <span class="font-weight-medium">Responsável:</span>
+                {{task.users.name}}
+              </span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  icon
+                  v-if="task.estimated_duration"
+                  v-bind="attrs"
+                  v-on="on"
+                  color="gray lighten-2 small-button"
+                  @click="executeAction"
+                >
+                  <v-icon small>mdi-clock-time-three-outline</v-icon>
+                </v-btn>
+              </template>
+              <span>({{task.estimated_duration}} horas)</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  icon
+                  v-if="task.files && task.files.length"
+                  v-bind="attrs"
+                  v-on="on"
+                  color="gray lighten-2 small-button"
+                  @click="executeAction"
+                >
+                  <v-icon small>mdi-paperclip</v-icon>
+                </v-btn>
+              </template>
+              <span>{{(!task.files ? '' : task.files.length == 1 ? '1 anexo' : `${task.files.length} anexos`)}}</span>
+            </v-tooltip>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
   </v-card>
@@ -157,6 +191,10 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.small-button {
+  width: 16px;
+  height: 16px;
 }
 </style>
 <script>

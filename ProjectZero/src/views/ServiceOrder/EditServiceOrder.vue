@@ -137,7 +137,7 @@
           <v-row class="ml-1 mr-1">
             <v-col
               cols="12"
-              style="min-width:325px"
+              style="min-width:260px"
               class="pl-0 pr-0"
               :lg="columns.length > 0 ? 12 / columns.length : 12"
               :md="columns.length > 0 ? 24 / columns.length : 12"
