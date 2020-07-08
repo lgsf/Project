@@ -44,6 +44,18 @@ const mutations = {
 
 const actions = {
 
+  setName({ commit }, payload) {
+      commit('setName', payload)
+  },
+
+  setEmail({ commit }, payload) {
+      commit('setEmail', payload)
+  },
+
+  setContact({ commit }, payload) {
+      commit('setContact', payload)
+  },
+
   readCompanyName({ commit }){
     db.collection("systemConfiguration")
       .get()

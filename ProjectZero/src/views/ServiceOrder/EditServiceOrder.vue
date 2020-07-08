@@ -25,7 +25,7 @@
                     <v-icon right class="white--text">settings</v-icon>
                     </v-btn>
                   </template>
-                  <span>Iniciar, Finalizar, Cancelar e Apagar a Ordem</span>
+                  <span>Iniciar, Finalizar, Cancelar ou Excluir a Ordem</span>
                 </v-tooltip>
               </template>
               <v-list >
@@ -277,11 +277,11 @@ export default {
     {
       filtertasks() {
         this.showOnlyMine = !this.showOnlyMine;
-        this.loadTasksByOrder({ filterCurrentUser: this.showOnlyMine });
+        this.loadTasksByOrder({ filterCurrentUser: this.showOnlyMine })
       },
       onMoveTask(evt) {
-        if (this.currentUserEmail != evt.draggedContext.element.users?.email)
-          return false;
+        if (this.currentUserEmail != evt.draggedContext.element.users?.email && this.status != 'Em progresso')
+          return false
       },
       checkOrderMethod(title){
         switch (title){
@@ -331,7 +331,7 @@ export default {
     this.loadGroups()
     this.checkOrderStatus(this.selected)
   }
-};
+}
 </script>
 
 <style scoped>

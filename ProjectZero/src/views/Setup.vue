@@ -33,6 +33,7 @@
                 <v-text-field
                   v-model="companyName"
                   :label="companyNameLabel"
+                  @input="setName"
                 />
               </v-col>
             </v-row>
@@ -41,6 +42,7 @@
                 <v-text-field
                   v-model="companyContact"
                   :label="companyContactLabel"
+                  @input="setContact"
                 />
              </v-col>
             </v-row>
@@ -49,6 +51,7 @@
                 <v-text-field
                   v-model="companyEmail"
                   :label="companyEmailLabel"
+                  @input="setEmail"
                 />
               </v-col>
             </v-row>
@@ -125,6 +128,9 @@ const computedGeneral = mapState("general", {
 
 const methods = mapActions("setup", [
   "readConfiguration",
+  "setName",
+  "setEmail",
+  "setContact",
   "onFilePicked",
   "saveConfiguration"
 ])
