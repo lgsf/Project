@@ -5,8 +5,8 @@ const state = () => ({
     client: undefined,
     selected: '',
     search: '',
-    serviceOrders: [],
     statusList: ['Pendente', 'Em progresso', 'Finalizada', 'Cancelada'],
+    serviceOrders: [],
     selectedOrderTasks: [],
     kanbanColumns: [],
     selectedTask: { name: '' },
@@ -35,6 +35,9 @@ const mutations = {
     updateClient(state, payload) {
         state.client = payload;
         state.selected.client = payload;
+    },
+    updateStatus(state, payload) {
+        state.selected.status = payload;
     },
     updateOrderStartDate(state, payload) {
         state.selected.start_date = payload;
@@ -301,6 +304,7 @@ const actions = {
 
         db.collection("serviceOrder").add({
             name: context.state.newOrder.name,
+            status: context.state.newOrder.status || '',
             client: context.state.newOrder.client || '',
             creation_date: moment(context.state.newOrder.creation_date, "DD/MM/YYYY").unix(),
             end_date: context.state.newOrder.end_date ? moment(context.state.newOrder.end_date, "DD/MM/YYYY").unix() : '',
@@ -356,6 +360,10 @@ const actions = {
     },
     updateClient(context, payload) {
         context.commit("updateClient", payload)
+    },
+    updateStatus(context, payload) {
+        context.commit("updateStatus", payload)
+        this.dispatch('serviceOrders/saveServiceOrder')
     },
     updateOrderStartDate(context, payload) {
         context.commit('updateOrderStartDate', payload)
@@ -516,7 +524,8 @@ const actions = {
                 start_date: serviceOrder.start_date ? moment(serviceOrder.start_date, "DD/MM/YYYY").unix() : '',
                 users: serviceOrder.users || [],
                 administrator: serviceOrder.administrator || '',
-                groups: serviceOrder.groups || []
+                groups: serviceOrder.groups || [],
+                status: serviceOrder.status || ''
             })
             .then(() => {
                 this.dispatch('general/setSuccessMessage', 'Ordem de serviço salva com sucesso.');

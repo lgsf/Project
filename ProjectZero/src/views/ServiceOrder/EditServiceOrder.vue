@@ -21,13 +21,13 @@
                       v-bind="attrs"
                       v-on="{ ...tooltip, ...menu }"
                     >Opções da Ordem
-                    <v-icon right class="white--text">mdi-format-line-weight</v-icon>
+                    <v-icon right class="white--text">settings</v-icon>
                     </v-btn>
                   </template>
                   <span>Iniciar, Finalizar, Cancelar e Apagar a Ordem</span>
                 </v-tooltip>
               </template>
-              <v-list>
+              <v-list >
                 <v-list-item
                   v-for="(item, index) in items"
                   :key="index"
@@ -200,17 +200,18 @@
 </template>
 
 <script>
-import DatePicker from "@/components/shared/DatePicker";
-import { mapState, mapActions } from "vuex";
-import draggable from "vuedraggable";
-import Alert from "@/components/shared/Alert";
-import TaskCard from "@/components/shared/TaskCard.vue";
-import EditServiceOrderTask from "./EditServiceOrderTask.vue";
+import DatePicker from "@/components/shared/DatePicker"
+import { mapState, mapActions } from "vuex"
+import draggable from "vuedraggable"
+import Alert from "@/components/shared/Alert"
+import TaskCard from "@/components/shared/TaskCard.vue"
+import EditServiceOrderTask from "./EditServiceOrderTask.vue"
+
 
 const computed = mapState({
   isLoading: state => state.general.isLoading,
   selected: state => state.serviceOrders.selected || {},
-  statusList: state => state.serviceOrders.statusList,
+  status: state => state.serviceOrders.selected.status,
   tasks: state => state.serviceOrders.selectedOrderTasks,
   columns: state => state.serviceOrders.kanbanColumns,
   clientList: state => state.clients.clients,
@@ -221,19 +222,19 @@ const computed = mapState({
     return (
       state.auth.userGroup == "bmyiE5pvx66Ct7Wmj78b" ||
       state.auth.user.email == state.serviceOrders.selected.administrator?.email
-    );
+    )
   },
   duration: function(state) {
-    let accumulatedTime = 0;
+    let accumulatedTime = 0
     state.serviceOrders.selectedOrderTasks.forEach(task => {
       accumulatedTime += task.estimated_duration
         ? parseInt(task.estimated_duration)
-        : 0;
-    });
+        : 0
+    })
 
-    return accumulatedTime;
+    return accumulatedTime
   }
-});
+})
 
 const userMethods = mapActions("users", ["readUsers"]);
 const groupMethods = mapActions("groups", ["loadGroups"]);
@@ -243,6 +244,7 @@ const orderMethods = mapActions("serviceOrders", [
   "searchFor",
   "reloadOrders",
   "updateClient",
+  "updateStatus",
   "updateOrderStartDate",
   "updateOrderEndDate",
   "showTaskDialog",
@@ -264,7 +266,19 @@ export default {
     EditServiceOrderTask,
     DatePicker
   },
-  computed,
+  computed: Object.assign({}, computed, {
+    isInitiated: function(state){
+      if(state.selected.status == 'Em progresso'){
+        this.items[0].title='Finalizar'
+        }
+      else if(state.selected.status == 'Finalizada'){
+        this.items.shift()
+      }
+      else if(state.selected.status == 'Cancelada'){
+        this.items = this.items.slice(2)
+        }
+    }
+  }),
   methods: Object.assign(
     {},
     orderMethods,
@@ -283,11 +297,11 @@ export default {
       checkOrderMethod(title){
         switch (title){
           case "Iniciar":
-            return 
+            return this.updateStatus('Em progresso')
           case "Finalizar":
-            return
+            return this.updateStatus('Finalizada')
           case "Cancelar":
-            return
+            return this.updateStatus('Cancelada')
           case "Apagar":
             return this.deleteOrder()
         }
@@ -298,16 +312,17 @@ export default {
     showOnlyMine: false,
     items: [
         { title: 'Iniciar' },
-        { title: 'Finalizar' },
         { title: 'Cancelar' },
         { title: 'Apagar' },
       ],
+
   }),
   mounted() {
     this.loadTasksByOrder()
     this.loadClients()    
     this.readUsers()
     this.loadGroups()
+    this.isInitiated
   }
 };
 </script>
