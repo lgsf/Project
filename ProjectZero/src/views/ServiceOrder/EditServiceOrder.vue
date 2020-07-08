@@ -267,19 +267,7 @@ export default {
     EditServiceOrderTask,
     DatePicker
   },
-  computed: Object.assign({}, computed, {
-    isInitiated: function(state){
-      if(state.selected.status == 'Em progresso'){
-        this.items[0].title='Finalizar'
-        }
-      else if(state.selected.status == 'Finalizada'){
-        this.items.shift()
-      }
-      else if(state.selected.status == 'Cancelada'){
-        this.items = this.items.slice(2)
-        }
-    }
-  }),
+  computed,
   methods: Object.assign(
     {},
     orderMethods,
@@ -292,29 +280,38 @@ export default {
         this.loadTasksByOrder({ filterCurrentUser: this.showOnlyMine });
       },
       onMoveTask(evt) {
-        let selectedTask = evt.draggedContext.element;
-        if (this.currentUserEmail != selectedTask.users?.email) return false;
-        if (!selectedTask.dependencyTask) return true;
-        let dependencyTask = this.selected.tasks.reduce(
-          (a, b) => (b.id == selectedTask.dependencyTask ? b : a),
-          undefined
-        );
-        if (!dependencyTask) return true;
-        if (["Finalizada", "Cancelada"].includes(dependencyTask.status))
-          return true;
-        return false;
+        if (this.currentUserEmail != evt.draggedContext.element.users?.email)
+          return false;
       },
-      checkOrderMethod(title) {
-        switch (title) {
+      checkOrderMethod(title){
+        switch (title){
           case "Iniciar":
             return this.updateStatus('Em progresso')
           case "Finalizar":
-            return this.updateStatus('Finalizada')
+            return this.checkIfTasksDone(this.selected)
           case "Cancelar":
             return this.updateStatus('Cancelada')
           case "Apagar":
-            return this.deleteOrder();
+            return this.deleteOrder()
         }
+      },
+      checkOrderStatus(selected){
+        switch (selected.status){
+          case "Pendente":
+            return 
+          case "Em progresso":
+            return this.items[0].title='Finalizar'
+          case "Finalizada":
+            return this.items.shift()
+            case "Cancelada":
+            return this.items = this.items.slice(2)
+        }
+      },
+      checkIfTasksDone(selected){
+        if(selected.tasks.some(e => e.status === "Pendente" || "Em progresso" )){
+          alert("Você não pode finalizar pois existem tarefas pendentes!")
+        }
+        else this.updateStatus('Finalizada')
       }
     }
   ),
@@ -332,7 +329,7 @@ export default {
     this.loadClients()    
     this.readUsers()
     this.loadGroups()
-    this.isInitiated
+    this.checkOrderStatus(this.selected)
   }
 };
 </script>
