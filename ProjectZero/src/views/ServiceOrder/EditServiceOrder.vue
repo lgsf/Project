@@ -309,12 +309,12 @@ export default {
       },
       checkIfTasksDone(selected){
         if(selected.tasks.some(e => e.status === "Pendente" || "Em progresso" )){
-          alert("Você não pode finalizar pois existem tarefas pendentes!")
+          alert("Você não pode finalizar a ordem: " + selected.name + "! Ainda existem tarefas pendentes ou em andamento.")
         }
         else this.updateStatus('Finalizada')
       }
     }
-  ),
+    ),
   data: () => ({
     showOnlyMine: false,
     items: [
