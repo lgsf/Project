@@ -1,9 +1,9 @@
 <template>
   <v-card class="pa-0 body-2" raised min-height="120px">
     <v-row class="ml-1 mr-1">
-      <v-col cols="12">
+      <v-col cols="12" class="pt-1">
         <v-row>
-          <v-col cols="12" class="pt-2 mt-3 text-lg-h3 text-md-h4">
+          <v-col cols="6" class="ma-0 pa-1 body-2">
             <v-tooltip bottom v-if="task.priority == 'Critica'">
               <template v-slot:activator="{ on, attrs }">
                 <v-icon
@@ -48,7 +48,20 @@
               </template>
               <span>{{task.priority}} prioridade</span>
             </v-tooltip>
-
+          </v-col>
+          <v-col cols="6" align="end" justify="end" class="ma-0 pa-0">
+            <v-btn
+              icon
+              class="ma-2 small-button"
+              color="blue-grey lighten-3"
+              @click="executeAction"
+            >
+              <v-icon>mdi-eye</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" class="pt-0 mt-0 text-card">
             <span class="font-weight-medium">Tarefa:</span>
             <span class="font-weight-regular">{{task.name}}</span>
           </v-col>
@@ -60,7 +73,7 @@
             sm="6"
             md="12"
             lg="6"
-            class="text-lg-left body-2 pt-0 pb-0 pr-0 mr-0"
+            class="text-lg-left text-card pt-0 pb-0 pr-0 mr-0"
           >
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -80,7 +93,7 @@
             sm="6"
             md="12"
             lg="6"
-            class="text-sm-right text-md-left text-lg-right body-2 pt-0 pb-0 pl-lg-0 ml-lg-0"
+            class="text-sm-right text-md-left text-lg-right text-card pt-0 pb-0 pl-lg-0 ml-lg-0"
           >
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -96,7 +109,7 @@
           </v-col>
         </v-row>
         <v-row class="justify-start">
-          <v-col v-if="!!task.tags && !showXSmallTags" cols="12" class="pr-0">
+          <v-col v-if="!!task.tags && !showXSmallTags" cols="12" class="pa-1">
             <span v-for="(tag,i) in task.tags" :key="i">
               <v-chip
                 class="ma-1"
@@ -106,7 +119,7 @@
               >{{tag.text}}</v-chip>
             </span>
           </v-col>
-          <v-col v-if="!!task.tags && showXSmallTags" cols="12" class="pr-0">
+          <v-col v-if="!!task.tags && showXSmallTags" cols="12" class="pa-1">
             <span v-for="(tag,i) in task.tags" :key="i">
               <v-chip
                 x-small
@@ -117,21 +130,9 @@
               >&nbsp;&nbsp;&nbsp;</v-chip>
             </span>
           </v-col>
-          <v-col cols="12" class="pl-0 pt-0 pr-0 pb-0">
-            <v-btn
-              absolute
-              style="right:3px; top: 1px"
-              icon
-              class="ma-0"
-              color="blue-grey lighten-3"
-              @click="executeAction"
-            >
-              <v-icon>mdi-eye</v-icon>
-            </v-btn>
-          </v-col>
         </v-row>
         <v-row>
-          <v-col class="justify-start pt-1 pb-0" cols="12">
+          <v-col class="justify-start pa-0" cols="12">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -195,6 +196,24 @@
 .small-button {
   width: 16px;
   height: 16px;
+}
+.text-card {
+  font-size: 1em;
+}
+@media (min-width: 960px) {
+  .text-card {
+    font-size: 1em;
+  }
+}
+@media (min-width: 1264px) {
+  .text-card {
+    font-size: 0.85em;
+  }
+}
+@media (min-width: 1904px) {
+  .text-card {
+    font-size: 0.925em;
+  }
 }
 </style>
 <script>
