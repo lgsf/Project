@@ -224,7 +224,7 @@
                     :key="task.id"
                     :task="task"
                     class="mt-3 cursor-move"
-                    :action="function(){ showTaskDialog(task); }"
+                    :action="function(){ showTaskDialog(task) }"
                   ></task-card>
                   <!-- </transition-group> -->
                 </draggable>
@@ -254,7 +254,8 @@ import EditServiceOrderTask from "./EditServiceOrderTask.vue"
 const computed = mapState({
   isLoading: state => state.general.isLoading,
   selected: state => state.serviceOrders.selected || {},
-  status: state => state.serviceOrders.selected.status,
+  statusList: state => state.serviceOrders.statusList,
+  orderStatus: state => state.serviceOrders.selected.status,
   tasks: state => state.serviceOrders.selectedOrderTasks,
   columns: state => state.serviceOrders.kanbanColumns,
   clientList: state => state.clients.clients,
@@ -327,11 +328,11 @@ export default {
     groupMethods,
     {
       filtertasks() {
-        this.showOnlyMine = !this.showOnlyMine;
+        this.showOnlyMine = !this.showOnlyMine
         this.loadTasksByOrder({ filterCurrentUser: this.showOnlyMine })
       },
       onMoveTask(evt) {
-        if (this.currentUserEmail != evt.draggedContext.element.users?.email && this.status != 'Em progresso')
+        if (this.currentUserEmail != evt.draggedContext.element.users?.email && this.orderStatus != 'Em progresso')
           return false
       },
       checkScreenWidth() {

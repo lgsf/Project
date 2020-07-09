@@ -13,18 +13,18 @@ const state = () => ({
     showTaskDialog: false,
     taskDialogInEditMode: false,
     showCreateOrderDialog: false,
-    newOrder: { name: '', creation_date: new Date().toLocaleString('pt-br'), start_date: '', end_date: '', users: [], userGroups: [] },
+    newOrder: { name: '', creation_date: new Date().toLocaleString('pt-br'), start_date: '', end_date: '', users: [], userGroups: [], status: 'Pendente' },
     taskPriorityList: ['', 'Baixa', 'Media', 'Alta', 'Critica']
 });
 
 const mutations = {
     updateShowCreateOrderDialog(state, payload) {
-        state.showCreateOrderDialog = payload;
+        state.showCreateOrderDialog = payload
     },
     selectOrder(state, payload) {
         state.selected = payload;
         if (payload)
-            state.client = payload.client;
+            state.client = payload.client
     },
     searchFor(state, payload) {
         state.search = payload
@@ -34,22 +34,22 @@ const mutations = {
     },
     updateClient(state, payload) {
         state.client = payload;
-        state.selected.client = payload;
+        state.selected.client = payload
     },
     updateStatus(state, payload) {
-        state.selected.status = payload;
+        state.selected.status = payload
     },
     updateOrderStartDate(state, payload) {
-        state.selected.start_date = payload;
+        state.selected.start_date = payload
     },
     updateOrderEndDate(state, payload) {
-        state.selected.end_date = payload;
+        state.selected.end_date = payload
     },
     updateNewOrderStartDate(state, payload) {
-        state.newOrder.start_date = payload;
+        state.newOrder.start_date = payload
     },
     updateNewOrderEndDate(state, payload) {
-        state.newOrder.end_date = payload;
+        state.newOrder.end_date = payload
     },
     updateSelectedOrderTasks(state, payload) {
         state.selectedOrderTasks = payload
@@ -61,7 +61,7 @@ const mutations = {
         state.kanbanColumns = state.statusList.map(status => ({
             title: status,
             tasks: state.selectedOrderTasks?.sort((a, b) => comparePriorities(a, b)).filter(task => task.status == status) || []
-        }));
+        }))
     },
     updateSelectedTask(state, payload) {
         state.selectedTask = payload
@@ -69,7 +69,7 @@ const mutations = {
     updateTaskDialogInEditMode(state, payload) {
         state.taskDialogInEditMode = payload
     }
-};
+}
 
 function comparePriorities(a, b) {
     let priorityLevel = [
@@ -86,51 +86,51 @@ function comparePriorities(a, b) {
 }
 
 function onServiceOrdersLoaded(context, payload) {
-    let serviceOrders = [];
+    let serviceOrders = []
     payload.forEach(orderSnapShot => {
-        let orderData = orderSnapShot.data();
+        let orderData = orderSnapShot.data()
 
         if (context.rootState.auth.userGroup == 'bmyiE5pvx66Ct7Wmj78b' || orderData.administrator?.email == context.rootState.auth.user.email ||
             orderData.users.some(u => u.email == context.rootState.auth.user.email)) {
-            orderData.id = orderSnapShot.id;
-            orderData.dateForSorting = orderData.creation_date;
-            orderData.creation_date = moment.unix(orderData.creation_date).format('DD/MM/YYYY');
+            orderData.id = orderSnapShot.id
+            orderData.dateForSorting = orderData.creation_date
+            orderData.creation_date = moment.unix(orderData.creation_date).format('DD/MM/YYYY')
             if (orderData.start_date)
-                orderData.start_date = moment.unix(orderData.start_date).format('DD/MM/YYYY');
+                orderData.start_date = moment.unix(orderData.start_date).format('DD/MM/YYYY')
             if (orderData.end_date)
-                orderData.end_date = moment.unix(orderData.end_date).format('DD/MM/YYYY');
-            serviceOrders.push(orderData);
+                orderData.end_date = moment.unix(orderData.end_date).format('DD/MM/YYYY')
+            serviceOrders.push(orderData)
         }
-    });
+    })
 
     serviceOrders = serviceOrders.sort((a, b) => b.dateForSorting - a.dateForSorting)
 
     return new Promise(function (resolve, reject) {
         if (!serviceOrders)
-            reject(serviceOrders);
+            reject(serviceOrders)
         else
-            resolve(serviceOrders);
+            resolve(serviceOrders)
     })
 }
 
 function getOrderUsersIds(serviceOrders) {
-    let userIds = [];
+    let userIds = []
     serviceOrders.forEach(order => {
-        userIds.push(order.administrator);
-        userIds = userIds.concat(order.users);
-        userIds = userIds.unique();
+        userIds.push(order.administrator)
+        userIds = userIds.concat(order.users)
+        userIds = userIds.unique()
     });
-    return userIds;
+    return userIds
 }
 
 function completeOrdersWithUsersInformation(serviceOrders, users) {
     serviceOrders.forEach(order => {
-        order.administratorName = users.filter(u => u.id == order.administrator)[0]?.name;
+        order.administratorName = users.filter(u => u.id == order.administrator)[0]?.name
         order.usersList = order?.users?.map(u => ({
             id: u,
             name: u.name
-        })) || [];
-    });
+        })) || []
+    })
 }
 
 function getOrderFromDatabase(serviceOrderId) {
@@ -140,18 +140,18 @@ function getOrderFromDatabase(serviceOrderId) {
 
 function uploadTaskFiles(context, order, resolve) {
     if (!context.state.selectedTask.files?.length)
-        return resolve({ order });
-    let taskId = context.state.selectedTask.id;
-    let files = context.state.selectedTask.files.filter(m => m.newFile);
-    let promises = [];
+        return resolve({ order })
+    let taskId = context.state.selectedTask.id
+    let files = context.state.selectedTask.files.filter(m => m.newFile)
+    let promises = []
     files.forEach(file => {
-        let promise = fileStorage.ref(`orders/${order.id}/${taskId}/${file.name}`).put(file.file);
-        promise = promise.then(getFileDownloadUrl);
-        promises.push(promise);
-    });
+        let promise = fileStorage.ref(`orders/${order.id}/${taskId}/${file.name}`).put(file.file)
+        promise = promise.then(getFileDownloadUrl)
+        promises.push(promise)
+    })
     return Promise.all(promises).then(files => {
-        resolve({ order, files });
-    });
+        resolve({ order, files })
+    })
 }
 
 function getFileDownloadUrl(file) {
@@ -167,11 +167,11 @@ function getFileDownloadUrl(file) {
 
 function updateTaskFilesReference(files, context) {
     if (!files || !files.length)
-        return;
-    context.state.selectedTask.files = context.state.selectedTask.files.filter(m => !m.newFile);
+        return
+    context.state.selectedTask.files = context.state.selectedTask.files.filter(m => !m.newFile)
     files.forEach(newFile => {
         /* eslint-disable */
-        var regex = new RegExp(/[^\/]+.[\w]*$/);
+        var regex = new RegExp(/[^\/]+.[\w]*$/)
         context.state.selectedTask.files.push({
             bucket: newFile.metadata.bucket,
             fullPath: newFile.metadata.fullPath,
@@ -179,71 +179,71 @@ function updateTaskFilesReference(files, context) {
             name: regex.exec(newFile.metadata.fullPath)[0],
             url: newFile.url,
             lastModified: moment(newFile.metadata.updated).format('DD/MM/YYYY HH:mm:ss')
-        });
-    });
+        })
+    })
 }
 
 function saveCurrentSelectedTask(order, context, resolve) {
-    let orderData = order.data();
-    context.state.selectedTask.priority = context.state.selectedTask.priority || '';
-    context.state.selectedTask.tags = context.state.selectedTask.tags || [];
-    var index = orderData.tasks.indexOf(orderData.tasks.find(t => t.id == context.state.selectedTask.id));
-    orderData.tasks[index] = context.state.selectedTask;
-    let tags = (orderData.tags || []).concat(context.state.selectedTask.tags || []);
-    tags = tags.unique((a, b) => a.color == b.color);
-    context.state.selected.tags = tags;
+    let orderData = order.data()
+    context.state.selectedTask.priority = context.state.selectedTask.priority || ''
+    context.state.selectedTask.tags = context.state.selectedTask.tags || []
+    var index = orderData.tasks.indexOf(orderData.tasks.find(t => t.id == context.state.selectedTask.id))
+    orderData.tasks[index] = context.state.selectedTask
+    let tags = (orderData.tags || []).concat(context.state.selectedTask.tags || [])
+    tags = tags.unique((a, b) => a.color == b.color)
+    context.state.selected.tags = tags
 
     getOrderFromDatabase(context.state.selected.id)
         .update({ tasks: orderData.tasks, tags: tags }).then(() => {
-            context.dispatch('loadTasksByOrder');
-            resolve();
-        });
+            context.dispatch('loadTasksByOrder')
+            resolve()
+        })
 }
 
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8)
+        return v.toString(16)
+    })
 }
 
 function addNewTaskToOrder(context, order, resolve) {
-    context.state.selectedTask.status = "Pendente";
+    context.state.selectedTask.status = "Pendente"
     if (!context.state.selectedTask.priority)
-        context.state.selectedTask.priority = '';
+        context.state.selectedTask.priority = ''
 
-    let orderData = order.data();
+    let orderData = order.data()
 
     context.state.selectedTask.id = uuidv4();
-    let newTask = Object.assign({}, context.state.selectedTask, { files: [] });
+    let newTask = Object.assign({}, context.state.selectedTask, { files: [] })
     let user = context.rootGetters['users/getUserByEmail'](context.rootState.auth.user.email)
-    newTask.created_by = user[0];
-    context.state.selectedTask.created_by = user[0];
+    newTask.created_by = user[0]
+    context.state.selectedTask.created_by = user[0]
     orderData.tasks.push(newTask);
 
     getOrderFromDatabase(context.state.selected.id)
         .update({ tasks: orderData.tasks })
         .then(() => {
-            context.dispatch('loadTasksByOrder').then(() => getOrderFromDatabase(order.id).get().then(order => resolve(order)));
-        });
+            context.dispatch('loadTasksByOrder').then(() => getOrderFromDatabase(order.id).get().then(order => resolve(order)))
+        })
 }
 
 function loadTasksByOrder(context, filterCurrentUser, resolve) {
     if (!context.state.selected) {
         getOrderFromDatabase(window.location.href.split('/')[4]).get()
             .then(snapshot => {
-                let order = snapshot.data();
-                order.id = window.location.href.split('/')[4];
-                context.commit('selectOrder', order);
+                let order = snapshot.data()
+                order.id = window.location.href.split('/')[4]
+                context.commit('selectOrder', order)
                 let selectedOrderTasks = snapshot.data()
                     .tasks
-                    .filter(task => !filterCurrentUser || (task.users && task.users.email == context.rootState.auth.user.email));
+                    .filter(task => !filterCurrentUser || (task.users && task.users.email == context.rootState.auth.user.email))
                 context.dispatch('updateSelectedOrderTask', selectedOrderTasks)
                     .then(() => {
-                        context.commit('updateKanbanColumns');
-                        resolve();
-                    });
-            });
+                        context.commit('updateKanbanColumns')
+                        resolve()
+                    })
+            })
     }
     else {
         getOrderFromDatabase(context.state.selected.id).get()
@@ -253,36 +253,36 @@ function loadTasksByOrder(context, filterCurrentUser, resolve) {
                     .filter(task => !filterCurrentUser || (task.users && task.users.email == context.rootState.auth.user.email));
                 context.dispatch('updateSelectedOrderTask', selectedOrderTasks)
                     .then(() => {
-                        context.commit('updateKanbanColumns');
-                        resolve();
-                    });
-            });
+                        context.commit('updateKanbanColumns')
+                        resolve()
+                    })
+            })
     }
 }
 
 function formatDate(date) {
-    if (!date) return null;
+    if (!date) return null
 
-    const [year, month, day] = date.split("-");
-    return `${day}/${month}/${year}`;
+    const [year, month, day] = date.split("-")
+    return `${day}/${month}/${year}`
 }
 
 Array.prototype.unique = function (compare) {
-    var a = this.concat();
+    var a = this.concat()
     for (var i = 0; i < a.length; ++i) {
         for (var j = i + 1; j < a.length; ++j) {
             if (!compare && a[i] === a[j] || compare && compare(a[i], a[j]))
-                a.splice(j--, 1);
+                a.splice(j--, 1)
         }
     }
 
-    return a;
-};
+    return a
+}
 
 const actions = {
     editServiceOrder(context) {
         if (context.state.selected)
-            router.push({ path: `/EditServiceOrder/${context.state.selected.id}` });
+            router.push({ path: `/EditServiceOrder/${context.state.selected.id}` })
         else
             context.commit('updateShowCreateOrderDialog', true)
     },
@@ -348,14 +348,14 @@ const actions = {
     },
     loadTasksByOrder(context, payload) {
         if (payload && payload.skipLoading) {
-            return new Promise(resolve => loadTasksByOrder(context, payload.filterCurrentUser, resolve));
+            return new Promise(resolve => loadTasksByOrder(context, payload.filterCurrentUser, resolve))
         }
 
         this.dispatch('general/resetAllMessages', '')
         this.dispatch('general/setIsLoading').then(() => {
-            let promise = new Promise(resolve => loadTasksByOrder(context, payload?.filterCurrentUser, resolve));
+            let promise = new Promise(resolve => loadTasksByOrder(context, payload?.filterCurrentUser, resolve))
             promise.then(() => this.dispatch('general/resetIsLoading'))
-            return promise;
+            return promise
         })
     },
     updateClient(context, payload) {
@@ -405,36 +405,36 @@ const actions = {
         if (context.state.selectedTask.id)
             getOrderFromDatabase(context.state.selected.id).get()
                 .then(order => {
-                    return new Promise(resolve => uploadTaskFiles(context, order, resolve));
+                    return new Promise(resolve => uploadTaskFiles(context, order, resolve))
                 })
                 .then(({ order, files }) => {
                     updateTaskFilesReference(files, context);
-                    return new Promise((resolve) => saveCurrentSelectedTask(order, context, resolve));
+                    return new Promise((resolve) => saveCurrentSelectedTask(order, context, resolve))
                 })
                 .then(() => {
                     this.dispatch('serviceOrders/closeTaskModal')
                 })
                 .catch(error => {
-                    console.error("Error updating document: ", error);
-                });
+                    console.error("Error updating document: ", error)
+                })
         else
             getOrderFromDatabase(context.state.selected.id).get()
                 .then((order) => {
-                    return new Promise(resolve => addNewTaskToOrder(context, order, resolve));
+                    return new Promise(resolve => addNewTaskToOrder(context, order, resolve))
                 })
                 .then(order => {
-                    return new Promise(resolve => uploadTaskFiles(context, order, resolve));
+                    return new Promise(resolve => uploadTaskFiles(context, order, resolve))
                 })
                 .then(({ order, files }) => {
-                    updateTaskFilesReference(files, context);
-                    return new Promise((resolve) => saveCurrentSelectedTask(order, context, resolve));
+                    updateTaskFilesReference(files, context)
+                    return new Promise((resolve) => saveCurrentSelectedTask(order, context, resolve))
                 })
                 .then(() => {
                     this.dispatch('serviceOrders/closeTaskModal')
                 })
                 .catch(error => {
-                    console.error("Error updating document: ", error);
-                });
+                    console.error("Error updating document: ", error)
+                })
 
         if (context.state.selectedTask.users && context.state.selectedTask.users.email && context.state.selectedTask.users.email != context.rootState.auth.user.email) {
             this.dispatch('notifications/sendNotification', {
@@ -528,11 +528,11 @@ const actions = {
                 status: serviceOrder.status || 'Pendente'
             })
             .then(() => {
-                this.dispatch('general/setSuccessMessage', 'Ordem de serviço salva com sucesso.');
+                this.dispatch('general/setSuccessMessage', 'Ordem de serviço salva com sucesso.')
             })
             .catch(error => {
-                console.error("Error updating document: ", error);
-            });
+                console.error("Error updating document: ", error)
+            })
     },
     setOrUnsetEditMode(context) {
         context.commit('updateTaskDialogInEditMode', !context.state.taskDialogInEditMode)
@@ -542,23 +542,23 @@ const actions = {
             .delete()
             .then(() => {
                 this.dispatch('serviceOrders/reloadOrders')
-                    .then(() => { router.push({ path: "/serviceOrder" }); })
+                    .then(() => { router.push({ path: "/serviceOrder" }) })
             })
     }
-};
+}
 
 const getters = {
     getAllTasksByOrderBut(state) {
         return (filters) => {
             let selectedOrder = state.serviceOrders
-                .reduce((a, b) => b.id == filters.orderId ? b : a, undefined);
+                .reduce((a, b) => b.id == filters.orderId ? b : a, undefined)
             if (!selectedOrder)
-                return [];
-            let filteredTasks = selectedOrder.tasks?.filter(m => m.id != filters.taskId);
-            return filteredTasks || [];
+                return []
+            let filteredTasks = selectedOrder.tasks?.filter(m => m.id != filters.taskId)
+            return filteredTasks || []
         }
     }
-};
+}
 
 export default {
     namespaced: true,
