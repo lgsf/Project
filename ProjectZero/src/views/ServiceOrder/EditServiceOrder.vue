@@ -60,7 +60,7 @@
             </v-col>
           </v-row>
           <v-row class="ml-5 mr-5">
-            <v-col cols="4">
+            <v-col cols="4" v-if="checkWidth">
               <DatePicker
                 dateLabel="Data de criação:"
                 :value="selected.creation_date"
@@ -68,7 +68,15 @@
                 :disable="true"
               />
             </v-col>
-            <v-col cols="4">
+            <v-col v-if="!checkWidth" cols="12">
+              <DatePicker
+                dateLabel="Data de criação:"
+                :value="selected.creation_date"
+                ref="DatePicker"
+                :disable="true"
+              />
+            </v-col>
+            <v-col cols="4" v-if="checkWidth">
               <DatePicker
                 dateLabel="Data de Início:"
                 :value="selected.start_date"
@@ -77,7 +85,25 @@
                 :disable="!isAdmin"
               />
             </v-col>
-            <v-col cols="4">
+            <v-col cols="4" v-if="checkWidth">
+              <DatePicker
+                dateLabel="Data de encerramento:"
+                :value="selected.end_date"
+                ref="DatePicker"
+                v-on:update="updateOrderEndDate"
+                :disable="!isAdmin"
+              />
+            </v-col>
+            <v-col cols="12" v-if="!checkWidth">
+              <DatePicker
+                dateLabel="Data de Início:"
+                :value="selected.start_date"
+                ref="DatePicker"
+                v-on:update="updateOrderStartDate"
+                :disable="!isAdmin"
+              />
+              </v-col>
+              <v-col cols="12" v-if="!checkWidth">
               <DatePicker
                 dateLabel="Data de encerramento:"
                 :value="selected.end_date"
@@ -131,7 +157,7 @@
             </v-col>
           </v-row>
           <v-row class="ml-5 mt-5 mr-5">
-            <v-col>
+            <v-col v-if="checkWidth">
               <v-btn
                 class="mt-1"
                 color="success"
@@ -141,12 +167,28 @@
               >
                 <v-icon>mdi-plus</v-icon>Tarefa
               </v-btn>
-              <v-btn color="blue" dark @click="filtertasks()" class="mt-1">
+              <v-btn v-if="checkWidth" color="blue" dark @click="filtertasks()" class="mt-1">
                 Filtrar
                 <v-icon style="padding-left:8px;">filter_list</v-icon>
               </v-btn>
             </v-col>
-            <v-col class="d-flex justify-end">
+            <v-col class="d-flex justify-center" v-if="!checkWidth">
+              <v-btn
+                class="mt-1 mr-1"
+                color="success"
+                dark
+                @click="showTaskDialog({name: ''})"
+              >
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
+              <v-btn color="blue" dark @click="filtertasks()" class="mt-1">
+                <v-icon >filter_list</v-icon>
+              </v-btn>
+              <v-btn v-show="!checkWidth" color="primary" dark @click="returnToServiceOrders" class="mt-1 ml-1">
+                <v-icon >keyboard_return</v-icon>
+              </v-btn>
+            </v-col>
+            <v-col class="d-flex justify-end" v-if="checkWidth">
               <v-btn color="primary" dark @click="returnToServiceOrders" class="mt-1">
                 <v-icon style="padding-right:8px; padding-left:0px;">keyboard_return</v-icon>Voltar
               </v-btn>
@@ -237,8 +279,8 @@ const computed = mapState({
   }
 })
 
-const userMethods = mapActions("users", ["readUsers"]);
-const groupMethods = mapActions("groups", ["loadGroups"]);
+const userMethods = mapActions("users", ["readUsers"])
+const groupMethods = mapActions("groups", ["loadGroups"])
 
 const orderMethods = mapActions("serviceOrders", [
   "selectOrder",
@@ -256,7 +298,7 @@ const orderMethods = mapActions("serviceOrders", [
   "returnToServiceOrders"
 ])
 
-const clientMethods = mapActions("clients", ["loadClients"]);
+const clientMethods = mapActions("clients", ["loadClients"])
 
 export default {
   props: ["id"],
@@ -267,7 +309,16 @@ export default {
     EditServiceOrderTask,
     DatePicker
   },
-  computed,
+  computed: Object.assign(
+    {}, computed,
+    {
+       checkWidth() {
+            if(this.width > 620){
+              return true
+            }
+            else return false
+        }
+    }),
   methods: Object.assign(
     {},
     orderMethods,
@@ -283,6 +334,11 @@ export default {
         if (this.currentUserEmail != evt.draggedContext.element.users?.email && this.status != 'Em progresso')
           return false
       },
+      checkScreenWidth() {
+            setInterval(() => {
+                this.width = window.innerWidth
+            }, 100)
+        },
       checkOrderMethod(title){
         switch (title){
           case "Iniciar":
@@ -303,7 +359,7 @@ export default {
             return this.items[0].title='Finalizar'
           case "Finalizada":
             return this.items = this.items.slice(2)
-            case "Cancelada":
+          case "Cancelada":
             return this.items = this.items.slice(2)
         }
       },
@@ -322,6 +378,7 @@ export default {
         { title: 'Cancelar' },
         { title: 'Excluir' },
       ],
+    width: 0
 
   }),
   mounted() {
@@ -330,6 +387,7 @@ export default {
     this.readUsers()
     this.loadGroups()
     this.checkOrderStatus(this.selected)
+    this.checkScreenWidth()
   }
 }
 </script>
