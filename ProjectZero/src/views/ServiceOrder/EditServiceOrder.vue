@@ -21,8 +21,9 @@
                       dark
                       v-bind="attrs"
                       v-on="{ ...tooltip, ...menu }"
-                    >Opções da Ordem
-                    <v-icon right class="white--text">settings</v-icon>
+                    ><span v-if="checkWidth">Opções da Ordem
+                    <v-icon right class="white--text">settings</v-icon></span>
+                    <span v-if="!checkWidth"><v-icon class="white--text">settings</v-icon></span>
                     </v-btn>
                   </template>
                   <span>Iniciar, Finalizar, Cancelar ou Excluir a Ordem</span>
