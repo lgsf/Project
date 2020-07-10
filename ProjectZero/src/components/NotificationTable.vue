@@ -127,11 +127,7 @@ export default {
           this.uniqueNotifications.sort((a, b) => (a.read > b.read) ? 1 : (a.read === b.read) ? ((a.date < b.date) ? 1 : -1) : -1 )
           this.order = !this.order
       },
-
-      changeIcon(item){
-         item.read = !item.read
-     },
-     
+      
      markRead(item){
        if(item.read.some(e => e.id === this.$store.state.auth.user.uid )){
          return
@@ -146,7 +142,6 @@ export default {
        this.unreadItem(item)
        this.readNotifications()
      }
-
    },
 
    mounted() {
