@@ -23,20 +23,20 @@
           > <v-row>
                 <v-expansion-panel-header @click="markRead(item)"> 
                   <v-col cols="4">
-                    <strong v-if="!item.read">{{item.title}} </strong>
-                    <span v-if="item.read">{{item.title}} </span>
+                    <strong v-if="!item.read.some(obj => obj.id == isUser)">{{item.title}} </strong>
+                    <span v-if="item.read.some(obj => obj.id == isUser)">{{item.title}} </span>
                   </v-col>
                   <v-col cols="4">
-                    <strong v-if="!item.read"> {{item.name}} </strong>
-                    <span v-if="item.read">{{item.name}} </span> 
+                    <strong v-if="!item.read.some(obj => obj.id == isUser)"> {{item.name}} </strong>
+                    <span v-if="item.read.some(obj => obj.id == isUser)">{{item.name}} </span> 
                   </v-col>
                   <v-col cols="4">
-                    <strong v-if="!item.read"> {{toMoment(item.date)}}</strong>
-                    <span v-if="item.read">{{toMoment(item.date)}} </span> 
+                    <strong v-if="!item.read.some(obj => obj.id == isUser)"> {{toMoment(item.date)}}</strong>
+                    <span v-if="item.read.some(obj => obj.id == isUser)">{{toMoment(item.date)}} </span> 
                   </v-col>
                 <template v-slot:actions>
-                  <v-icon color ='success' v-show="item.read" >mdi-check</v-icon>
-                  <v-icon color="primary" v-show="!item.read" @click="markRead(item)">mdi-alert-circle</v-icon>
+                  <v-icon color ='success' v-show="item.read.some(obj => obj.id == isUser)" >mdi-check</v-icon>
+                  <v-icon color="primary" v-show="!item.read.some(obj => obj.id == isUser)" >mdi-alert-circle</v-icon>
                 </template>
               </v-expansion-panel-header>
             </v-row>
@@ -99,6 +99,9 @@ export default {
     isLoading() {
      return this.$store.state.general.isLoading
     },
+    isUser(){
+      return this.$store.state.auth.user.uid
+    },
     isAdmin() {
       return this.$store.state.auth.userGroup == "bmyiE5pvx66Ct7Wmj78b"
     },
@@ -130,15 +133,18 @@ export default {
      },
      
      markRead(item){
-       if(item.read == false){
+       if(item.read.some(e => e.id === this.$store.state.auth.user.uid )){
+         return
+       }
+       else {
          this.readItem(item)
-         this.changeIcon(item)
-       }    
+         
+       }
      },
 
      markUnread(item){
        this.unreadItem(item)
-       this.changeIcon(item)
+       this.readNotifications()
      }
 
    },

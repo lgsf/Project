@@ -103,7 +103,7 @@ const state = () => ({
                 date: moment().unix(),
                 user: state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
                 group: state.editingGroup?.map((obj) => { return Object.assign({}, obj) }) || [],
-                read: false
+                read: []
             })
     }
 
@@ -117,7 +117,7 @@ const state = () => ({
                 date: moment().unix(),
                 user: state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
                 group: state.editingGroup?.map((obj) => { return Object.assign({}, obj) }) || [],
-                read: false
+                read: []
             })
     }
 
@@ -236,21 +236,24 @@ const state = () => ({
             })
         },
 
-        readItem({ commit }, payload){
+        readItem({ commit, rootState }, payload){
             commit('selectNotification', [])
+            let readArray = payload.read
+            readArray.push({id: rootState.auth.user.uid, isRead: true })
                db.collection("notifications")
                      .doc(payload.id)
                      .update({
-                         read: true
+                         read: readArray
                      })
           },
      
-        unreadItem({ commit }, payload){
+        unreadItem({ commit, rootState }, payload){
             commit('selectNotification', [])
+            let readArray = payload.read.filter(obj => obj.id !== rootState.auth.user.uid)
             db.collection("notifications")
                  .doc(payload.id)
                  .update({
-                     read: false
+                     read: readArray
                  })
           },
         
