@@ -1,15 +1,15 @@
 <template>
   <v-card class="pa-0 body-2" raised min-height="120px">
-    <v-row class="ml-1 mr-1">
-      <v-col cols="12" class="pt-1">
-        <v-row>
+    <v-row class="ml-0 mr-0">
+      <v-col cols="12" class="pt-0">
+        <v-row class="indigo lighten-2">
           <v-col cols="6" class="ma-0 pa-1 body-2">
             <v-tooltip bottom v-if="task.priority == 'Critica'">
               <template v-slot:activator="{ on, attrs }">
                 <v-icon
                   v-bind="attrs"
                   v-on="on"
-                  color="error"
+                  color="red accent-3"
                   v-if="task.priority == 'Critica'"
                 >mdi-chevron-triple-up</v-icon>
               </template>
@@ -20,7 +20,7 @@
                 <v-icon
                   v-bind="attrs"
                   v-on="on"
-                  color="success"
+                  color="light-green accent-3"
                   v-if="task.priority == 'Baixa'"
                 >mdi-chevron-down</v-icon>
               </template>
@@ -42,7 +42,7 @@
                 <v-icon
                   v-bind="attrs"
                   v-on="on"
-                  color="error"
+                  color="orange darken-4"
                   v-if="task.priority == 'Alta'"
                 >mdi-chevron-double-up</v-icon>
               </template>
@@ -50,17 +50,12 @@
             </v-tooltip>
           </v-col>
           <v-col cols="6" align="end" justify="end" class="ma-0 pa-0">
-            <v-btn
-              icon
-              class="ma-2 small-button"
-              color="blue-grey lighten-3"
-              @click="executeAction"
-            >
+            <v-btn icon class="ma-2 small-button" color="grey lighten-2" @click="executeAction">
               <v-icon>mdi-eye</v-icon>
             </v-btn>
           </v-col>
         </v-row>
-        <v-row>
+        <v-row class="mt-2">
           <v-col cols="12" class="pt-0 mt-0 text-card">
             <span class="font-weight-medium">Tarefa:</span>
             <span class="font-weight-regular">{{task.name}}</span>

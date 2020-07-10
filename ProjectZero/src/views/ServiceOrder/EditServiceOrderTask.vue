@@ -9,44 +9,46 @@
     >
       <v-card>
         <v-toolbar class="primary" dark>
-          <v-toolbar-title>{{selectedTask.name}}</v-toolbar-title>
+          <v-toolbar-title>
+            <span>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon
+                    v-bind="attrs"
+                    v-on="on"
+                    color="red darken-2"
+                    v-if="selectedTask.priority == 'Critica'"
+                  >mdi-chevron-triple-up</v-icon>
+                  <v-icon
+                    v-bind="attrs"
+                    v-on="on"
+                    color="success lighten-2"
+                    v-if="selectedTask.priority == 'Baixa'"
+                  >mdi-chevron-down</v-icon>
+                  <v-icon
+                    v-bind="attrs"
+                    v-on="on"
+                    color="amber"
+                    v-if="selectedTask.priority == 'Media'"
+                  >mdi-chevron-up</v-icon>
+                  <v-icon
+                    v-bind="attrs"
+                    v-on="on"
+                    color="red darken-1"
+                    v-if="selectedTask.priority == 'Alta'"
+                  >mdi-chevron-double-up</v-icon>
+                </template>
+                <span>{{selectedTask.priority}} prioridade</span>
+              </v-tooltip>
+            </span>
+            {{selectedTask.name}}
+          </v-toolbar-title>
         </v-toolbar>
         <v-divider></v-divider>
         <v-card-text>
           <v-container>
             <v-row justify="start" align="center">
-              <v-col cols="1" md="1" class="pt-0 pb-0">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-icon
-                      v-bind="attrs"
-                      v-on="on"
-                      color="error"
-                      v-if="selectedTask.priority == 'Critica'"
-                    >mdi-chevron-triple-up</v-icon>
-                    <v-icon
-                      v-bind="attrs"
-                      v-on="on"
-                      color="success"
-                      v-if="selectedTask.priority == 'Baixa'"
-                    >mdi-chevron-down</v-icon>
-                    <v-icon
-                      v-bind="attrs"
-                      v-on="on"
-                      color="amber"
-                      v-if="selectedTask.priority == 'Media'"
-                    >mdi-chevron-up</v-icon>
-                    <v-icon
-                      v-bind="attrs"
-                      v-on="on"
-                      color="error"
-                      v-if="selectedTask.priority == 'Alta'"
-                    >mdi-chevron-double-up</v-icon>
-                  </template>
-                  <span>{{selectedTask.priority}} prioridade</span>
-                </v-tooltip>
-              </v-col>
-              <v-col cols="9" md="9" class="pt-0 pb-0">
+              <v-col cols="10" md="10" class="pt-0 pb-0">
                 <v-text-field label="Nome: " :disabled="!isInEditMode" v-model="selectedTask.name"></v-text-field>
               </v-col>
               <v-col cols="1" md="2" class="pt-0 pb-0">
