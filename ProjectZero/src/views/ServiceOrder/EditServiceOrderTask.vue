@@ -326,7 +326,7 @@
                         </v-row>
                         <v-row v-if="comment && comment != ''">
                           <v-col cols="12">
-                            <v-btn icon color="green" @click="saveComment(comment)">
+                            <v-btn icon color="green" @click="saveNewComment(comment)">
                               <v-icon>mdi-plus</v-icon>
                             </v-btn>
                           </v-col>
@@ -335,10 +335,10 @@
                           <v-col cols="12">
                             <v-list dense>
                               <v-list-item-group color="primary">
-                                <v-list-item v-for="(item, i) in selectedTask.comments" :key="i">
+                                <v-list-item v-for="(item, i) in comments" :key="i">
                                   <v-list-item-content>
-                                    <v-list-item-title v-html="item.created_by.name"></v-list-item-title>
-                                    <v-list-item-subtitle v-html="item.creation_date"></v-list-item-subtitle>
+                                    <v-list-item-title v-html="getCommentTitle(item)"></v-list-item-title>
+                                    <v-list-item-subtitle v-html="item.text"></v-list-item-subtitle>
                                   </v-list-item-content>
                                 </v-list-item>
                               </v-list-item-group>
@@ -408,6 +408,10 @@ const computed = Object.assign(
     isInEditMode: state => state.serviceOrders.taskDialogInEditMode,
     taskPriorityList: state => state.serviceOrders.taskPriorityList,
     createdBy: state => state.serviceOrders.selectedTask.created_by?.name || "",
+    comments: function(state) {
+      let commentsList = state.serviceOrders.selectedTask.comments;
+      return commentsList.sort((a, b) => b.creation_date - a.creation_date);
+    },
     userRole: function(state) {
       let role = "NotRelated";
       if (state.auth.userGroup.id == "bmyiE5pvx66Ct7Wmj78b")
@@ -551,6 +555,12 @@ export default {
     saveAndClose() {
       this.showFiles = true;
       this.saveTask();
+    },
+    getCommentTitle(item){
+      return item.created_by.name + ' - ' + moment.unix(item.creation_date).format('DD/MM/YYYY');
+    },
+    saveNewComment(comment){
+      this.saveComment(comment).then(() => this.comment = '');
     }
   }),
   computed,

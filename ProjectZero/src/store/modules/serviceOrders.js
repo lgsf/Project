@@ -551,12 +551,14 @@ const actions = {
         
         context.state.selectedTask.comments.push({
             text: payload,
-            creation_date: new Date().toLocaleString('pt-br'),
+            creation_date: moment().unix(),
             created_by: user[0]
         })
+        var index = context.state.selected.tasks.indexOf(context.state.selected.tasks.find(t => t.id == context.state.selectedTask.id))
+        context.state.selected.tasks[index] = context.state.selectedTask
 
         getOrderFromDatabase(context.state.selected.id)
-            .update({ tasks: context.state.selectedTask })
+            .update({ tasks: context.state.selected.tasks })
     }
 }
 
