@@ -1,8 +1,10 @@
 <template>
-  <div class="login" >
+  <div class="login">
     <br />
     <v-banner>
-      <a href="Home"><v-img :src="imgUrl"></v-img></a>
+      <a href="Home">
+        <v-img :src="imgUrl" height="60" width="140" contain></v-img>
+      </a>
       <template v-slot:actions>
         <h3>{{screenCompany}}</h3>
       </template>
@@ -42,13 +44,13 @@
                     @keyup.13.native="login"
                   ></v-text-field>
                 </v-col>
-                <v-btn color="error" router :to="{name: 'ResetPassword'}"> 
-                  <v-icon light style="margin-right:8px;">vpn_key</v-icon>
-                  Esqueci a senha  </v-btn>
+                <v-btn color="error" router :to="{name: 'ResetPassword'}">
+                  <v-icon light style="margin-right:8px;">vpn_key</v-icon>Esqueci a senha
+                </v-btn>
                 <v-spacer></v-spacer>
-                <v-btn 
-                @click="login" :loading="isLoading" color="primary" :disabled="!valid">
-                  Login <v-icon light style="margin-left:8px;">send</v-icon>
+                <v-btn @click="login" :loading="isLoading" color="primary" :disabled="!valid">
+                  Login
+                  <v-icon light style="margin-left:8px;">send</v-icon>
                   <template v-slot:loader>
                     <span class="custom-loader">
                       <v-icon light>cached</v-icon>
@@ -65,17 +67,17 @@
 </template>
 
 <script>
-import Alert from "@/components/shared/Alert"
-import { mapActions, mapState  } from "vuex"
+import Alert from "@/components/shared/Alert";
+import { mapActions, mapState } from "vuex";
 
 const computed = mapState("setup", {
   screenCompany: state => state.companyName,
   imgUrl: state => state.imgUrl
-})
+});
 
 const computedGeneral = mapState("general", {
-    isLoading: state => state.isLoading
-})
+  isLoading: state => state.isLoading
+});
 
 export default {
   components: { Alert },
@@ -103,20 +105,18 @@ export default {
     ...mapActions("setup", ["readLogo", "readCompanyName"]),
 
     login() {
-      this.userLogin( {
+      this.userLogin({
         email: this.email,
         password: this.password
-      })
+      });
     }
-    
   },
 
   computed: Object.assign({}, computed, computedGeneral),
 
   mounted() {
-    this.readLogo()
-    this.readCompanyName()
+    this.readLogo();
+    this.readCompanyName();
   }
-  
-}
+};
 </script>
