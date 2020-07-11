@@ -410,7 +410,7 @@ const computed = Object.assign(
     createdBy: state => state.serviceOrders.selectedTask.created_by?.name || "",
     comments: function(state) {
       let commentsList = state.serviceOrders.selectedTask.comments;
-      return commentsList.sort((a, b) => b.creation_date - a.creation_date);
+      return commentsList?.sort((a, b) => b.creation_date - a.creation_date);
     },
     userRole: function(state) {
       let role = "NotRelated";

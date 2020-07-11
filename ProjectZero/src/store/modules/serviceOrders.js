@@ -238,6 +238,7 @@ function loadTasksByOrder(context, filterCurrentUser, resolve) {
                 let selectedOrderTasks = snapshot.data()
                     .tasks
                     .filter(task => !filterCurrentUser || (task.users && task.users.email == context.rootState.auth.user.email))
+                    selectedOrderTasks.forEach(task => { if(!task.comments) task.comments = []; })
                 context.dispatch('updateSelectedOrderTask', selectedOrderTasks)
                     .then(() => {
                         context.commit('updateKanbanColumns')
@@ -554,11 +555,11 @@ const actions = {
             creation_date: moment().unix(),
             created_by: user[0]
         })
-        var index = context.state.selected.tasks.indexOf(context.state.selected.tasks.find(t => t.id == context.state.selectedTask.id))
-        context.state.selected.tasks[index] = context.state.selectedTask
+        var index = context.state.selectedOrderTasks.indexOf(context.state.selectedOrderTasks.find(t => t.id == context.state.selectedTask.id))
+        context.state.selectedOrderTasks[index] = context.state.selectedTask
 
         getOrderFromDatabase(context.state.selected.id)
-            .update({ tasks: context.state.selected.tasks })
+            .update({ tasks: context.state.selectedOrderTasks })
     }
 }
 
