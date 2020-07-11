@@ -44,13 +44,36 @@
                     @keyup.13.native="login"
                   ></v-text-field>
                 </v-col>
-                <v-btn color="error" router :to="{name: 'ResetPassword'}">
+                <v-btn v-if="checkWidth" color="error" router :to="{name: 'ResetPassword'}">
                   <v-icon light style="margin-right:8px;">vpn_key</v-icon>Esqueci a senha
                 </v-btn>
+                <v-btn v-if="!checkWidth" color="error" router :to="{name: 'ResetPassword'}">
+                  <v-icon light>vpn_key</v-icon>
+                </v-btn>
                 <v-spacer></v-spacer>
-                <v-btn @click="login" :loading="isLoading" color="primary" :disabled="!valid">
+                <v-btn
+                  v-if="checkWidth"
+                  @click="login"
+                  :loading="isLoading"
+                  color="primary"
+                  :disabled="!valid"
+                >
                   Login
                   <v-icon light style="margin-left:8px;">send</v-icon>
+                  <template v-slot:loader>
+                    <span class="custom-loader">
+                      <v-icon light>cached</v-icon>
+                    </span>
+                  </template>
+                </v-btn>
+                <v-btn
+                  v-if="!checkWidth"
+                  @click="login"
+                  :loading="isLoading"
+                  color="primary"
+                  :disabled="!valid"
+                >
+                  <v-icon light>send</v-icon>
                   <template v-slot:loader>
                     <span class="custom-loader">
                       <v-icon light>cached</v-icon>
@@ -84,6 +107,7 @@ export default {
   name: "Login",
   data() {
     return {
+      width: 0,
       valid: false,
       screenTitle: "Login",
       email: "",
@@ -109,14 +133,26 @@ export default {
         email: this.email,
         password: this.password
       });
+    },
+    checkScreenWidth() {
+      setInterval(() => {
+        this.width = window.innerWidth;
+      }, 100);
     }
   },
 
-  computed: Object.assign({}, computed, computedGeneral),
+  computed: Object.assign({}, computed, computedGeneral, {
+    checkWidth() {
+      if (this.width > 620) {
+        return true;
+      } else return false;
+    }
+  }),
 
   mounted() {
     this.readLogo();
     this.readCompanyName();
+    this.checkScreenWidth();
   }
 };
 </script>

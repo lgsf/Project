@@ -444,7 +444,7 @@ const actions = {
                 date: new Date().toLocaleString('pt-br'),
                 user: [context.state.selectedTask.users],
                 group: [],
-                read: false
+                read: []
             })
         }
 
@@ -500,7 +500,7 @@ const actions = {
                                 date: new Date().toLocaleString('pt-br'),
                                 user: [context.state.selectedTask.users],
                                 group: [],
-                                read: false
+                                read: []
                             })
                         }
                     }

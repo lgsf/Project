@@ -230,7 +230,7 @@ const state = () => ({
                 })
               let uniqueSet = new Set (notifications.map(e => JSON.stringify(e)))
               let uniqueNotifications = Array.from(uniqueSet).map(e => JSON.parse(e))
-              uniqueNotifications.sort((a, b) => (a.read > b.read) ? 1 : (a.read === b.read) ? ((a.date < b.date) ? 1 : -1) : -1 )
+              uniqueNotifications.sort((a, b) => (a.read.some(obj => obj.id == rootState.auth.user.uid)) ? 1 : (a.read.includes(obj => obj.id == rootState.auth.user.uid) && b.read.includes(obj => obj.id == rootState.auth.user.uid)) ? ((a.date < b.date) ? 1 : -1) : -1 )
               commit('updateMyNotifications', uniqueNotifications)
               this.dispatch('general/resetIsLoading')
             })
@@ -239,7 +239,7 @@ const state = () => ({
         readItem({ commit, rootState }, payload){
             commit('selectNotification', [])
             let readArray = payload.read
-            readArray.push({id: rootState.auth.user.uid, isRead: true })
+            readArray.push({id: rootState.auth.user.uid})
                db.collection("notifications")
                      .doc(payload.id)
                      .update({
