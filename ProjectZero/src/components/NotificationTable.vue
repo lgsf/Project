@@ -124,17 +124,16 @@ export default {
       },
 
        orderNotificationNotRead(){
-          this.uniqueNotifications.sort((a, b) => (a.read > b.read) ? 1 : (a.read === b.read) ? ((a.date < b.date) ? 1 : -1) : -1 )
+          this.uniqueNotifications.sort((a, b) => (a.read.some(obj => obj.id == this.$store.state.auth.user.uid)) ? 1 : (a.read.includes(obj => obj.id == this.$store.state.auth.user.uid) && b.read.includes(obj => obj.id == this.$store.state.auth.user.uid)) ? ((a.date < b.date) ? 1 : -1) : -1 )
           this.order = !this.order
       },
-      
+
      markRead(item){
-       if(item.read.some(e => e.id === this.$store.state.auth.user.uid )){
+       if(item.read.some(e => e.id === this.$store.state.auth.user.uid)){
          return
        }
        else {
          this.readItem(item)
-         
        }
      },
 
@@ -142,6 +141,7 @@ export default {
        this.unreadItem(item)
        this.readNotifications()
      }
+     
    },
 
    mounted() {

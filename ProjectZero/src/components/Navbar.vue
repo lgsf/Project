@@ -2,8 +2,8 @@
   <nav>
     <v-app-bar app flat>
       <v-app-bar-nav-icon @click="drawer = !drawer" class></v-app-bar-nav-icon>
-      <v-toolbar-title >
-        <v-img :src="imgUrl"></v-img>
+      <v-toolbar-title>
+        <v-img :src="imgUrl" height="60" width="140" contain></v-img>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn @click="userSignOut" color="grey-2">
@@ -12,18 +12,15 @@
       </v-btn>
     </v-app-bar>
     <div v-if="drawer">
-      <v-navigation-drawer app v-model="drawer"  class="grey-3">
+      <v-navigation-drawer app v-model="drawer" class="grey-3">
         <v-card>
           <div class="text-center" v-if="isLoading">
-            <br>
-            <br>
-          <v-progress-circular
-            indeterminate
-            color="primary"
-          ></v-progress-circular>
-          <br>
-          <br>
-          <br>
+            <br />
+            <br />
+            <v-progress-circular indeterminate color="primary"></v-progress-circular>
+            <br />
+            <br />
+            <br />
           </div>
           <v-list flat v-if="!isLoading">
             <v-subheader>Menu</v-subheader>
@@ -66,39 +63,38 @@
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
 
-import { mapState, mapActions  } from "vuex"
+const methods = mapActions("auth", ["userSignOut"]);
 
-const methods = mapActions("auth", ["userSignOut"])
+const generalMethods = mapActions("general", ["loadMenu"]);
 
-const generalMethods = mapActions("general", ["loadMenu" ])
+const setupMethods = mapActions("setup", ["readLogo"]);
 
-const setupMethods = mapActions("setup", ["readLogo"])
-
-const computed = mapState( {
+const computed = mapState({
   imgUrl: state => state.setup.imgUrl,
   links: state => state.general.links
-})
+});
 
 const computedGeneral = mapState("general", {
-    isLoading: state => state.loadingNavbar
-})
+  isLoading: state => state.loadingNavbar
+});
 
 export default {
   data() {
     return {
       drawer: true
-    }
+    };
   },
   computed: Object.assign({}, computed, computedGeneral),
 
   methods: Object.assign({}, methods, generalMethods, setupMethods),
 
   mounted() {
-    this.readLogo()
-    this.loadMenu()
+    this.readLogo();
+    this.loadMenu();
   }
-}
+};
 </script>
 
 <style>
