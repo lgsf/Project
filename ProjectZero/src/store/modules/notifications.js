@@ -239,7 +239,7 @@ const state = () => ({
         readItem({ commit, rootState }, payload){
             commit('selectNotification', [])
             let readArray = payload.read
-            readArray.push({id: rootState.auth.user.uid, isRead: true })
+            readArray.push({id: rootState.auth.user.uid})
                db.collection("notifications")
                      .doc(payload.id)
                      .update({
