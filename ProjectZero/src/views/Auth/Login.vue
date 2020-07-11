@@ -1,8 +1,10 @@
 <template>
-  <div class="login" >
+  <div class="login">
     <br />
     <v-banner>
-      <a href="Home"><v-img :src="imgUrl"></v-img></a>
+      <a href="Home">
+        <v-img :src="imgUrl" height="60" width="140" contain></v-img>
+      </a>
       <template v-slot:actions>
         <h3>{{screenCompany}}</h3>
       </template>
@@ -42,25 +44,36 @@
                     @keyup.13.native="login"
                   ></v-text-field>
                 </v-col>
-                <v-btn v-if="checkWidth" color="error" router :to="{name: 'ResetPassword'}"> 
-                  <v-icon light style="margin-right:8px;">vpn_key</v-icon>
-                  Esqueci a senha  </v-btn>
-                  <v-btn v-if="!checkWidth" color="error" router :to="{name: 'ResetPassword'}"> 
-                  <v-icon light >vpn_key</v-icon>
-                  </v-btn>
+                <v-btn v-if="checkWidth" color="error" router :to="{name: 'ResetPassword'}">
+                  <v-icon light style="margin-right:8px;">vpn_key</v-icon>Esqueci a senha
+                </v-btn>
+                <v-btn v-if="!checkWidth" color="error" router :to="{name: 'ResetPassword'}">
+                  <v-icon light>vpn_key</v-icon>
+                </v-btn>
                 <v-spacer></v-spacer>
-                <v-btn v-if="checkWidth"
-                @click="login" :loading="isLoading" color="primary" :disabled="!valid">
-                  Login <v-icon light style="margin-left:8px;">send</v-icon>
+                <v-btn
+                  v-if="checkWidth"
+                  @click="login"
+                  :loading="isLoading"
+                  color="primary"
+                  :disabled="!valid"
+                >
+                  Login
+                  <v-icon light style="margin-left:8px;">send</v-icon>
                   <template v-slot:loader>
                     <span class="custom-loader">
                       <v-icon light>cached</v-icon>
                     </span>
                   </template>
                 </v-btn>
-                <v-btn v-if="!checkWidth"
-                @click="login" :loading="isLoading" color="primary" :disabled="!valid">
-                 <v-icon light>send</v-icon>
+                <v-btn
+                  v-if="!checkWidth"
+                  @click="login"
+                  :loading="isLoading"
+                  color="primary"
+                  :disabled="!valid"
+                >
+                  <v-icon light>send</v-icon>
                   <template v-slot:loader>
                     <span class="custom-loader">
                       <v-icon light>cached</v-icon>
@@ -77,17 +90,17 @@
 </template>
 
 <script>
-import Alert from "@/components/shared/Alert"
-import { mapActions, mapState  } from "vuex"
+import Alert from "@/components/shared/Alert";
+import { mapActions, mapState } from "vuex";
 
 const computed = mapState("setup", {
   screenCompany: state => state.companyName,
   imgUrl: state => state.imgUrl
-})
+});
 
 const computedGeneral = mapState("general", {
-    isLoading: state => state.isLoading
-})
+  isLoading: state => state.isLoading
+});
 
 export default {
   components: { Alert },
@@ -116,33 +129,30 @@ export default {
     ...mapActions("setup", ["readLogo", "readCompanyName"]),
 
     login() {
-      this.userLogin( {
+      this.userLogin({
         email: this.email,
         password: this.password
-      })
+      });
     },
     checkScreenWidth() {
-            setInterval(() => {
-                this.width = window.innerWidth
-            }, 100)
-        }
-    
+      setInterval(() => {
+        this.width = window.innerWidth;
+      }, 100);
+    }
   },
 
   computed: Object.assign({}, computed, computedGeneral, {
     checkWidth() {
-            if(this.width > 620){
-              return true
-            }
-            else return false
-        }
+      if (this.width > 620) {
+        return true;
+      } else return false;
+    }
   }),
 
   mounted() {
-    this.readLogo()
-    this.readCompanyName()
-    this.checkScreenWidth()
+    this.readLogo();
+    this.readCompanyName();
+    this.checkScreenWidth();
   }
-  
-}
+};
 </script>
