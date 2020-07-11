@@ -16,31 +16,12 @@
                   <v-icon
                     v-bind="attrs"
                     v-on="on"
-                    color="red darken-2"
-                    v-if="selectedTask.priority == 'Critica'"
-                  >mdi-chevron-triple-up</v-icon>
-                  <v-icon
-                    v-bind="attrs"
-                    v-on="on"
-                    color="success lighten-2"
-                    v-if="selectedTask.priority == 'Baixa'"
-                  >mdi-chevron-down</v-icon>
-                  <v-icon
-                    v-bind="attrs"
-                    v-on="on"
-                    color="amber"
-                    v-if="selectedTask.priority == 'Media'"
-                  >mdi-chevron-up</v-icon>
-                  <v-icon
-                    v-bind="attrs"
-                    v-on="on"
-                    color="red darken-1"
-                    v-if="selectedTask.priority == 'Alta'"
-                  >mdi-chevron-double-up</v-icon>
+                    :color="priorityIcon.color"
+                  >{{priorityIcon.icon}}</v-icon>
                 </template>
                 <span>{{selectedTask.priority}} prioridade</span>
               </v-tooltip>
-            </span>
+            </span> 
             {{selectedTask.name}}
           </v-toolbar-title>
         </v-toolbar>
@@ -467,6 +448,17 @@ const computed = Object.assign(
       };
       let getAllTasksByOrderBut = store["serviceOrders/getAllTasksByOrderBut"];
       return getAllTasksByOrderBut(filters);
+    },
+    priorityIcon: function(state){
+      if(state.serviceOrders.selectedTask.priority == 'Critica')
+        return { icon: 'mdi-chevron-triple-up', color: 'red darken-1' };
+      if(state.serviceOrders.selectedTask.priority == 'Alta')
+        return { icon: 'mdi-chevron-double-up', color: 'red darken-1' };
+      if(state.serviceOrders.selectedTask.priority == 'Media')
+        return { icon: 'mdi-chevron-up', color: 'amber' };
+      if(state.serviceOrders.selectedTask.priority == 'Baixa')
+        return { icon: 'mdi-chevron-down', color: 'success lighten-2' };
+      return '';
     }
   }),
   mapGetters("serviceOrders", ["getAllTasksByOrderBut"])
