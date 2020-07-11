@@ -544,6 +544,19 @@ const actions = {
                 this.dispatch('serviceOrders/reloadOrders')
                     .then(() => { router.push({ path: "/serviceOrder" }) })
             })
+    },
+    saveComment(context, payload){
+        context.state.selectedTask.comments = context.state.selectedTask.comments || [];
+        let user = context.rootGetters['users/getUserByEmail'](context.rootState.auth.user.email)
+        
+        context.state.selectedTask.comments.push({
+            text: payload,
+            creation_date: new Date().toLocaleString('pt-br'),
+            created_by: user[0]
+        })
+
+        getOrderFromDatabase(context.state.selected.id)
+            .update({ tasks: context.state.selectedTask })
     }
 }
 
