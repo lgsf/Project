@@ -64,6 +64,8 @@ const mutations = {
         }))
     },
     updateSelectedTask(state, payload) {
+        if(payload.comments)
+            payload.comments = payload.comments.sort((a, b) => b.creation_date - a.creation_date);
         state.selectedTask = payload
     },
     updateTaskDialogInEditMode(state, payload) {
@@ -238,6 +240,8 @@ function loadTasksByOrder(context, filterCurrentUser, resolve) {
                 let selectedOrderTasks = snapshot.data()
                     .tasks
                     .filter(task => !filterCurrentUser || (task.users && task.users.email == context.rootState.auth.user.email))
+                
+                selectedOrderTasks.forEach(task => { if(!task.comments) task.comments = []; });
                 context.dispatch('updateSelectedOrderTask', selectedOrderTasks)
                     .then(() => {
                         context.commit('updateKanbanColumns')
@@ -544,6 +548,23 @@ const actions = {
                 this.dispatch('serviceOrders/reloadOrders')
                     .then(() => { router.push({ path: "/serviceOrder" }) })
             })
+    },
+    saveComment(context, payload){
+        context.state.selectedTask.comments = context.state.selectedTask.comments || [];
+        let user = context.rootGetters['users/getUserByEmail'](context.rootState.auth.user.email)
+        
+        context.state.selectedTask.comments.push({
+            text: payload,
+            creation_date: moment().unix(),
+            created_by: user[0]
+        })
+
+        context.state.selectedTask.comments = context.state.selectedTask.comments.sort((a, b) => b.creation_date - a.creation_date);
+        var index = context.state.selectedOrderTasks.indexOf(context.state.selectedOrderTasks.find(t => t.id == context.state.selectedTask.id))
+        context.state.selectedOrderTasks[index] = context.state.selectedTask
+
+        getOrderFromDatabase(context.state.selected.id)
+            .update({ tasks: context.state.selectedOrderTasks })
     }
 }
 
