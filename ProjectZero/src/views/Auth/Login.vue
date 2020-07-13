@@ -132,27 +132,27 @@ export default {
       this.userLogin({
         email: this.email,
         password: this.password
-      });
+      })
     },
     checkScreenWidth() {
       setInterval(() => {
-        this.width = window.innerWidth;
-      }, 100);
+        this.width = window.innerWidth
+      }, 100)
     }
   },
 
   computed: Object.assign({}, computed, computedGeneral, {
     checkWidth() {
       if (this.width > 620) {
-        return true;
-      } else return false;
+        return true
+      } else return false
     }
   }),
 
   mounted() {
-    this.readLogo();
-    this.readCompanyName();
-    this.checkScreenWidth();
+    this.readLogo()
+    this.readCompanyName()
+    this.checkScreenWidth()
   }
-};
+}
 </script>

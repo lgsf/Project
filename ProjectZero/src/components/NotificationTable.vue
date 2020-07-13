@@ -52,7 +52,7 @@
                   <v-row>
                     <v-btn color="error" v-if="isAdmin" text @click="deleteNotificationItem(item)">Excluir</v-btn>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" v-show="item.read" text @click="markUnread(item)">Não-lido</v-btn>
+                    <v-btn color="blue darken-1" v-show="item.read.some(obj => obj.id == isUser)" text @click="markUnread(item)">Não-lido</v-btn>
                   </v-row>
                </v-expansion-panel-content>
              </v-expansion-panel>
@@ -124,7 +124,7 @@ export default {
       },
 
        orderNotificationNotRead(){
-          this.uniqueNotifications.sort((a, b) => (a.read.some(obj => obj.id == this.$store.state.auth.user.uid)) ? 1 : (a.read.includes(obj => obj.id == this.$store.state.auth.user.uid) && b.read.includes(obj => obj.id == this.$store.state.auth.user.uid)) ? ((a.date < b.date) ? 1 : -1) : -1 )
+          this.uniqueNotifications.sort((a, b) => (a.read.some(obj => obj.id == this.$store.state.auth.user.uid) && !b.read.some(obj => obj.id == this.$store.state.auth.user.uid)) ? 1 : (!(a.read.some(obj => obj.id == this.$store.state.auth.user.uid)) && !(b.read.some(obj => obj.id == this.$store.state.auth.user.uid)) || (a.read.some(obj => obj.id == this.$store.state.auth.user.uid)) && (b.read.some(obj => obj.id == this.$store.state.auth.user.uid))) ? ((a.date < b.date) ? 1 : -1) : -1 )
           this.order = !this.order
       },
 
@@ -139,7 +139,6 @@ export default {
 
      markUnread(item){
        this.unreadItem(item)
-       this.readNotifications()
      }
      
    },

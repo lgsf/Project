@@ -40,9 +40,6 @@
               <v-list-item @click="type = 'month'">
                 <v-list-item-title>Mês</v-list-item-title>
               </v-list-item>
-              <v-list-item @click="type = '4day'">
-                <v-list-item-title>4 dias</v-list-item-title>
-              </v-list-item>
             </v-list>
           </v-menu>
         </v-toolbar>
@@ -169,8 +166,7 @@ export default {
     typeToLabel: {
       month: 'Mês',
       week: 'Semana',
-      day: 'Dia',
-      '4day': '4 Dias',
+      day: 'Dia'
     },
     name: null,
     details: null,
@@ -198,19 +194,13 @@ export default {
         return ''
       }
       const startMonth = this.monthFormatter(start)
-      const endMonth = this.monthFormatter(end)
-      const suffixMonth = startMonth === endMonth ? '' : endMonth
       const startYear = start.year
-      const endYear = end.year
-      const suffixYear = startYear === endYear ? '' : endYear
       const startDay = start.day + this.nth(start.day)
-      const endDay = end.day + this.nth(end.day)
+
       switch (this.type) {
         case 'month':
         return `${startMonth} ${startYear}`
         case 'week':
-        case '4day':
-        return `${startMonth} ${startDay} ${startYear} - ${suffixMonth} ${endDay} ${suffixYear}`
         case 'day':
         return `${startMonth} ${startDay} ${startYear}`
       }

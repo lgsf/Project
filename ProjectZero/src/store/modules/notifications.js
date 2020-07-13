@@ -230,7 +230,7 @@ const state = () => ({
                 })
               let uniqueSet = new Set (notifications.map(e => JSON.stringify(e)))
               let uniqueNotifications = Array.from(uniqueSet).map(e => JSON.parse(e))
-              uniqueNotifications.sort((a, b) => (a.read.some(obj => obj.id == rootState.auth.user.uid) && !b.read.some(obj => obj.id == rootState.auth.user.uid)) ? 1 : (a.read.some(obj => obj.id == rootState.auth.user.uid) && b.read.some(obj => obj.id == rootState.auth.user.uid)) ? ((a.date < b.date) ? 1 : -1) : -1 )
+              uniqueNotifications.sort((a, b) => (a.read.some(obj => obj.id == rootState.auth.user.uid) && !b.read.some(obj => obj.id == rootState.auth.user.uid)) ? 1 : (!(a.read.some(obj => obj.id == rootState.auth.user.uid)) && !(b.read.some(obj => obj.id == rootState.auth.user.uid)) || (a.read.some(obj => obj.id == rootState.auth.user.uid)) && (b.read.some(obj => obj.id == rootState.auth.user.uid))) ? ((a.date < b.date) ? 1 : -1) : -1 )
               commit('updateMyNotifications', uniqueNotifications)
               this.dispatch('general/resetIsLoading')
             })
@@ -247,7 +247,7 @@ const state = () => ({
                      })
           },
      
-        unreadItem({ commit, rootState }, payload){
+        unreadItem({ commit, rootState, dispatch }, payload){
             commit('selectNotification', [])
             let readArray = payload.read.filter(obj => obj.id !== rootState.auth.user.uid)
             db.collection("notifications")
@@ -255,6 +255,9 @@ const state = () => ({
                  .update({
                      read: readArray
                  })
+                 setTimeout(() => {
+                    dispatch('readNotifications')
+                  }, 300)
           },
         
         editNotification({ state, commit }, payload) {
@@ -358,7 +361,7 @@ const state = () => ({
                 date: moment().unix(),
                 user: payload.user,
                 group: payload.group,
-                read: false
+                read: []
             })
         }
 }
