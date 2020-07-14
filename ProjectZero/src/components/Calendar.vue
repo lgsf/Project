@@ -77,7 +77,9 @@
               <v-text-field v-model="name" type="text" label="Qual o título do lembrete?"></v-text-field>
               <v-text-field v-model="details" type="text" label="Quais os detalhes?"></v-text-field>
               <v-text-field v-model="start" type="date" label="Qual o início?"></v-text-field>
+              <v-text-field v-model="startTime" type="time" label="Qual o horário de final?"></v-text-field>
               <v-text-field v-model="end" type="date" label="Qual o fim?"></v-text-field>
+              <v-text-field v-model="endTime" type="time" label="Qual o horário de final?"></v-text-field>
               <v-text-field v-model="color" type="color" label="Escolha a cor do lembrete"></v-text-field>
               <v-card-actions>
                 <v-spacer></v-spacer>
@@ -154,15 +156,17 @@
 import { db, moment } from '@/main'
 import { mapActions, mapState } from "vuex"
 
+
 const computed = mapState("calendar", {
   events: state => state.events,
 })
 
 export default {
+
   data: () => ({
     today: moment().format('YYYY-MM-DD'),
     focus: new Date().toISOString().substr(0, 16).replace('T', ' '),
-    type: 'week',
+    type: 'month',
     typeToLabel: {
       month: 'Mês',
       week: 'Semana',
@@ -170,9 +174,11 @@ export default {
     },
     name: null,
     details: null,
-    start: null,
-    end: null,
-    color: '#1976D2', // default event color
+    start: '',
+    startTime:'',
+    end: '',
+    endTime:'',
+    color: '#000000', // default event color
     currentlyEditing: null,
     selectedEvent: {},
     selectedElement: null,
@@ -229,7 +235,7 @@ export default {
       this.$refs.calendar.next()
     },
     async addEvent () {
-      if (this.name && this.start && this.end) {
+      if (this.name && this.start && this.end && !this.startTime && !this.endTime) {
         await db.collection("calEvent").add({
           name: this.name,
           details: this.details,
@@ -243,7 +249,22 @@ export default {
         this.start = ''
         this.end = ''
         this.color = ''
-      } else {
+      } else if(this.name && this.start && this.end && this.startTime && this.endTime){
+          await db.collection("calEvent").add({
+          name: this.name,
+          details: this.details,
+          start: this.start + ' ' + this.startTime,
+          end: this.end + ' ' + this.endTime,
+          color: this.color
+        })
+        this.getEvents()
+        this.name = ''
+        this.details = ''
+        this.start = ''
+        this.end = ''
+        this.color = ''
+      }
+      else {
         alert('Você deve inserir o nome, início e fim do evento')
       }
     },
