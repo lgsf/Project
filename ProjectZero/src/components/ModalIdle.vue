@@ -44,12 +44,12 @@ export default {
      computed: {
       ...mapActions("auth", ["userSignOut"]),
     isIdle(){
-      return this.$store.state.idleVue.isIdle;
+      return this.$store.state.idleVue.isIdle
     }
   },
 	created() {
     let timerId = setInterval(() => {
-      this.time -= 1000;
+      this.time -= 1000
       if (!this.$store.state.idleVue.isIdle) clearInterval(timerId)
 
       if (this.time < 1) {

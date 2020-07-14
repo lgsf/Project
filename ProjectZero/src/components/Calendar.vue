@@ -134,6 +134,15 @@
       <form v-if="currentlyEditing !== selectedEvent.id">
         {{ selectedEvent.details }}
       </form>
+       <form v-else>
+        <textarea-autosize
+        v-model="selectedEvent.details"
+        type="text"
+        style="width: 100%"
+        :min-height="100"
+        placeholder="Adicionar">
+      </textarea-autosize>
+    </form>
      
   </v-card-text>
 
