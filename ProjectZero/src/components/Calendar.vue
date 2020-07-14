@@ -55,12 +55,12 @@
             <v-form @submit.prevent="addEvent" >
               <v-text-field @input="setName" v-model="name" type="text" label="Qual o título do lembrete?"></v-text-field>
               <v-text-field @input="setDetails" v-model="details" type="text" label="Quais os detalhes?"></v-text-field>
-              <v-text-field @input="setStart" v-model="start"  type="date" label="Qual o início?"></v-text-field>
-              <v-text-field @input="setStartTime" v-model="startTime" type="time" label="Qual o horário de final?"></v-text-field>
-              <v-text-field @input="setEnd" v-model="end"  type="date" label="Qual o fim?"></v-text-field>
-              <v-text-field @input="setEndTime" v-model="endTime"  type="time" label="Qual o horário de final?"></v-text-field>
+              <v-text-field @input="setStart" v-model="start"  type="date" label="Qual a data de início?"></v-text-field>
+              <v-text-field @input="setStartTime" v-model="startTime" type="time" label="Qual o horário de início?"></v-text-field>
+              <v-text-field @input="setEnd" v-model="end"  type="date" label="Qual a data de encerramento?"></v-text-field>
+              <v-text-field @input="setEndTime" v-model="endTime"  type="time" label="Qual o horário de encerramento?"></v-text-field>
               <v-text-field @input="setColor" v-model="color" type="color" label="Escolha a cor do lembrete"></v-text-field>
-              <div >
+              <div>
                 <v-radio-group v-model="picked"  :mandatory="true" row>
                   <v-radio label="Todos" value="Todos"></v-radio>
                   <v-radio label="Usuários" value="Usuários"></v-radio>
@@ -98,7 +98,7 @@
       <v-dialog v-model="dialogDate" max-width="500">
         <v-card>
           <v-toolbar class="primary ">
-          <h3 class="white--text">{{ name }} - {{toMoment}} <span v-if="startTime">às</span> {{startTime}}</h3>
+          <h3 class="white--text">{{ name || "Título" }} - {{toMoment}} <span v-if="startTime">às</span> {{startTime}}</h3>
             <v-spacer></v-spacer>
           <v-icon right class="white--text">calendar_today</v-icon>
         </v-toolbar>
@@ -106,10 +106,10 @@
             <v-form @submit.prevent="addEvent" >
               <v-text-field @input="setName" v-model="name" type="text" label="Qual o título do lembrete?"></v-text-field>
               <v-text-field @input="setDetails" v-model="details" type="text" label="Quais os detalhes?"></v-text-field>
-              <v-text-field @input="setStart" v-model="start"  type="date" label="Qual o início?"></v-text-field>
-              <v-text-field @input="setStartTime" v-model="startTime" type="time" label="Qual o horário de final?"></v-text-field>
-              <v-text-field @input="setEnd" v-model="end"  type="date" label="Qual o fim?"></v-text-field>
-              <v-text-field @input="setEndTime" v-model="endTime"  type="time" label="Qual o horário de final?"></v-text-field>
+              <v-text-field @input="setStart" v-model="start"  type="date" label="Qual a data de início?"></v-text-field>
+              <v-text-field @input="setStartTime" v-model="startTime" type="time" label="Qual o horário de início?"></v-text-field>
+              <v-text-field @input="setEnd" v-model="end"  type="date" label="Qual a data de encerramento?"></v-text-field>
+              <v-text-field @input="setEndTime" v-model="endTime"  type="time" label="Qual o horário de encerramento?"></v-text-field>
               <v-text-field @input="setColor" v-model="color" type="color" label="Escolha a cor do lembrete"></v-text-field>
               <div >
                 <v-radio-group v-model="picked"  :mandatory="true" row>
