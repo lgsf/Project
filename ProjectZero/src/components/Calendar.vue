@@ -46,6 +46,11 @@
 
       <v-dialog v-model="dialog" max-width="500">
         <v-card>
+          <v-toolbar class="primary ">
+          <h3 class="white--text">{{ name }} - {{toMoment}} <span v-if="startTime">às</span> {{startTime}}</h3>
+            <v-spacer></v-spacer>
+          <v-icon right class="white--text">calendar_today</v-icon>
+        </v-toolbar>
           <v-container>
             <v-form @submit.prevent="addEvent" >
               <v-text-field @input="setName" v-model="name" type="text" label="Qual o título do lembrete?"></v-text-field>
@@ -92,6 +97,11 @@
 
       <v-dialog v-model="dialogDate" max-width="500">
         <v-card>
+          <v-toolbar class="primary ">
+          <h3 class="white--text">{{ name }} - {{toMoment}} <span v-if="startTime">às</span> {{startTime}}</h3>
+            <v-spacer></v-spacer>
+          <v-icon right class="white--text">calendar_today</v-icon>
+        </v-toolbar>
           <v-container>
             <v-form @submit.prevent="addEvent" >
               <v-text-field @input="setName" v-model="name" type="text" label="Qual o título do lembrete?"></v-text-field>
@@ -249,7 +259,10 @@ export default {
     },
     isUser() {
       return this.$store.state.auth.user.uid
-    }  
+    },
+    toMoment(){
+      return moment(this.start).format('DD-MM-YYYY')
+    }
   }),
   methods: {
     ...mapActions("calendar", 
