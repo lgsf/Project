@@ -48,13 +48,13 @@
         <v-card>
           <v-container>
             <v-form @submit.prevent="addEvent" >
-              <v-text-field v-model="name" type="text" label="Qual o título do lembrete?"></v-text-field>
-              <v-text-field v-model="details" type="text" label="Quais os detalhes?"></v-text-field>
-              <v-text-field v-model="start" type="date" label="Qual o início?"></v-text-field>
-              <v-text-field v-model="startTime" type="time" label="Qual o horário de final?"></v-text-field>
-              <v-text-field v-model="end" type="date" label="Qual o fim?"></v-text-field>
-              <v-text-field v-model="endTime" type="time" label="Qual o horário de final?"></v-text-field>
-              <v-text-field v-model="color" type="color" label="Escolha a cor do lembrete"></v-text-field>
+              <v-text-field @input="setName" type="text" label="Qual o título do lembrete?"></v-text-field>
+              <v-text-field @input="setDetails" type="text" label="Quais os detalhes?"></v-text-field>
+              <v-text-field @input="setStart" v-model="start"  type="date" label="Qual o início?"></v-text-field>
+              <v-text-field @input="setStartTime"  type="time" label="Qual o horário de final?"></v-text-field>
+              <v-text-field @input="setEnd"  type="date" label="Qual o fim?"></v-text-field>
+              <v-text-field @input="setEndTime"  type="time" label="Qual o horário de final?"></v-text-field>
+              <v-text-field @input="setColor" type="color" label="Escolha a cor do lembrete"></v-text-field>
               <v-card-actions>
                 <v-spacer></v-spacer>
               <v-btn text color="blue darken-1"  @click="clean">
@@ -76,13 +76,13 @@
         <v-card>
           <v-container>
             <v-form @submit.prevent="addEvent" >
-              <v-text-field v-model="name" type="text" label="Qual o título do lembrete?"></v-text-field>
-              <v-text-field v-model="details" type="text" label="Quais os detalhes?"></v-text-field>
-              <v-text-field v-model="start" type="date" label="Qual o início?"></v-text-field>
-              <v-text-field v-model="startTime" type="time" label="Qual o horário de final?"></v-text-field>
-              <v-text-field v-model="end" type="date" label="Qual o fim?"></v-text-field>
-              <v-text-field v-model="endTime" type="time" label="Qual o horário de final?"></v-text-field>
-              <v-text-field v-model="color" type="color" label="Escolha a cor do lembrete"></v-text-field>
+              <v-text-field @input="setName" type="text" label="Qual o título do lembrete?"></v-text-field>
+              <v-text-field @input="setDetails" type="text" label="Quais os detalhes?"></v-text-field>
+              <v-text-field @input="setStart" v-model="start"  type="date" label="Qual o início?"></v-text-field>
+              <v-text-field @input="setStartTime"  type="time" label="Qual o horário de final?"></v-text-field>
+              <v-text-field @input="setEnd"  type="date" label="Qual o fim?"></v-text-field>
+              <v-text-field @input="setEndTime"  type="time" label="Qual o horário de final?"></v-text-field>
+              <v-text-field @input="setColor" type="color" label="Escolha a cor do lembrete"></v-text-field>
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn text color="blue darken-1"  @click="clean">
@@ -164,12 +164,19 @@
 </template>
 
 <script>
-import { db, moment } from '@/main'
+import { moment } from '@/main'
 import { mapActions, mapState } from "vuex"
 
 
 const computed = mapState("calendar", {
   events: state => state.events,
+  name: state => state.name,
+  details: state => state.details,
+  start: state => state.start,
+  end: state => state.end,
+  startTime: state => state.startTime,
+  endTime: state => state.endTime,
+  color: state => state.color,
 })
 
 export default {
@@ -183,13 +190,6 @@ export default {
       week: 'Semana',
       day: 'Dia'
     },
-    name: '',
-    details: '',
-    start: '',
-    startTime:'',
-    end: '',
-    endTime:'',
-    color: '#000000', // default event color
     currentlyEditing: null,
     selectedEvent: {},
     selectedElement: null,
@@ -206,14 +206,25 @@ export default {
     }   
   }),
   methods: {
-    ...mapActions("calendar", ["setEvent"]),
+    ...mapActions("calendar", ["setEvent", 
+    "addEvent", 
+    "setName", 
+    "setDetails", 
+    "setStart",
+    "setEnd",
+    "setStartTime",
+    "setEndTime",
+    "setColor",
+    "updateEventStore",
+    "deleteEventStore"
+    ]),
     async getEvents () {
       this.setEvent()
     },
     clean() {
       this.title = ''
       this.name = ''
-      this.detail =''
+      this.details =''
       this.date = ''
       this.startTime = ''
       this.endTime = ''
@@ -227,12 +238,12 @@ export default {
       this.clean()
       this.dialogDate = true
       this.focus = date
-      this.start = date
+      this.setStart(date)
     },
     setDialog() {
       this.clean()
       this.dialog = true
-      this.start = this.today
+      this.setStart(this.today)
     },
     viewDay ({ date }) {
       this.focus = date
@@ -250,41 +261,16 @@ export default {
     next () {
       this.$refs.calendar.next()
     },
-    async addEvent () {
-      if (this.name && this.start && this.end && !this.startTime && !this.endTime) {
-        await db.collection("calEvent").add({
-          name: this.name,
-          details: this.details,
-          start: this.start,
-          end: this.end,
-          color: this.color
-        })
-        this.getEvents()
-      } else if(this.name && this.start && this.end && this.startTime && this.endTime){
-          await db.collection("calEvent").add({
-          name: this.name,
-          details: this.details,
-          start: this.start + ' ' + this.startTime,
-          end: this.end + ' ' + this.endTime,
-          color: this.color
-        })
-      }
-      else {
-        alert('Você deve inserir o nome, início e fim do evento')
-      }
-    },
     editEvent (ev) {
       this.currentlyEditing = ev.id
     },
-    async updateEvent (ev) {
-      await db.collection('calEvent').doc(this.currentlyEditing).update({
-        details: ev.details
-      })
+    updateEvent (ev) {
+      this.updateEventStore(ev)
       this.selectedOpen = false
       this.currentlyEditing = null
     },
-    async deleteEvent (ev) {
-      await db.collection("calEvent").doc(ev).delete()
+    deleteEvent (ev) {
+      this.deleteEventStore(ev)
       this.selectedOpen = false
       this.getEvents()
     },
