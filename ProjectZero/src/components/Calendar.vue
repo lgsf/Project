@@ -51,7 +51,9 @@
               <v-text-field v-model="name" type="text" label="Qual o título do lembrete?"></v-text-field>
               <v-text-field v-model="details" type="text" label="Quais os detalhes?"></v-text-field>
               <v-text-field v-model="start" type="date" label="Qual o início?"></v-text-field>
+              <v-text-field v-model="startTime" type="time" label="Qual o horário de final?"></v-text-field>
               <v-text-field v-model="end" type="date" label="Qual o fim?"></v-text-field>
+              <v-text-field v-model="endTime" type="time" label="Qual o horário de final?"></v-text-field>
               <v-text-field v-model="color" type="color" label="Escolha a cor do lembrete"></v-text-field>
               <v-card-actions>
                 <v-spacer></v-spacer>
@@ -89,7 +91,7 @@
                 <v-btn text color="blue darken-1"  @click="close">
                 Fechar
               </v-btn>
-              <v-btn type="submit" text color="blue darken-1"  @click.stop="dialog = false">
+              <v-btn type="submit" text color="blue darken-1"  @click.stop="dialogDate = false">
                 Salvar
               </v-btn>
               </v-card-actions>
@@ -172,8 +174,8 @@ export default {
       week: 'Semana',
       day: 'Dia'
     },
-    name: null,
-    details: null,
+    name: '',
+    details: '',
     start: '',
     startTime:'',
     end: '',
@@ -203,18 +205,23 @@ export default {
       this.title = ''
       this.name = ''
       this.detail =''
-      this.date= ''
+      this.date = ''
+      this.startTime = ''
+      this.endTime = ''
     },
     close(){
       this.dialog = false
       this.dialogDate = false
+      this.clean()
     },
-    setDialogDate( { date }) {
+    setDialogDate({ date }) {
+      this.clean()
       this.dialogDate = true
       this.focus = date
       this.start = date
     },
     setDialog() {
+      this.clean()
       this.dialog = true
       this.start = this.today
     },
@@ -244,11 +251,6 @@ export default {
           color: this.color
         })
         this.getEvents()
-        this.name = ''
-        this.details = ''
-        this.start = ''
-        this.end = ''
-        this.color = ''
       } else if(this.name && this.start && this.end && this.startTime && this.endTime){
           await db.collection("calEvent").add({
           name: this.name,
@@ -257,12 +259,6 @@ export default {
           end: this.end + ' ' + this.endTime,
           color: this.color
         })
-        this.getEvents()
-        this.name = ''
-        this.details = ''
-        this.start = ''
-        this.end = ''
-        this.color = ''
       }
       else {
         alert('Você deve inserir o nome, início e fim do evento')
