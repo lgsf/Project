@@ -90,17 +90,17 @@
 </template>
 
 <script>
-import Alert from "@/components/shared/Alert";
-import { mapActions, mapState } from "vuex";
+import Alert from "@/components/shared/Alert"
+import { mapActions, mapState } from "vuex"
 
 const computed = mapState("setup", {
   screenCompany: state => state.companyName,
   imgUrl: state => state.imgUrl
-});
+})
 
 const computedGeneral = mapState("general", {
   isLoading: state => state.isLoading
-});
+})
 
 export default {
   components: { Alert },
@@ -120,7 +120,7 @@ export default {
         v => !!v || "Password is required",
         v => v.length >= 6 || "Password must be greater than 6 characters"
       ]
-    };
+    }
   },
 
   methods: {

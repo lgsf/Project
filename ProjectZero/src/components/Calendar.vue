@@ -1,5 +1,4 @@
 <template>
-  
     <v-col class="xs-12 sm-6" justify="center">
        <div class="text-center">
         <v-progress-circular
@@ -10,7 +9,7 @@
         </div>
       <v-sheet height="64" v-if="!isLoading">
         <v-toolbar  color="primary">
-          <v-btn color="primary" class="mr-1" small @click.stop="dialog = true">
+          <v-btn color="primary" class="mr-1" small @click.stop="setDialog()">
             <v-icon>add</v-icon>
           </v-btn>
           <v-btn color="primary" class="mr-1"  small @click="setToday">
@@ -56,10 +55,12 @@
               <v-text-field v-model="color" type="color" label="Escolha a cor do lembrete"></v-text-field>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn text color="blue darken-1"  @click="close">
-                Limpar
+              <v-btn text color="blue darken-1"  @click="clean">
+                  Limpar
+                </v-btn>
+                  <v-btn text color="blue darken-1"  @click="close">
+                  Fechar
               </v-btn>
-              
               <v-btn type="submit" text color="blue darken-1"  @click.stop="dialog = false">
                 Salvar
               </v-btn>
@@ -80,10 +81,12 @@
               <v-text-field v-model="color" type="color" label="Escolha a cor do lembrete"></v-text-field>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn text color="blue darken-1"  @click="close">
+                <v-btn text color="blue darken-1"  @click="clean">
                 Limpar
               </v-btn>
-              
+                <v-btn text color="blue darken-1"  @click="close">
+                Fechar
+              </v-btn>
               <v-btn type="submit" text color="blue darken-1"  @click.stop="dialog = false">
                 Salvar
               </v-btn>
@@ -115,28 +118,19 @@
   :activator="selectedElement"
   offset-x
   >
-  <v-card color="grey lighten-4" :width="350" >
+  <v-card color="grey lighten-4" :min-width="300" >
     <v-toolbar :color="selectedEvent.color" dark>
       <v-btn @click="deleteEvent(selectedEvent.id)" icon>
         <v-icon>delete</v-icon>
       </v-btn>
       <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
-      <div class="flex-grow-1"></div>
     </v-toolbar>
 
     <v-card-text>
       <form v-if="currentlyEditing !== selectedEvent.id">
         {{ selectedEvent.details }}
       </form>
-      <form v-else>
-        <textarea-autosize
-        v-model="selectedEvent.details"
-        type="text"
-        style="width: 100%"
-        :min-height="100"
-        placeholder="Add">
-      </textarea-autosize>
-    </form>
+     
   </v-card-text>
 
   <v-card-actions>
@@ -157,12 +151,18 @@
 </template>
 
 <script>
-import { db } from '@/main'
+import { db, moment } from '@/main'
+import { mapActions, mapState } from "vuex"
+
+const computed = mapState("calendar", {
+  events: state => state.events,
+})
+
 export default {
   data: () => ({
-    today: new Date().toISOString().substr(0, 10),
-    focus: new Date().toISOString().substr(0, 10),
-    type: 'month',
+    today: moment().format('YYYY-MM-DD'),
+    focus: new Date().toISOString().substr(0, 16).replace('T', ' '),
+    type: 'week',
     typeToLabel: {
       month: 'Mês',
       week: 'Semana',
@@ -177,62 +177,40 @@ export default {
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
-    events: [],
     dialog: false,
     dialogDate: false
   }),
   mounted () {
     this.getEvents()
   },
-  computed: {
+  computed: Object.assign({}, computed, {
     isLoading() {
       return this.$store.state.general.isLoading
-    },
-    title () {
-      const { start, end } = this
-      if (!start || !end) {
-        return ''
-      }
-      const startMonth = this.monthFormatter(start)
-      const startYear = start.year
-      const startDay = start.day + this.nth(start.day)
-
-      switch (this.type) {
-        case 'month':
-        return `${startMonth} ${startYear}`
-        case 'week':
-        case 'day':
-        return `${startMonth} ${startDay} ${startYear}`
-      }
-      return ''
-    },
-    monthFormatter () {
-      return this.$refs.calendar.getFormatter({
-        timeZone: 'UTC', month: 'long',
-      })
-    }
-  },
+    }   
+  }),
   methods: {
+    ...mapActions("calendar", ["setEvent"]),
     async getEvents () {
-      let snapshot = await db.collection('calEvent').get()
-      const events = []
-      snapshot.forEach(doc => {
-        let appData = doc.data()
-        appData.id = doc.id
-        events.push(appData)
-      })
-      this.events = events
+      this.setEvent()
     },
-    close() {
+    clean() {
       this.title = ''
       this.name = ''
       this.detail =''
       this.date= ''
+    },
+    close(){
       this.dialog = false
+      this.dialogDate = false
     },
     setDialogDate( { date }) {
       this.dialogDate = true
       this.focus = date
+      this.start = date
+    },
+    setDialog() {
+      this.dialog = true
+      this.start = this.today
     },
     viewDay ({ date }) {
       this.focus = date
