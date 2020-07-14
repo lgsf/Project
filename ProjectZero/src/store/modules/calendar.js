@@ -9,6 +9,7 @@ const state = () => ({
     end: '',
     endTime:'',
     color: '#000000',
+    editingUser:[]
   })
 
   const mutations =  {
@@ -41,7 +42,10 @@ const state = () => ({
     },
     setColor: (state, payload) => {
       state.color = payload
-    }
+    },
+    editUser(state, payload) {
+      state.editingUser = payload
+  }
 }
 
 const actions = {
@@ -49,9 +53,27 @@ const actions = {
       let snapshot = await db.collection('calEvent').get()
       const events = []
       snapshot.forEach(doc => {
+        let userArray = []
+        let author = {}
+        userArray = doc.data().user
+        author = doc.data().author
+        if(userArray.length == 0){
         let appData = doc.data()
         appData.id = doc.id
         events.push(appData)
+      }
+      else if (userArray.length > 0) {
+        let appData = doc.data()
+        appData.id = doc.id
+        if(author == context.rootState.auth.user.uid)
+        events.push(appData)
+        userArray.forEach (item =>  {
+          if(item.id == context.rootState.auth.user.uid ){
+              events.push(appData)
+              }
+            })
+
+      }
       })
       context.commit('setEvents', events)
     },
@@ -74,7 +96,9 @@ const actions = {
           details: context.state.details,
           start: context.state.start,
           end: context.state.end,
-          color: context.state.color
+          color: context.state.color,
+          author: context.rootState.auth.user.uid,
+          user: context.state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
         })
         context.dispatch('setEvent')
       } else if(context.state.name && context.state.start && context.state.end && context.state.startTime && context.state.endTime){
@@ -83,7 +107,9 @@ const actions = {
           details: context.state.details,
           start: context.state.start + ' ' + context.state.startTime,
           end: context.state.end + ' ' + context.state.endTime,
-          color: context.state.color
+          color: context.state.color,
+          author: context.rootState.auth.user.uid,
+          user: context.state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
         })
         context.dispatch('setEvent')
       }
@@ -112,6 +138,9 @@ const actions = {
     setColor({ commit }, payload) {
       commit('setColor', payload)
     },
+    editUser({ commit }, payload) {
+      commit('editUser', payload)
+  }
   }
 
 

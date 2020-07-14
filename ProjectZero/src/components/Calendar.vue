@@ -48,13 +48,31 @@
         <v-card>
           <v-container>
             <v-form @submit.prevent="addEvent" >
-              <v-text-field @input="setName" type="text" label="Qual o título do lembrete?"></v-text-field>
-              <v-text-field @input="setDetails" type="text" label="Quais os detalhes?"></v-text-field>
+              <v-text-field @input="setName" v-model="name" type="text" label="Qual o título do lembrete?"></v-text-field>
+              <v-text-field @input="setDetails" v-model="details" type="text" label="Quais os detalhes?"></v-text-field>
               <v-text-field @input="setStart" v-model="start"  type="date" label="Qual o início?"></v-text-field>
-              <v-text-field @input="setStartTime"  type="time" label="Qual o horário de final?"></v-text-field>
-              <v-text-field @input="setEnd"  type="date" label="Qual o fim?"></v-text-field>
-              <v-text-field @input="setEndTime"  type="time" label="Qual o horário de final?"></v-text-field>
-              <v-text-field @input="setColor" type="color" label="Escolha a cor do lembrete"></v-text-field>
+              <v-text-field @input="setStartTime" v-model="startTime" type="time" label="Qual o horário de final?"></v-text-field>
+              <v-text-field @input="setEnd" v-model="end"  type="date" label="Qual o fim?"></v-text-field>
+              <v-text-field @input="setEndTime" v-model="endTime"  type="time" label="Qual o horário de final?"></v-text-field>
+              <v-text-field @input="setColor" v-model="color" type="color" label="Escolha a cor do lembrete"></v-text-field>
+              <div >
+                <v-radio-group v-model="picked"  :mandatory="true" row>
+                  <v-radio label="Todos" value="Todos"></v-radio>
+                  <v-radio label="Usuários" value="Usuários"></v-radio>
+                </v-radio-group>
+              </div>
+              <v-autocomplete
+                  v-if="picked == 'Usuários'"
+                  v-model="editingUser"
+                  :items="users"
+                  color="primary"
+                  item-text="name"
+                  label="Definir usuários para receber evento"
+                  return-object
+                  dense
+                  multiple
+                  @input="editUser"
+                ></v-autocomplete>
               <v-card-actions>
                 <v-spacer></v-spacer>
               <v-btn text color="blue darken-1"  @click="clean">
@@ -76,13 +94,31 @@
         <v-card>
           <v-container>
             <v-form @submit.prevent="addEvent" >
-              <v-text-field @input="setName" type="text" label="Qual o título do lembrete?"></v-text-field>
-              <v-text-field @input="setDetails" type="text" label="Quais os detalhes?"></v-text-field>
+              <v-text-field @input="setName" v-model="name" type="text" label="Qual o título do lembrete?"></v-text-field>
+              <v-text-field @input="setDetails" v-model="details" type="text" label="Quais os detalhes?"></v-text-field>
               <v-text-field @input="setStart" v-model="start"  type="date" label="Qual o início?"></v-text-field>
-              <v-text-field @input="setStartTime"  type="time" label="Qual o horário de final?"></v-text-field>
-              <v-text-field @input="setEnd"  type="date" label="Qual o fim?"></v-text-field>
-              <v-text-field @input="setEndTime"  type="time" label="Qual o horário de final?"></v-text-field>
-              <v-text-field @input="setColor" type="color" label="Escolha a cor do lembrete"></v-text-field>
+              <v-text-field @input="setStartTime" v-model="startTime" type="time" label="Qual o horário de final?"></v-text-field>
+              <v-text-field @input="setEnd" v-model="end"  type="date" label="Qual o fim?"></v-text-field>
+              <v-text-field @input="setEndTime" v-model="endTime"  type="time" label="Qual o horário de final?"></v-text-field>
+              <v-text-field @input="setColor" v-model="color" type="color" label="Escolha a cor do lembrete"></v-text-field>
+              <div >
+                <v-radio-group v-model="picked"  :mandatory="true" row>
+                  <v-radio label="Todos" value="Todos"></v-radio>
+                  <v-radio label="Usuários" value="Usuários"></v-radio>
+                </v-radio-group>
+              </div>
+              <v-autocomplete
+                  v-if="picked == 'Usuários'"
+                  v-model="editingUser"
+                  :items="users"
+                  color="primary"
+                  item-text="name"
+                  label="Definir usuários para receber evento"
+                  return-object
+                  dense
+                  multiple
+                  @input="editUser"
+                ></v-autocomplete>
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn text color="blue darken-1"  @click="clean">
@@ -177,13 +213,18 @@ const computed = mapState("calendar", {
   startTime: state => state.startTime,
   endTime: state => state.endTime,
   color: state => state.color,
+  editingUser: state => state.editingUser
+})
+
+const computedUser = mapState("users", {
+  users: state => state.userListModified,
 })
 
 export default {
 
   data: () => ({
     today: moment().format('YYYY-MM-DD'),
-    focus: new Date().toISOString().substr(0, 16).replace('T', ' '),
+    focus: moment().format('YYYY-MM-DD'),
     type: 'month',
     typeToLabel: {
       month: 'Mês',
@@ -195,18 +236,25 @@ export default {
     selectedElement: null,
     selectedOpen: false,
     dialog: false,
-    dialogDate: false
+    dialogDate: false,
+    picked: 'Todos'
   }),
   mounted () {
     this.getEvents()
+    this.readUsers()
   },
-  computed: Object.assign({}, computed, {
+  computed: Object.assign({}, computed, computedUser, {
     isLoading() {
       return this.$store.state.general.isLoading
-    }   
+    },
+    isUser() {
+      return this.$store.state.auth.user.uid
+    }  
   }),
   methods: {
-    ...mapActions("calendar", ["setEvent", 
+    ...mapActions("calendar", 
+    [
+    "setEvent", 
     "addEvent", 
     "setName", 
     "setDetails", 
@@ -216,19 +264,25 @@ export default {
     "setEndTime",
     "setColor",
     "updateEventStore",
-    "deleteEventStore"
+    "deleteEventStore",
+    "editUser"
     ]),
-    async getEvents () {
+    ...mapActions("users", [
+  "readUsers"
+  ]),
+    getEvents () {
       this.setEvent()
     },
     clean() {
-      this.title = ''
-      this.name = ''
-      this.details =''
-      this.date = ''
-      this.startTime = ''
-      this.endTime = ''
+      let clean = ''
+      this.setName(clean) 
+      this.setDetails(clean) 
+      this.setEnd(clean) 
+      this.setStartTime(clean) 
+      this.setEndTime(clean)
+      this.editUser([])
     },
+   
     close(){
       this.dialog = false
       this.dialogDate = false
@@ -239,11 +293,13 @@ export default {
       this.dialogDate = true
       this.focus = date
       this.setStart(date)
+      this.setEnd(date)
     },
     setDialog() {
       this.clean()
       this.dialog = true
       this.setStart(this.today)
+      this.setEnd(this.today)
     },
     viewDay ({ date }) {
       this.focus = date
@@ -272,7 +328,6 @@ export default {
     deleteEvent (ev) {
       this.deleteEventStore(ev)
       this.selectedOpen = false
-      this.getEvents()
     },
     showEvent ({ nativeEvent, event }) {
       const open = () => {

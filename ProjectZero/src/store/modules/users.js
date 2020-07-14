@@ -11,6 +11,7 @@ const state = () => ({
     editUserBirthDate: '',
     editUserGroup: '',
     userList: [],
+    userListModified:[],
     userGroups: []
 
 })
@@ -20,8 +21,13 @@ const mutations = {
         state.userGroups = payload
     },
 
-    setUserList(state, payload) {
+    setUserList( state, payload) {
         state.userList = payload
+        
+    },
+    setUserListModified( state, payload) {
+        state.userListModified = payload
+        
     },
     editUser(state, payload) {
         let anySelected = state.selected 
@@ -81,7 +87,7 @@ const actions = {
             })
     },
 
-    readUsers(context, showLoading) {
+    readUsers({rootState}, context, showLoading) {
         context = this.dispatch ? this : context;
         if(showLoading){
             context.dispatch('general/setIsLoading')
@@ -92,7 +98,7 @@ const actions = {
             db.collection("users")
                 .get()
                 .then(function (snapshots) {
-                    onUsersLoaded(context, snapshots)
+                    onUsersLoaded(context, rootState, snapshots)
                     if(showLoading)
                         context.dispatch('general/resetIsLoading')
                 })
@@ -151,14 +157,17 @@ const actions = {
 
 }
 
-function onUsersLoaded(context, payload) {
+function onUsersLoaded(context, rootState, payload) {
     let users = []
+    let usersModified = []
     payload.forEach(userSnapShot => {
         let userData = userSnapShot.data()
         userData.id = userSnapShot.id
         users.push(userData)
     })
     context.commit('users/setUserList', users)
+    usersModified = users.filter(obj => obj.id !== rootState.auth.user.uid )
+    context.commit('users/setUserListModified', usersModified)
 }
 
 
