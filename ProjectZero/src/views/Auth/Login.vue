@@ -2,9 +2,7 @@
   <div class="login">
     <br />
     <v-banner>
-      <a href="Home">
-        <v-img :src="imgUrl" height="60" width="140" contain></v-img>
-      </a>
+      <router-link to="/home"><v-img  :src="imgUrl" height="90" width="80" contain></v-img></router-link>
       <template v-slot:actions>
         <h3>{{screenCompany}}</h3>
       </template>

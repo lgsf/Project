@@ -67,6 +67,7 @@ const actions = {
     },
 
     userSignOut({ commit, state }) {
+        this.dispatch('general/resetAllMessages')
         let currentUser = firebase.auth().currentUser
         firebase
             .auth()

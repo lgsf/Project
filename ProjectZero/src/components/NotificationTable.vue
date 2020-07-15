@@ -46,7 +46,7 @@
                   </v-row>
                   <br>
                   <v-row>
-                    <span v-html="item.detail"></span>
+                    <component :is="{template: item.detail}"></component>
                   </v-row>
                   <br> 
                   <v-row>

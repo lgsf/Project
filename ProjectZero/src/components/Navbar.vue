@@ -3,7 +3,7 @@
     <v-app-bar app flat>
       <v-app-bar-nav-icon @click="drawer = !drawer" class></v-app-bar-nav-icon>
       <v-toolbar-title>
-        <v-img :src="imgUrl" height="60" width="140" contain></v-img>
+        <router-link to="/home"><v-img  :src="imgUrl" height="90" width="80" contain></v-img></router-link>
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn @click="userSignOut" color="grey-2">
