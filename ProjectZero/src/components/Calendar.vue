@@ -47,7 +47,7 @@
       <v-dialog v-model="dialog" max-width="500">
         <v-card>
           <v-toolbar class="primary ">
-          <h3 class="white--text">{{ name }} - {{toMoment}} <span v-if="startTime">às</span> {{startTime}}</h3>
+          <h3 class="white--text">{{ name || "Título" }} - {{toMoment}} <span v-if="startTime">às</span> {{startTime}}</h3>
             <v-spacer></v-spacer>
           <v-icon right class="white--text">calendar_today</v-icon>
         </v-toolbar>
