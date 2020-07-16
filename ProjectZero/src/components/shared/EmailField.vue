@@ -2,7 +2,7 @@
   <v-text-field
     :label="label"
     :error="error"
-    :rules="rules"
+    :rules="getRules()"
     :value="value"
     v-on:input="$emit('input', $event)"
   ></v-text-field>
@@ -11,18 +11,18 @@
 <script>
 const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 export default {
-  props: ["label", "value"],
+  props: ["label", "value", "required"],
   data: () => ({
-    error: undefined,
-    rules: [
-      value => {
-        return !value || pattern.test(value) || "E-mail inválido.";
-      }
-    ]
+    error: undefined
   }),
   methods: {
-    isValid() {
-      return !this.value || pattern.test(this.value);
+    getRules() {
+      let rules = [
+        value => !value || pattern.test(value) || "E-mail inválido."
+      ];
+      if (this.required)
+        rules.push(value => !!value || `O campo ${this.label} é obrigatório.`);
+      return rules;
     }
   }
 };
