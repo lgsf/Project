@@ -51,7 +51,7 @@
             <v-row>
               <v-col cols="12" class="no-top-bottom-padding">
                 <v-row>
-                  <v-col cols="4" class="no-top-bottom-padding">
+                  <v-col cols="12" md="4" lg="4" xl="4" sm="12" class="no-top-bottom-padding">
                     <DatePicker
                       dateLabel="Data de criação:"
                       :value="newOrder.creation_date"
@@ -59,7 +59,7 @@
                       :disable="true"
                     />
                   </v-col>
-                  <v-col cols="4" class="no-top-bottom-padding">
+                  <v-col cols="12" md="4" lg="4" xl="4" sm="12" class="no-top-bottom-padding">
                     <DatePicker
                       dateLabel="Data de Início:"
                       :value="newOrder.start_date"
@@ -67,7 +67,7 @@
                       v-on:update="updateNewOrderStartDate"
                     />
                   </v-col>
-                  <v-col cols="4" class="no-top-bottom-padding">
+                  <v-col cols="12" md="4" lg="4" xl="4" sm="12" class="no-top-bottom-padding">
                     <DatePicker
                      dateLabel="Data de encerramento:"
                      :value="newOrder.end_date"

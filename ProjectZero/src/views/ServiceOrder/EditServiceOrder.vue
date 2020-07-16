@@ -61,23 +61,10 @@
             </v-col>
           </v-row>
           <v-row class="ml-5 mr-5">
-            <v-col cols="4" v-if="checkWidth">
-              <DatePicker
-                dateLabel="Data de criação:"
-                :value="selected.creation_date"
-                ref="DatePicker"
-                :disable="true"
-              />
+            <v-col cols="12" md="4" lg="4" xl="4" sm="12" >
+              <v-text-field v-model="selected.creation_date" label="Data de criação:" disabled></v-text-field>
             </v-col>
-            <v-col v-if="!checkWidth" cols="12">
-              <DatePicker
-                dateLabel="Data de criação:"
-                :value="selected.creation_date"
-                ref="DatePicker"
-                :disable="true"
-              />
-            </v-col>
-            <v-col cols="4" v-if="checkWidth">
+            <v-col cols="12" md="4" lg="4" xl="4" sm="12" v-if="selected.status == 'Pendente'">
               <DatePicker
                 dateLabel="Data prevista de início:"
                 :value="selected.start_date"
@@ -86,7 +73,10 @@
                 :disable="!isAdmin"
               />
             </v-col>
-            <v-col cols="4" v-if="checkWidth">
+            <v-col cols="12" md="4" lg="4" xl="4" sm="12" v-if="selected.status == 'Em progresso' || selected.status == 'Finalizada' || selected.status == 'Cancelada'">
+              <v-text-field v-model="selected.start_date_time" label="Data de início:" disabled></v-text-field>
+            </v-col>
+            <v-col cols="12" md="4" lg="4" xl="4" sm="12" v-if="selected.status == 'Em progresso' || selected.status == 'Pendente'" >
               <DatePicker
                 dateLabel="Data prevista de encerramento:"
                 :value="selected.end_date"
@@ -95,23 +85,11 @@
                 :disable="!isAdmin"
               />
             </v-col>
-            <v-col cols="12" v-if="!checkWidth">
-              <DatePicker
-                dateLabel="Data prevista de início:"
-                :value="selected.start_date"
-                ref="DatePicker"
-                v-on:update="updateOrderStartDate"
-                :disable="!isAdmin"
-              />
-              </v-col>
-              <v-col cols="12" v-if="!checkWidth">
-              <DatePicker
-                dateLabel="Data prevista de encerramento:"
-                :value="selected.end_date"
-                ref="DatePicker"
-                v-on:update="updateOrderEndDate"
-                :disable="!isAdmin"
-              />
+            <v-col cols="12" md="4" lg="4" xl="4" sm="12" v-if="selected.status == 'Finalizada'">
+              <v-text-field v-model="selected.end_date_time" label="Data de encerramento:" disabled></v-text-field>
+            </v-col>
+            <v-col cols="12" md="4" lg="4" xl="4" sm="12" v-if="selected.status == 'Cancelada'">
+              <v-text-field v-model="selected.end_date_time" label="Data de cancelamento:" disabled></v-text-field>
             </v-col>
           </v-row>
           <v-row class="ml-5 mt-5 mr-5">
@@ -130,7 +108,7 @@
             </v-col>
           </v-row>
           <v-row class="ml-5 mr-5">
-            <v-col cols="6">
+            <v-col cols="12" md="6" lg="6" xl="6" sm="12">
               <v-autocomplete
                 v-model="selected.users"
                 :items="users"
@@ -143,7 +121,7 @@
                 :disabled="!isAdmin"
               ></v-autocomplete>
             </v-col>
-            <v-col cols="6">
+            <v-col cols="12" md="6" lg="6" xl="6" sm="12">
               <v-autocomplete
                 v-model="selected.groups"
                 :items="groups"
@@ -321,7 +299,7 @@ export default {
     {}, computed,
     {
        checkWidth() {
-            if(this.width > 620){
+            if(this.width > 752){
               return true
             }
             else return false

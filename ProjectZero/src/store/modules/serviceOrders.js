@@ -1,4 +1,4 @@
-import { db, fileStorage, moment } from "@/main";
+import { db, fileStorage, moment } from "@/main"
 import router from '@/router'
 
 const state = () => ({
@@ -97,10 +97,14 @@ function onServiceOrdersLoaded(context, payload) {
             orderData.id = orderSnapShot.id
             orderData.dateForSorting = orderData.creation_date
             orderData.creation_date = moment.unix(orderData.creation_date).format('DD/MM/YYYY')
-            if (orderData.start_date)
+            if (orderData.start_date){
+                orderData.start_date_time = moment.unix(orderData.start_date).format('DD/MM/YYYY, HH:mm:ss')
                 orderData.start_date = moment.unix(orderData.start_date).format('DD/MM/YYYY')
-            if (orderData.end_date)
+            }
+            if (orderData.end_date){
+                orderData.end_date_time = moment.unix(orderData.end_date).format('DD/MM/YYYY, HH:mm:ss')
                 orderData.end_date = moment.unix(orderData.end_date).format('DD/MM/YYYY')
+            }
             serviceOrders.push(orderData)
         }
     })
@@ -367,7 +371,19 @@ const actions = {
     },
     updateStatus(context, payload) {
         context.commit("updateStatus", payload)
-        this.dispatch('serviceOrders/saveServiceOrder')
+        if (payload == "Em progresso") {
+            context.commit('updateOrderStartDate', moment().unix())
+            this.dispatch('serviceOrders/initiateOrder')
+        } 
+        else if (payload == "Finalizada"){
+            context.commit('updateOrderEndDate', moment().unix())
+            this.dispatch('serviceOrders/finalizeOrder', true)
+        }
+        else {
+            context.commit('updateOrderEndDate', moment().unix())
+            this.dispatch('serviceOrders/finalizeOrder')
+        }
+        
     },
     updateOrderStartDate(context, payload) {
         context.commit('updateOrderStartDate', payload)
@@ -533,6 +549,43 @@ const actions = {
             })
             .then(() => {
                 this.dispatch('general/setSuccessMessage', 'Ordem de serviço salva com sucesso.')
+            })
+            .catch(error => {
+                console.error("Error updating document: ", error)
+            })
+    },
+    initiateOrder(context) {
+        let serviceOrder = context.state.selected
+        if (!serviceOrder)
+            return;
+        db.collection("serviceOrder")
+            .doc(serviceOrder.id)
+            .update({
+                start_date: serviceOrder.start_date,
+                status: serviceOrder.status
+            })
+            .then(() => {
+                this.dispatch('general/setSuccessMessage', 'A ordem de serviço foi inicializada com sucesso')
+            })
+            .catch(error => {
+                console.error("Error updating document: ", error)
+            })
+    },
+    finalizeOrder(context, payload) {
+        let serviceOrder = context.state.selected
+        if (!serviceOrder)
+            return;
+        db.collection("serviceOrder")
+            .doc(serviceOrder.id)
+            .update({
+                end_date: serviceOrder.end_date,
+                status: serviceOrder.status
+            })
+            .then(() => {
+                if (payload === true)
+                this.dispatch('general/setSuccessMessage', 'A ordem de serviço foi finalizada com sucesso')
+                else
+                this.dispatch('general/setSuccessMessage', 'A ordem de serviço foi cancelada com sucesso')
             })
             .catch(error => {
                 console.error("Error updating document: ", error)
