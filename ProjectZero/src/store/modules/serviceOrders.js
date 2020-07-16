@@ -1,5 +1,6 @@
 import { db, fileStorage, moment } from "@/main"
 import router from '@/router'
+import catchError from '@/utilities/firebaseErrors'
 
 const state = () => ({
     client: undefined,
@@ -125,7 +126,7 @@ function getOrderUsersIds(serviceOrders) {
         userIds.push(order.administrator)
         userIds = userIds.concat(order.users)
         userIds = userIds.unique()
-    });
+    })
     return userIds
 }
 
@@ -165,8 +166,8 @@ function getFileDownloadUrl(file) {
         fileStorage.ref(file.metadata.fullPath)
             .getDownloadURL()
             .then(url => {
-                file.url = url;
-                resolve(file);
+                file.url = url
+                resolve(file)
             })
     })
 }
@@ -283,7 +284,6 @@ Array.prototype.unique = function (compare) {
                 a.splice(j--, 1)
         }
     }
-
     return a
 }
 
@@ -333,10 +333,12 @@ const actions = {
     searchFor(context, payload) {
         context.commit('searchFor', payload)
     },
-    reloadOrders(context) {
-        let self = this;
+    reloadOrders(context, payload) {
+        let self = this
+        if (payload !== true){
         context.commit('selectOrder', '')
         this.dispatch('general/resetAllMessages', '')
+        }
         this.dispatch('general/setIsLoading').then(() => {
             db.collection("serviceOrder")
                 .get()
@@ -344,7 +346,7 @@ const actions = {
                     onServiceOrdersLoaded(context, orders)
                         .then((serviceOrders) => {
                             self.dispatch('users/readUsers').then(function () {
-                                let userIds = getOrderUsersIds(serviceOrders);
+                                let userIds = getOrderUsersIds(serviceOrders)
                                 let users = context.rootGetters['users/filterUsersById'](userIds)
                                 completeOrdersWithUsersInformation(serviceOrders, users)
                                 context.commit('updateOrders', serviceOrders)
@@ -435,7 +437,8 @@ const actions = {
                     this.dispatch('serviceOrders/closeTaskModal')
                 })
                 .catch(error => {
-                    console.error("Error updating document: ", error)
+                    let errorMessage = catchError(error)
+                    this.dispatch('general/setErrorMessage', errorMessage)
                 })
         else
             getOrderFromDatabase(context.state.selected.id).get()
@@ -453,7 +456,8 @@ const actions = {
                     this.dispatch('serviceOrders/closeTaskModal')
                 })
                 .catch(error => {
-                    console.error("Error updating document: ", error)
+                    let errorMessage = catchError(error)
+                    this.dispatch('general/setErrorMessage', errorMessage)
                 })
 
         if (context.state.selectedTask.users && context.state.selectedTask.users.email && context.state.selectedTask.users.email != context.rootState.auth.user.email) {
@@ -524,8 +528,8 @@ const actions = {
                             })
                         }
                     }
-                });
-            });
+                })
+            })
             this.dispatch('serviceOrders/saveTask')
         }
 
@@ -533,7 +537,7 @@ const actions = {
     saveServiceOrder(context) {
         let serviceOrder = context.state.selected
         if (!serviceOrder)
-            return;
+            return
         db.collection("serviceOrder")
             .doc(serviceOrder.id)
             .update({
@@ -551,13 +555,14 @@ const actions = {
                 this.dispatch('general/setSuccessMessage', 'Ordem de serviço salva com sucesso.')
             })
             .catch(error => {
-                console.error("Error updating document: ", error)
+                let errorMessage = catchError(error)
+                this.dispatch('general/setErrorMessage', errorMessage)
             })
     },
     initiateOrder(context) {
         let serviceOrder = context.state.selected
         if (!serviceOrder)
-            return;
+            return
         db.collection("serviceOrder")
             .doc(serviceOrder.id)
             .update({
@@ -568,13 +573,14 @@ const actions = {
                 this.dispatch('general/setSuccessMessage', 'A ordem de serviço foi inicializada com sucesso.')
             })
             .catch(error => {
-                console.error("Error updating document: ", error)
+                let errorMessage = catchError(error)
+                this.dispatch('general/setErrorMessage', errorMessage)
             })
     },
     finalizeOrder(context, payload) {
         let serviceOrder = context.state.selected
         if (!serviceOrder)
-            return;
+            return
         db.collection("serviceOrder")
             .doc(serviceOrder.id)
             .update({
@@ -582,13 +588,17 @@ const actions = {
                 status: serviceOrder.status
             })
             .then(() => {
-                if (payload === true)
+                if (payload === true){
                 this.dispatch('general/setSuccessMessage', 'A ordem de serviço foi finalizada com sucesso.')
-                else
-                this.dispatch('general/setSuccessMessage', 'A ordem de serviço foi cancelada com sucesso.')
+                }
+                else {
+                    this.dispatch('general/setSuccessMessage', 'A ordem de serviço foi cancelada com sucesso.')
+                }
+                
             })
             .catch(error => {
-                console.error("Error updating document: ", error)
+                let errorMessage = catchError(error)
+                this.dispatch('general/setErrorMessage', errorMessage)
             })
     },
     setOrUnsetEditMode(context) {
