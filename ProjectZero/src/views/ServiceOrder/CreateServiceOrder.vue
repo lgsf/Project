@@ -8,9 +8,15 @@
         <v-divider></v-divider>
         <v-card-text>
           <v-container>
+            <v-form v-model="valid">
             <v-row>
               <v-col cols="12" style="padding-bottom: 0px">
-                <v-text-field label="Nome: " v-model="newOrder.name"></v-text-field>
+                <v-text-field label="Nome: " 
+                 v-model="newOrder.name"
+                 required
+                 :rules="nameRules"
+                 >
+                 </v-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -37,6 +43,8 @@
                     label="Cliente"
                     return-object
                     dense
+                    required
+                    :rules="clientRules"
                   ></v-autocomplete>
                 </v-col>
             </v-row>
@@ -112,13 +120,14 @@
                 ></v-autocomplete>
               </v-col>
             </v-row>
+            </v-form>
           </v-container>
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="closeCreateOrderModal">Fechar</v-btn>
-          <v-btn color="blue darken-1" text @click="saveNewOrder">Salvar</v-btn>
+          <v-btn color="blue darken-1" :disabled="!valid" text @click="saveNewOrder">Salvar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -160,7 +169,15 @@ export default {
       DatePicker
     },
     data() {
-        return { }
+        return { 
+          valid: false,
+          nameRules: [
+            v => !!v || 'É obrigatório selecionar um nome para a ordem'
+          ],
+          clientRules: [
+            v => !!v || 'É obrigatório selecionar um cliente para a ordem'
+          ],
+         }
     },
     methods:  Object.assign({}, methods, userMethods, erpMethods, clientsMethods),
     computed,

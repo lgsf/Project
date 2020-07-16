@@ -8,7 +8,7 @@
         </div>
         <v-card v-if="!isLoading" class="mx-auto mt-5">
           <v-toolbar class="primary white--text" dark>
-            <h3>{{ selected.name }}</h3>
+            <h3>{{ selected.name }} - {{selected.status}}</h3>
             <v-spacer></v-spacer>
             <div class="text-center">
             <v-menu>
@@ -79,7 +79,7 @@
             </v-col>
             <v-col cols="4" v-if="checkWidth">
               <DatePicker
-                dateLabel="Data de Início:"
+                dateLabel="Data prevista de início:"
                 :value="selected.start_date"
                 ref="DatePicker"
                 v-on:update="updateOrderStartDate"
@@ -88,7 +88,7 @@
             </v-col>
             <v-col cols="4" v-if="checkWidth">
               <DatePicker
-                dateLabel="Data de encerramento:"
+                dateLabel="Data prevista de encerramento:"
                 :value="selected.end_date"
                 ref="DatePicker"
                 v-on:update="updateOrderEndDate"
@@ -97,7 +97,7 @@
             </v-col>
             <v-col cols="12" v-if="!checkWidth">
               <DatePicker
-                dateLabel="Data de Início:"
+                dateLabel="Data prevista de início:"
                 :value="selected.start_date"
                 ref="DatePicker"
                 v-on:update="updateOrderStartDate"
@@ -106,7 +106,7 @@
               </v-col>
               <v-col cols="12" v-if="!checkWidth">
               <DatePicker
-                dateLabel="Data de encerramento:"
+                dateLabel="Data prevista de encerramento:"
                 :value="selected.end_date"
                 ref="DatePicker"
                 v-on:update="updateOrderEndDate"
@@ -169,7 +169,8 @@
                 <v-icon>mdi-plus</v-icon>Tarefa
               </v-btn>
               <v-btn v-if="checkWidth" color="blue" dark @click="filtertasks()" class="mt-1">
-                Filtrar
+                <span v-if="!showOnlyMine">Minhas tarefas</span> 
+                <span v-if="showOnlyMine">Todas tarefas</span>
                 <v-icon style="padding-left:8px;">filter_list</v-icon>
               </v-btn>
             </v-col>
@@ -271,13 +272,18 @@ const computed = mapState({
   },
   duration: function(state) {
     let accumulatedTime = 0
+    let doneTime = 0
     state.serviceOrders.selectedOrderTasks.forEach(task => {
       accumulatedTime += task.estimated_duration
         ? parseInt(task.estimated_duration)
         : 0
+      if(task.status === "Finalizada" || task.status === "Cancelada" ){
+        doneTime += task.estimated_duration
+        ? parseInt(task.estimated_duration)
+        : 0
+      }
     })
-
-    return accumulatedTime
+    return doneTime + "/" + accumulatedTime 
   }
 })
 

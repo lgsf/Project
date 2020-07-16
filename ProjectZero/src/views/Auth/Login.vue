@@ -111,12 +111,12 @@ export default {
       email: "",
       password: "",
       emailRules: [
-        v => !!v || "E-mail is required",
-        v => /.+@.+/.test(v) || "E-mail must be valid"
+        v => !!v || 'O endereço de e-mail é obrigatório',
+        v => /.+@.+/.test(v) || 'O endereço de email deve ser válido'
       ],
       passwordRules: [
-        v => !!v || "Password is required",
-        v => v.length >= 6 || "Password must be greater than 6 characters"
+        v => !!v || "A senha é obrigatória",
+        v => v.length >= 6 || "A senha deve conter mais de 6 caracteres"
       ]
     }
   },
