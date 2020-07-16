@@ -87,9 +87,9 @@ const actions = {
             })
     },
 
-    readUsers({rootState}, context, showLoading) {
+    readUsers({rootState, context}, payload) {
         context = this.dispatch ? this : context;
-        if(showLoading){
+        if(payload){
             context.dispatch('general/setIsLoading')
             context.dispatch('general/resetAllMessages', '')
         }
@@ -99,13 +99,13 @@ const actions = {
                 .get()
                 .then(function (snapshots) {
                     onUsersLoaded(context, rootState, snapshots)
-                    if(showLoading)
+                    if(payload)
                         context.dispatch('general/resetIsLoading')
                 })
                 .catch(error => {
                     console.log("Error getting documents: ", error);
                 })
-            })  
+            })
     },
 
     onSelectedUser({ commit }, payload) {

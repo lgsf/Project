@@ -588,7 +588,7 @@ const actions = {
                 status: serviceOrder.status
             })
             .then(() => {
-                if (payload === true){
+                if (payload === true) {
                 this.dispatch('general/setSuccessMessage', 'A ordem de serviço foi finalizada com sucesso.')
                 }
                 else {
