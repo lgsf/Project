@@ -17,7 +17,12 @@
             <v-container>
               <v-row>
                 <v-col cols="12">
-                  <v-text-field label="Razão Social*" :value="name" @input="editName" required></v-text-field>
+                  <v-text-field
+                    label="Razão Social*"
+                    :value="name"
+                    @input="editName"
+                    :rules="[rules.nameRequired]"
+                  ></v-text-field>
                 </v-col>
               </v-row>
               <v-row>
@@ -71,7 +76,10 @@ export default {
   components: { EmailField, CnpjField },
   data() {
     return {
-      isNotValid: false
+      isNotValid: false,
+      rules: {
+        nameRequired: value => !!value || `O campo Razão Social é obrigatório.`
+      }
     };
   },
   computed,

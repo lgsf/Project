@@ -11,7 +11,12 @@
             <v-container>
               <v-row>
                 <v-col cols="12">
-                  <v-text-field label="Nome*" :value="name" @input="setName" required></v-text-field>
+                  <v-text-field
+                    label="Nome*"
+                    :value="name"
+                    @input="setName"
+                    :rules="[rules.nameRequired]"
+                  ></v-text-field>
                 </v-col>
               </v-row>
               <v-row>
@@ -92,7 +97,10 @@ export default {
   components: { DatePicker, PhoneNumberField, EmailField },
   data() {
     return {
-      isNotValid: false
+      isNotValid: false,
+      rules: {
+        nameRequired: value => !!value || `O campo Nome é obrigatório.`
+      }
     };
   },
   methods,
