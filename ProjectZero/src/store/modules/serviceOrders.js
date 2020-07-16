@@ -565,7 +565,7 @@ const actions = {
                 status: serviceOrder.status
             })
             .then(() => {
-                this.dispatch('general/setSuccessMessage', 'A ordem de serviço foi inicializada com sucesso')
+                this.dispatch('general/setSuccessMessage', 'A ordem de serviço foi inicializada com sucesso.')
             })
             .catch(error => {
                 console.error("Error updating document: ", error)
@@ -583,9 +583,9 @@ const actions = {
             })
             .then(() => {
                 if (payload === true)
-                this.dispatch('general/setSuccessMessage', 'A ordem de serviço foi finalizada com sucesso')
+                this.dispatch('general/setSuccessMessage', 'A ordem de serviço foi finalizada com sucesso.')
                 else
-                this.dispatch('general/setSuccessMessage', 'A ordem de serviço foi cancelada com sucesso')
+                this.dispatch('general/setSuccessMessage', 'A ordem de serviço foi cancelada com sucesso.')
             })
             .catch(error => {
                 console.error("Error updating document: ", error)
