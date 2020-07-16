@@ -75,8 +75,8 @@ export default {
             screenTitle: 'Esqueci a senha',
             email: '',
             emailRules: [
-                v => !!v || 'E-mail is required',
-                v => /.+@.+/.test(v) || 'E-mail must be valid'
+                v => !!v || 'O endereço de e-mail é obrigatório',
+                v => /.+@.+/.test(v) || 'O endereço de email deve ser válido'
             ]
         }
     },
