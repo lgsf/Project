@@ -22,7 +22,7 @@
               </v-row>
               <v-row>
                 <v-col cols="12">
-                  <v-text-field label="CNPJ" :value="cnpj" @input="editCnpj" required></v-text-field>
+                  <cnpj-field label="CNPJ" :value="cnpj" @input="editCnpj" required="true"></cnpj-field>
                 </v-col>
               </v-row>
               <v-row>
@@ -47,6 +47,7 @@
 <script>
 import { mapState, mapActions } from "vuex";
 import EmailField from "@/components/shared/EmailField";
+import CnpjField from "@/components/shared/CnpjField";
 
 const computed = mapState("clients", {
   title: state => state.editTitle,
@@ -67,7 +68,7 @@ const methods = mapActions("clients", [
 ]);
 
 export default {
-  components: { EmailField },
+  components: { EmailField, CnpjField },
   data() {
     return {
       isNotValid: false
