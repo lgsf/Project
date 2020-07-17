@@ -23,7 +23,7 @@ const mutations = {
         state.showCreateOrderDialog = payload
     },
     selectOrder(state, payload) {
-        state.selected = payload;
+        state.selected = payload
         if (payload)
             state.client = payload.client
     },
@@ -34,7 +34,7 @@ const mutations = {
         state.serviceOrders = payload
     },
     updateClient(state, payload) {
-        state.client = payload;
+        state.client = payload
         state.selected.client = payload
     },
     updateStatus(state, payload) {

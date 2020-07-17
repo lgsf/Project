@@ -1,5 +1,6 @@
 
-import { db } from "@/main";
+import { db } from "@/main"
+import catchError from '@/utilities/firebaseErrors'
 
 const state = () => ({
     label: '',
@@ -23,13 +24,19 @@ const state = () => ({
             text: "E-mail",
             align: "start",
             value: "email"
+        },
+        {
+            text: "Estado Atual",
+            align: "start",
+            value: "status"
         }],
     clients: [],
-    users: [],
+    activeClients: [],
     editClient: false,
     editingName: '',
     editingCnpj: '',
-    editingEmail: ''
+    editingEmail: '',
+    editingStatus: ''
 })
 
 const mutations = {
@@ -47,6 +54,7 @@ const mutations = {
         state.editingName = anySelected ? state.selected.name : ''
         state.editingCnpj = anySelected ? state.selected.cnpj : ''
         state.editingEmail = anySelected ? state.selected.email : ''
+        state.editingStatus = anySelected ? state.selected.status : 'Ativo'
         state.editClient = payload
     },
     editName(state, payload) {
@@ -58,8 +66,11 @@ const mutations = {
     editCnpj(state, payload) {
         state.editingCnpj = payload
     },
-    updateUsers(state, payload) {
-        state.users = payload
+    editStatus(state, payload) {
+        state.editingStatus = payload
+    },
+    updateActiveClients(state, payload) {
+        state.activeClients = payload
     }
 }
 
@@ -69,7 +80,11 @@ function createNewClient(state) {
         .add({
             name: state.editingName || "",
             email: state.editingEmail || "",
-            cnpj: state.editingCnpj || ""
+            cnpj: state.editingCnpj || "",
+            status: state.editingStatus || "Ativo"
+        }).catch(error => {
+            let errorMessage = catchError(error)
+            this.dispatch('general/setErrorMessage', errorMessage)
         })
 }
 
@@ -79,7 +94,11 @@ function updateExistingClient(state) {
         .update({
             name: state.editingName || "",
             email: state.editingEmail || "",
-            cnpj: state.editingCnpj || ""
+            cnpj: state.editingCnpj || "",
+            status: state.editingStatus || "Ativo"
+        }).catch(error => {
+            let errorMessage = catchError(error)
+            this.dispatch('general/setErrorMessage', errorMessage)
         })
 }
 
@@ -109,13 +128,19 @@ const actions = {
             .get()
             .then((snapshots) => {
                 let clients = []
+                let activeClients = []
                 snapshots.forEach(clientSnapShot => {
                     let clientData = clientSnapShot.data()
                     clientData.id = clientSnapShot.id
                     clients.push(clientData)
                 })
                 commit('updateClients', clients)
+                activeClients = clients.filter(obj => obj.status !== "Desativado" )
+                commit('updateActiveClients', activeClients)
                 this.dispatch('general/resetIsLoading')
+            }).catch(error => {
+                let errorMessage = catchError(error)
+                this.dispatch('general/setErrorMessage', errorMessage)
             })
     },
 
@@ -137,6 +162,11 @@ const actions = {
     editCnpj({ state, commit }, payload) {
         if (!state) console.log('Error, state is undifined.')
         commit('editCnpj', payload)
+    },
+
+    editStatus({ state, commit }, payload) {
+        if (!state) console.log('Error, state is undifined.')
+        commit('editStatus', payload)
     },
 
     saveClient({ state }) {

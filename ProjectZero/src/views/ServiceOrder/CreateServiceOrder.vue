@@ -135,7 +135,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions } from "vuex"
 import DatePicker from "@/components/shared/DatePicker"
 
 const computed = mapState({
@@ -144,25 +144,25 @@ const computed = mapState({
     users: state => state.users.userList,
     userGroups: state => state.users.userGroups,
     orderTemplates: state => state.erp.erpOrders,
-    clientList: state => state.clients.clients
-});
+    clientList: state => state.clients.activeClients
+})
 
-const userMethods = mapActions("users", ["readUsers"]);
+const userMethods = mapActions("users", ["readUsers"])
 
 const methods = mapActions("serviceOrders", [
   "closeCreateOrderModal",
   "saveNewOrder",
   "updateNewOrderStartDate",
   "updateNewOrderEndDate"
-]);
+])
 
 const erpMethods = mapActions("erp", [
   "loadErpOrders"
-]);
+])
 
 const clientsMethods = mapActions("clients", [
   "loadClients"
-]);
+])
 
 export default {
     components: {
@@ -188,7 +188,3 @@ export default {
     }
 }
 </script>
-
-<style>
-
-</style>

@@ -68,10 +68,10 @@
 </template>
 
 <script>
-import DatePicker from "@/components/shared/DatePicker";
-import PhoneNumberField from "@/components/shared/PhoneNumberField";
-import EmailField from "@/components/shared/EmailField";
-import { mapState, mapActions } from "vuex";
+import DatePicker from "@/components/shared/DatePicker"
+import PhoneNumberField from "@/components/shared/PhoneNumberField"
+import EmailField from "@/components/shared/EmailField"
+import { mapState, mapActions } from "vuex"
 
 const computed = mapState("users", {
   dialog: state => state.showEditModal,
@@ -81,7 +81,7 @@ const computed = mapState("users", {
   group: state => state.editUserGroup,
   birth_date: state => state.editUserBirthDate,
   userGroups: state => state.userGroups
-});
+})
 
 const methods = mapActions("users", [
   "setName",
@@ -91,7 +91,7 @@ const methods = mapActions("users", [
   "setGroup",
   "save",
   "closeEditUserModal"
-]);
+])
 
 export default {
   components: { DatePicker, PhoneNumberField, EmailField },
@@ -101,11 +101,9 @@ export default {
       rules: {
         nameRequired: value => !!value || `O campo Nome é obrigatório.`
       }
-    };
+    }
   },
   methods,
   computed
-};
+}
 </script>
-
-<style lang="stylus"></style>

@@ -45,6 +45,19 @@
           <v-row class="ml-5 mt-5 mr-5">
             <v-col cols="8">
               <v-autocomplete
+                v-if="selected.status == 'Pendente'"
+                :value="selected.client"
+                @input="updateClient"
+                :items="activeClientList"
+                color="primary"
+                item-text="name"
+                label="Cliente"
+                return-object
+                dense
+                :disabled="!isAdmin"
+              ></v-autocomplete>
+              <v-autocomplete
+                v-else
                 :value="selected.client"
                 @input="updateClient"
                 :items="clientList"
@@ -53,7 +66,7 @@
                 label="Cliente"
                 return-object
                 dense
-                :disabled="!isAdmin"
+                :disabled="true"
               ></v-autocomplete>
             </v-col>
             <v-col cols="4">
@@ -239,6 +252,7 @@ const computed = mapState({
   tasks: state => state.serviceOrders.selectedOrderTasks,
   columns: state => state.serviceOrders.kanbanColumns,
   clientList: state => state.clients.clients,
+  activeClientList: state => state.clients.activeClients,
   users: state => state.users.userList,
   groups: state => state.groups.groups,
   currentUserEmail: state => state.auth.user.email,
@@ -382,8 +396,7 @@ export default {
 .kanban-column {
   height: 100%;
 }
-/* Unfortunately @apply cannot be setup in codesandbox, 
-but you'd use "@apply border opacity-50 border-blue-500 bg-gray-200" here */
+
 .ghost-card {
   opacity: 0.5;
   background: #f7fafc;

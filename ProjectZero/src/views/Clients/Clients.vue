@@ -24,6 +24,7 @@
                     :label="searchLabel"
                     single-line
                     hide-details
+                    
                   ></v-text-field>
                 </v-card-title>
                 <v-row>
@@ -34,6 +35,8 @@
                       :search="search"
                       :value="item"
                       @click:row="selectClient"
+                      sortBy="status"
+                      update: sort-ascd
                     >
                     </v-data-table>
                   </v-col>
@@ -50,8 +53,8 @@
   </div>
 </template>
 <script>
-import { mapState, mapActions } from "vuex";
-import EditClient from "./EditClient";
+import { mapState, mapActions } from "vuex"
+import EditClient from "./EditClient"
 
 const computed = mapState("clients", {
   selected: state => state.selected,

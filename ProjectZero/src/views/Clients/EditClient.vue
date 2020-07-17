@@ -27,13 +27,21 @@
               </v-row>
               <v-row>
                 <v-col cols="12">
-                  <cnpj-field label="CNPJ" :value="cnpj" @input="editCnpj" required="true"></cnpj-field>
+                  <cnpj-field label="CNPJ*" :rules="[rules.cnpjRequired]" :value="cnpj" @input="editCnpj" required="true"></cnpj-field>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col cols="12">
-                  <email-field label="Email" :value="email" @input="editEmail" required="true"></email-field>
+                  <email-field label="Email*" :value="email" @input="editEmail" required="true"></email-field>
                 </v-col>
+              </v-row>
+              <v-row>
+              <div>
+                <v-radio-group v-model="status" @change="editStatus" :mandatory="true" row>
+                  <v-radio label="Ativo" value="Ativo"></v-radio>
+                  <v-radio label="Desativado" value="Desativado"></v-radio>
+                </v-radio-group>
+              </div>
               </v-row>
             </v-container>
             <small>*Obrigatório</small>
@@ -50,17 +58,18 @@
   </v-form>
 </template>
 <script>
-import { mapState, mapActions } from "vuex";
-import EmailField from "@/components/shared/EmailField";
-import CnpjField from "@/components/shared/CnpjField";
+import { mapState, mapActions } from "vuex"
+import EmailField from "@/components/shared/EmailField"
+import CnpjField from "@/components/shared/CnpjField"
 
 const computed = mapState("clients", {
   title: state => state.editTitle,
   dialog: state => state.editClient,
   name: state => state.editingName,
   cnpj: state => state.editingCnpj,
-  email: state => state.editingEmail
-});
+  email: state => state.editingEmail,
+  status: state => state.editingStatus
+})
 
 const methods = mapActions("clients", [
   "editName",
@@ -69,8 +78,9 @@ const methods = mapActions("clients", [
   "loadClients",
   "editClient",
   "saveClient",
-  "closeSelectionClient"
-]);
+  "closeSelectionClient",
+  "editStatus"
+])
 
 export default {
   components: { EmailField, CnpjField },
@@ -78,12 +88,12 @@ export default {
     return {
       isNotValid: false,
       rules: {
-        nameRequired: value => !!value || `O campo Razão Social é obrigatório.`
+        nameRequired: value => !!value || `O campo Razão Social é obrigatório.`,
+        cnpjRequired: value => !!value || `O campo CNPJ é obrigatório.`
       }
-    };
+    }
   },
   computed,
   methods
-};
+}
 </script>
-<style lang="stylus"></style>
