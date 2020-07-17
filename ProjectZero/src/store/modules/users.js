@@ -1,5 +1,6 @@
 import { db } from "@/main"
 import { auth } from "@/main"
+import catchError from '@/utilities/firebaseErrors'
 
 const state = () => ({
     search: "",
@@ -83,13 +84,14 @@ const actions = {
                 commit('setUserGroups', userGroups)
             })
             .catch(error => {
-                console.log("Error getting documents: ", error)
+                let errorMessage = catchError(error)
+                this.dispatch('general/setErrorMessage', errorMessage)
             })
     },
 
     readUsers({rootState, context}, payload) {
-        context = this.dispatch ? this : context;
-        if(payload){
+        context = this.dispatch ? this : context
+        if (payload) {
             context.dispatch('general/setIsLoading')
             context.dispatch('general/resetAllMessages', '')
         }
@@ -99,11 +101,12 @@ const actions = {
                 .get()
                 .then(function (snapshots) {
                     onUsersLoaded(context, rootState, snapshots)
-                    if(payload)
+                    if (payload)
                         context.dispatch('general/resetIsLoading')
                 })
                 .catch(error => {
-                    console.log("Error getting documents: ", error);
+                    let errorMessage = catchError(error)
+                    this.dispatch('general/setErrorMessage', errorMessage)
                 })
             })
     },
@@ -185,7 +188,8 @@ function createUser(state) {
                 })
         })
         .catch(error => {
-            console.error("Error inserting document: ", error)
+            let errorMessage = catchError(error)
+            this.dispatch('general/setErrorMessage', errorMessage)
         })
 
 }
@@ -201,7 +205,8 @@ function updateUser(state) {
             group_id: state.editUserGroup,
         })
         .catch(error => {
-            console.error("Error updating document: ", error)
+            let errorMessage = catchError(error)
+            this.dispatch('general/setErrorMessage', errorMessage)
         })
 
 }
