@@ -78,10 +78,23 @@ const actions = {
       context.commit('setEvents', events)
     },
     async updateEventStore (context, payload) {
-      context.commit('setDetails', payload.details)
-      await db.collection('calEvent').doc(payload.id).update({
-        details: context.state.details
-      })
+      if (context.state.name && context.state.start && context.state.end && !context.state.startTime && !context.state.endTime) {
+        await db.collection("calEvent").doc(payload.id).update({
+          name: context.state.name,
+          details: context.state.details,
+          start: context.state.start,
+          end: context.state.end,
+        })
+        context.dispatch('setEvent')
+      } else if(context.state.name && context.state.start && context.state.end && context.state.startTime && context.state.endTime){
+          await db.collection("calEvent").doc(payload.id).update({
+          name: context.state.name,
+          details: context.state.details,
+          start: context.state.start + ' ' + context.state.startTime,
+          end: context.state.end + ' ' + context.state.endTime,
+        })
+        context.dispatch('setEvent')
+      }
     },
 
     async deleteEventStore (context, payload) {

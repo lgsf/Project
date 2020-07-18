@@ -52,22 +52,29 @@
           <v-icon right class="white--text">calendar_today</v-icon>
         </v-toolbar>
           <v-container>
-            <v-form @submit.prevent="addEvent" >
-              <v-text-field @input="setName" v-model="name" type="text" label="Qual o título do lembrete?"></v-text-field>
+            <v-form v-model="isNotValid" >
+              <v-text-field @input="setName" v-model="name" :rules="[rules.nameRequired]" type="text" label="Qual o título do lembrete?"></v-text-field>
               <v-text-field @input="setDetails" v-model="details" type="text" label="Quais os detalhes?"></v-text-field>
               <v-text-field @input="setStart" v-model="start"  type="date" label="Qual a data de início?"></v-text-field>
               <v-text-field @input="setStartTime" v-model="startTime" type="time" label="Qual o horário de início?"></v-text-field>
               <v-text-field @input="setEnd" v-model="end"  type="date" label="Qual a data de encerramento?"></v-text-field>
               <v-text-field @input="setEndTime" v-model="endTime"  type="time" label="Qual o horário de encerramento?"></v-text-field>
-              <v-text-field @input="setColor" v-model="color" type="color" label="Escolha a cor do lembrete"></v-text-field>
+             <div>
+                <v-radio-group v-model="pickedColor" label="Qual a cor:" :mandatory="true" row>
+                  <v-radio label="Preto" value="true"></v-radio>
+                  <v-radio label="Outro" value="false"></v-radio>
+                </v-radio-group>
+              </div>
+              <v-color-picker @input="setColor" v-model="color" v-if="pickedColor == 'false'" />
               <div>
-                <v-radio-group v-model="picked"  :mandatory="true" row>
-                  <v-radio label="Todos" value="Todos"></v-radio>
-                  <v-radio label="Usuários" value="Usuários"></v-radio>
+                <v-radio-group v-model="picked" label="Recipiente:" :mandatory="true" row>
+                  <v-radio label="Todos" value="Todos" @change="editUser([])"></v-radio>
+                  <v-radio label="Somente eu" @change="editUser([usersModified[0]])" value="Eu"></v-radio>
+                  <v-radio label="Usuários" @change="editUser([])" value="Usuários"></v-radio>
                 </v-radio-group>
               </div>
               <v-autocomplete
-                  v-if="picked == 'Usuários'"
+                  v-if="picked === 'Usuários'"
                   v-model="editingUser"
                   :items="users"
                   color="primary"
@@ -86,7 +93,7 @@
                   <v-btn text color="blue darken-1"  @click="close">
                   Fechar
               </v-btn>
-              <v-btn type="submit" text color="blue darken-1"  @click.stop="dialog = false">
+              <v-btn  text color="blue darken-1" :disabled="!isNotValid"  @click="save">
                 Salvar
               </v-btn>
               </v-card-actions>
@@ -103,8 +110,8 @@
           <v-icon right class="white--text">calendar_today</v-icon>
         </v-toolbar>
           <v-container>
-            <v-form @submit.prevent="addEvent" >
-              <v-text-field @input="setName" v-model="name" type="text" label="Qual o título do lembrete?"></v-text-field>
+            <v-form v-model="isNotValid"  >
+              <v-text-field @input="setName" :rules="[rules.nameRequired]" v-model="name" type="text" label="Qual o título do lembrete?"></v-text-field>
               <v-text-field @input="setDetails" v-model="details" type="text" label="Quais os detalhes?"></v-text-field>
               <v-text-field @input="setStart" v-model="start"  type="date" label="Qual a data de início?"></v-text-field>
               <v-text-field @input="setStartTime" v-model="startTime" type="time" label="Qual o horário de início?"></v-text-field>
@@ -117,10 +124,11 @@
                 </v-radio-group>
               </div>
               <v-color-picker @input="setColor" v-model="color" v-if="pickedColor == 'false'" />
-              <div>
+             <div>
                 <v-radio-group v-model="picked" label="Recipiente:" :mandatory="true" row>
-                  <v-radio label="Todos" value="Todos"></v-radio>
-                  <v-radio label="Usuários" value="Usuários"></v-radio>
+                  <v-radio label="Todos" value="Todos" @change="editUser([])"></v-radio>
+                  <v-radio label="Somente eu" @change="editUser([usersModified[0]])" value="Eu"></v-radio>
+                  <v-radio label="Usuários" @change="editUser([])" value="Usuários"></v-radio>
                 </v-radio-group>
               </div>
               <v-autocomplete
@@ -143,7 +151,7 @@
                 <v-btn text color="blue darken-1"  @click="close">
                 Fechar
               </v-btn>
-              <v-btn type="submit" text color="blue darken-1"  @click.stop="dialogDate = false">
+              <v-btn  text color="blue darken-1" :disabled="!isNotValid"  @click="save">
                 Salvar
               </v-btn>
               </v-card-actions>
@@ -184,21 +192,23 @@
 
     <v-card-text>
       <form v-if="currentlyEditing !== selectedEvent.id">
-        {{ selectedEvent.details }}
+        Detalhes do evento: {{ selectedEvent.details }}<br>
+        Data de início: {{ toMomentFunc(selectedEvent.start) }}<br>
+        Data de encerramento: {{ toMomentFunc(selectedEvent.end) }}
       </form>
        <form v-else>
-        <textarea-autosize
-        v-model="selectedEvent.details"
-        type="text"
-        style="width: 100%"
-        :min-height="100"
-        placeholder="Adicionar">
-      </textarea-autosize>
+        <v-text-field @input="setName" :rules="[rules.nameRequired]" v-model="selectedEvent.name" type="text" label="Qual o título do lembrete?"></v-text-field>
+        <v-text-field @input="setDetails" v-model="selectedEvent.details" type="text" label="Quais os detalhes?"></v-text-field>
+        <v-text-field @input="setStart" v-model="selectedEventComputedStart"  type="date" label="Qual a data de início?"></v-text-field>
+        <v-text-field @input="setStartTime" v-model="selectedEventComputedStartTime" type="time" label="Qual o horário de início?"></v-text-field>
+        <v-text-field @input="setEnd" v-model="selectedEventComputedEnd"  type="date" label="Qual a data de término?"></v-text-field>
+        <v-text-field @input="setEndTime" v-model="selectedEventComputedEndTime"  type="time" label="Qual o horário de encerramento?"></v-text-field>
     </form>
      
   </v-card-text>
 
   <v-card-actions>
+    <v-spacer></v-spacer>
     <v-btn text color="blue darken-1" @click="selectedOpen = false">
       Fechar
     </v-btn>
@@ -234,11 +244,16 @@ const computed = mapState("calendar", {
 
 const computedUser = mapState("users", {
   users: state => state.userListModified,
+  usersModified: state => state.userJustMe,
 })
 
 export default {
 
   data: () => ({
+    isNotValid: false,
+      rules: {
+        nameRequired: value => !!value || `O campo Título é obrigatório.`,
+      },
     today: moment().format('YYYY-MM-DD'),
     focus: moment().format('YYYY-MM-DD'),
     type: 'month',
@@ -270,17 +285,20 @@ export default {
     toMoment(){
       return moment(this.start).format('DD-MM-YYYY')
     },
-    swatchStyle() {
-      const { color, menu } = this
-      return {
-        backgroundColor: color,
-        cursor: 'pointer',
-        height: '30px',
-        width: '30px',
-        borderRadius: menu ? '50%' : '4px',
-        transition: 'border-radius 200ms ease-in-out'
-      }
-    }
+    selectedEventComputedStart(){
+      return moment(this.selectedEvent.start).format('YYYY-MM-DD')
+    },
+    selectedEventComputedStartTime(){
+      if(this.selectedEvent.start.length > 10)
+      return moment(this.selectedEvent.start).format('HH:mm:ss')
+    },
+    selectedEventComputedEnd(){
+      return moment(this.selectedEvent.end).format('YYYY-MM-DD')
+    },
+    selectedEventComputedEndTime(){
+      if(this.selectedEvent.start.length > 10)
+      return moment(this.selectedEvent.end).format('HH:mm:ss')
+    },
   }),
   methods: {
     ...mapActions("calendar", 
@@ -304,6 +322,17 @@ export default {
     getEvents () {
       this.setEvent()
     },
+     toMomentFunc(date){
+       if(date == undefined)
+       return
+       else
+        {
+          if(date.length > 10)
+            return moment(date).format('DD/MM/YYYY, HH:mm:ss')
+          else
+            return moment(date).format('DD/MM/YYYY')
+        }
+    },
     clean() {
       let clean = ''
       this.setName(clean) 
@@ -312,6 +341,14 @@ export default {
       this.setStartTime(clean) 
       this.setEndTime(clean)
       this.editUser([])
+      this.setColor("#000000")
+      this.pickedColor = 'true'
+      this.picked = 'Todos'
+    },
+    save(){
+      this.dialog = false
+      this.dialogDate = false
+      this.addEvent()
     },
    
     close(){
@@ -363,6 +400,12 @@ export default {
     showEvent ({ nativeEvent, event }) {
       const open = () => {
         this.selectedEvent = event
+        this.setName(event.name)
+        this.setDetails(event.details)
+        this.setStart(event.start.substr(0,10))
+        this.setEnd(event.end.substr(0,10))
+        this.setStartTime(event.start.substr(11, event.start.length-1))
+        this.setEndTime(event.end.substr(11, event.start.length-1))
         this.selectedElement = nativeEvent.target
         setTimeout(() => this.selectedOpen = true, 10)
       }

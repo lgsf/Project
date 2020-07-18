@@ -13,6 +13,7 @@ const state = () => ({
     editUserGroup: '',
     userList: [],
     userListModified:[],
+    userJustMe:[],
     userGroups: []
 
 })
@@ -28,6 +29,10 @@ const mutations = {
     },
     setUserListModified( state, payload) {
         state.userListModified = payload
+        
+    },
+    setJustMeList( state, payload) {
+        state.userJustMe = payload
         
     },
     editUser(state, payload) {
@@ -163,6 +168,7 @@ const actions = {
 function onUsersLoaded(context, rootState, payload) {
     let users = []
     let usersModified = []
+    let usersJustMe = []
     payload.forEach(userSnapShot => {
         let userData = userSnapShot.data()
         userData.id = userSnapShot.id
@@ -170,7 +176,9 @@ function onUsersLoaded(context, rootState, payload) {
     })
     context.commit('users/setUserList', users)
     usersModified = users.filter(obj => obj.id !== rootState.auth.user.uid )
+    usersJustMe = users.filter(obj => obj.id == rootState.auth.user.uid )
     context.commit('users/setUserListModified', usersModified)
+    context.commit('users/setJustMeList', usersJustMe)
 }
 
 
