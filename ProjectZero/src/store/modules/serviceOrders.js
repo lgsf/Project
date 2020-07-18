@@ -43,8 +43,14 @@ const mutations = {
     updateOrderStartDate(state, payload) {
         state.selected.start_date = payload
     },
+    updateOrderStartDateTime(state, payload) {
+        state.selected.start_date_time = payload
+    },
     updateOrderEndDate(state, payload) {
         state.selected.end_date = payload
+    },
+    updateOrderEndDateTime(state, payload) {
+        state.selected.end_date_time = payload
     },
     updateNewOrderStartDate(state, payload) {
         state.newOrder.start_date = payload
@@ -375,10 +381,12 @@ const actions = {
         context.commit("updateStatus", payload)
         if (payload == "Em progresso") {
             context.commit('updateOrderStartDate', moment().unix())
+            context.commit('updateOrderStartDateTime', moment().format('DD/MM/YYYY, HH:mm:ss'))
             this.dispatch('serviceOrders/initiateOrder')
         } 
         else if (payload == "Finalizada"){
             context.commit('updateOrderEndDate', moment().unix())
+            context.commit('updateOrderEndDateTime', moment().format('DD/MM/YYYY, HH:mm:ss'))
             this.dispatch('serviceOrders/finalizeOrder', true)
         }
         else {

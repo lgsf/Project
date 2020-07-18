@@ -257,7 +257,7 @@ const state = () => ({
                  })
                  setTimeout(() => {
                     dispatch('readNotifications')
-                  }, 300)
+                  }, 500)
           },
         
         editNotification({ state, commit }, payload) {

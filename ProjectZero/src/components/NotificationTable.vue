@@ -16,7 +16,7 @@
               Ordenar por não-lidos</v-btn></span>
             <v-icon right class="white--text">notifications</v-icon>
         </v-toolbar> 
-         <v-expansion-panels >
+         <v-expansion-panels :value="model" >
             <v-expansion-panel 
             v-for="(item, i) in uniqueNotifications.slice(0 + counter, MAX_NUMBER + counter)"
             :key="i" 
@@ -40,7 +40,7 @@
                 </template>
               </v-expansion-panel-header>
             </v-row>
-                <v-expansion-panel-content>
+                <v-expansion-panel-content >
                   <v-row>
                     Data: {{toMoment(item.date)}}
                   </v-row>
@@ -91,7 +91,8 @@ export default {
       name: null,
       detail: null,
       date: null,
-      read: null
+      read: null,
+      model: false
     }
   },
 
@@ -130,15 +131,17 @@ export default {
 
      markRead(item){
        if(item.read.some(e => e.id === this.$store.state.auth.user.uid)){
-         return
+         return this.model = true
        }
        else {
          this.readItem(item)
+         this.model = true
        }
      },
 
      markUnread(item){
        this.unreadItem(item)
+       this.model = false
      }
      
    },

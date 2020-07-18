@@ -98,10 +98,10 @@
                 :disable="!isAdmin"
               />
             </v-col>
-            <v-col cols="12" md="4" lg="4" xl="4" sm="12" v-if="selected.status == 'Finalizada'">
+            <v-col cols="12" md="4" lg="4" xl="4" sm="12" v-else-if="selected.status == 'Finalizada'">
               <v-text-field v-model="selected.end_date_time" label="Data de encerramento:" disabled></v-text-field>
             </v-col>
-            <v-col cols="12" md="4" lg="4" xl="4" sm="12" v-if="selected.status == 'Cancelada'">
+            <v-col cols="12" md="4" lg="4" xl="4" sm="12" v-else-if="selected.status == 'Cancelada'">
               <v-text-field v-model="selected.end_date_time" label="Data de cancelamento:" disabled></v-text-field>
             </v-col>
           </v-row>
