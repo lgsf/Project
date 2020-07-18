@@ -65,7 +65,11 @@
                   <v-radio label="Outra" value="false"></v-radio>
                 </v-radio-group>
               </div>
-              <v-color-picker @input="setColor" v-model="color" v-if="pickedColor == 'false'" />
+              <v-row>
+                <v-spacer></v-spacer>
+                <v-color-picker @input="setColor" v-model="color" v-if="pickedColor == 'false'" />
+                <v-spacer></v-spacer>
+              </v-row>
               <div>
                 <v-radio-group v-model="picked" label="Recipiente:" :mandatory="true" row>
                   <v-radio label="Todos" value="Todos" @change="editUser([])"></v-radio>
@@ -123,7 +127,11 @@
                   <v-radio label="Outra" value="false"></v-radio>
                 </v-radio-group>
               </div>
+              <v-row>
+              <v-spacer></v-spacer>
               <v-color-picker @input="setColor" v-model="color" v-if="pickedColor == 'false'" />
+              <v-spacer></v-spacer>
+              </v-row>
              <div>
                 <v-radio-group v-model="picked" label="Recipiente:" :mandatory="true" row>
                   <v-radio label="Todos" value="Todos" @change="editUser([])"></v-radio>
@@ -202,6 +210,7 @@
         <v-text-field @input="setStartTime" v-model="selectedEventComputedStartTime" type="time" label="Qual o horário de início?"></v-text-field>
         <v-text-field @input="setEnd" v-model="selectedEventComputedEnd"  type="date" label="Qual a data de término?"></v-text-field>
         <v-text-field @input="setEndTime" v-model="selectedEventComputedEndTime"  type="time" label="Qual o horário de encerramento?"></v-text-field>
+        <v-color-picker @input="setColor" v-model="selectedEvent.color"/>
     </form>
      
   </v-card-text>
@@ -405,6 +414,7 @@ export default {
         this.setEnd(event.end.substr(0,10))
         this.setStartTime(event.start.substr(11, event.start.length-1))
         this.setEndTime(event.end.substr(11, event.start.length-1))
+        this.setColor(event.color)
         this.selectedElement = nativeEvent.target
         setTimeout(() => this.selectedOpen = true, 10)
       }

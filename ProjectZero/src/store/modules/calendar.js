@@ -84,6 +84,7 @@ const actions = {
           details: context.state.details,
           start: context.state.start,
           end: context.state.end,
+          color: context.state.color
         })
         context.dispatch('setEvent')
       } else if(context.state.name && context.state.start && context.state.end && context.state.startTime && context.state.endTime){
@@ -92,6 +93,7 @@ const actions = {
           details: context.state.details,
           start: context.state.start + ' ' + context.state.startTime,
           end: context.state.end + ' ' + context.state.endTime,
+          color: context.state.color
         })
         context.dispatch('setEvent')
       }
