@@ -52,6 +52,9 @@ const mutations = {
     updateOrderEndDateTime(state, payload) {
         state.selected.end_date_time = payload
     },
+    updateNewOrder(state, payload) {
+        state.newOrder = payload
+    },
     updateNewOrderStartDate(state, payload) {
         state.newOrder.start_date = payload
     },
@@ -309,6 +312,7 @@ const actions = {
     },
     closeCreateOrderModal(context) {
         context.commit('updateShowCreateOrderDialog', false)
+        context.commit('updateNewOrder', { name: '', creation_date: new Date().toLocaleString('pt-br'), start_date: '', end_date: '', users: [], userGroups: [], status: 'Pendente' })
     },
     saveNewOrder(context) {
         let tasks = []

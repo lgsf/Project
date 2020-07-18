@@ -62,7 +62,7 @@
              <div>
                 <v-radio-group v-model="pickedColor" label="Qual a cor:" :mandatory="true" row>
                   <v-radio label="Preto" value="true"></v-radio>
-                  <v-radio label="Outro" value="false"></v-radio>
+                  <v-radio label="Outra" value="false"></v-radio>
                 </v-radio-group>
               </div>
               <v-color-picker @input="setColor" v-model="color" v-if="pickedColor == 'false'" />
@@ -120,7 +120,7 @@
               <div>
                 <v-radio-group v-model="pickedColor" label="Qual a cor:" :mandatory="true" row>
                   <v-radio label="Preto" value="true"></v-radio>
-                  <v-radio label="Outro" value="false"></v-radio>
+                  <v-radio label="Outra" value="false"></v-radio>
                 </v-radio-group>
               </div>
               <v-color-picker @input="setColor" v-model="color" v-if="pickedColor == 'false'" />
@@ -180,7 +180,6 @@
   v-model="selectedOpen"
   :close-on-content-click="false"
   :activator="selectedElement"
-  offset-x
   >
   <v-card color="grey lighten-4" :min-width="300" >
     <v-toolbar :color="selectedEvent.color" dark>
