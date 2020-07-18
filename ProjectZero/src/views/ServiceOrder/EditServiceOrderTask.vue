@@ -456,7 +456,7 @@ const computed = Object.assign(
       if(state.serviceOrders.selectedTask.priority == 'Media')
         return { icon: 'mdi-chevron-up', color: 'amber' };
       if(state.serviceOrders.selectedTask.priority == 'Baixa')
-        return { icon: 'mdi-chevron-down', color: 'success lighten-2' };
+        return { icon: 'mdi-chevron-up', color: 'success lighten-2' };
       return '';
     }
   }),
@@ -553,7 +553,7 @@ export default {
       this.saveTask();
     },
     getCommentTitle(item){
-      return item.created_by.name + ' - ' + moment.unix(item.creation_date).format('DD/MM/YYYY');
+      return item.created_by.name + ' - ' + moment.unix(item.creation_date).format('DD/MM/YYYY HH:mm:ss');
     },
     saveNewComment(comment){
       this.saveComment(comment).then(() => this.comment = '');

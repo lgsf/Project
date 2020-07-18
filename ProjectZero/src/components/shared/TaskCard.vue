@@ -2,7 +2,7 @@
   <v-card class="pa-0 body-2" raised min-height="120px">
     <v-row class="ml-0 mr-0">
       <v-col cols="12" class="pt-0">
-        <v-row class="indigo lighten-2">
+        <v-row class="primary">
           <v-col cols="6" class="ma-0 pa-1 body-2">
             <v-tooltip bottom v-if="task.priority == 'Critica'">
               <template v-slot:activator="{ on, attrs }">
@@ -22,7 +22,7 @@
                   v-on="on"
                   color="light-green accent-3"
                   v-if="task.priority == 'Baixa'"
-                >mdi-chevron-down</v-icon>
+                >mdi-chevron-up</v-icon>
               </template>
               <span>{{task.priority}} prioridade</span>
             </v-tooltip>
@@ -190,6 +190,21 @@
                 </v-btn>
               </template>
               <span>Possui dependência</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  icon
+                  v-if="task.comments && task.comments.length"
+                  v-bind="attrs"
+                  v-on="on"
+                  color="gray lighten-2 small-button"
+                  @click="executeAction"
+                >
+                  <v-icon small>mdi-chat</v-icon>
+                </v-btn>
+              </template>
+              <span>{{(!task.comments ? '' : task.comments.length == 1 ? '1 comentário' : `${task.comments.length} comentários`)}}</span>
             </v-tooltip>
           </v-col>
         </v-row>

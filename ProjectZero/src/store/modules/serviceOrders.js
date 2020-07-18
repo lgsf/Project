@@ -15,7 +15,7 @@ const state = () => ({
     taskDialogInEditMode: false,
     showCreateOrderDialog: false,
     newOrder: { name: '', creation_date: new Date().toLocaleString('pt-br'), start_date: '', end_date: '', users: [], userGroups: [], status: 'Pendente' },
-    taskPriorityList: ['', 'Baixa', 'Média', 'Alta', 'Crítica']
+    taskPriorityList: ['', 'Baixa', 'Media', 'Alta', 'Critica']
 })
 
 const mutations = {
