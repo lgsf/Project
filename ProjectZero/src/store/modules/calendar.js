@@ -57,23 +57,23 @@ const actions = {
         let author = {}
         userArray = doc.data().user
         author = doc.data().author
-        if(userArray.length == 0){
-        let appData = doc.data()
-        appData.id = doc.id
-        events.push(appData)
-      }
-      else if (userArray.length > 0) {
-        let appData = doc.data()
-        appData.id = doc.id
-        if(author == context.rootState.auth.user.uid)
-        events.push(appData)
-        userArray.forEach (item =>  {
-          if(item.id == context.rootState.auth.user.uid ){
+        if (userArray.length == 0) {
+          let appData = doc.data()
+          appData.id = doc.id
+          events.push(appData)
+        }
+        else if (userArray.length > 0) {
+          let appData = doc.data()
+          appData.id = doc.id
+          if (author == context.rootState.auth.user.uid)
+            events.push(appData)
+          userArray.forEach (item => {
+            if (item.id == author)
+              return
+            else if (item.id == context.rootState.auth.user.uid) 
               events.push(appData)
-              }
-            })
-
-      }
+          })
+        }
       })
       context.commit('setEvents', events)
     },
