@@ -68,8 +68,13 @@ const actions = {
 
     userSignOut({ commit, state }) {
         this.dispatch('general/resetAllMessages')
-        let currentUser = firebase.auth().currentUser
-        firebase
+        db.collection('userSessionInfo').add({
+            uid: state.user.uid,
+            session_start: state.sessionStart,
+            session_end: moment().unix()
+        }).then( docRef => {
+            if (docRef) {
+            firebase
             .auth()
             .signOut()
             .then(() => new Promise(resolve => {
@@ -79,20 +84,13 @@ const actions = {
                 commit('setUserName', '')
                 this.dispatch('general/setSuccessMessage', 'Você saiu com sucesso!')
                 router.push('/')
-                resolve()
-            }))
-            .then(() => new Promise(resolve => {
-                db.collection('userSessionInfo').add({
-                    uid: currentUser.uid,
-                    sesstion_start: state.sessionStart,
-                    session_end: moment().unix()
-                }).then(() => {
-                    window.sessionStorage.clear()
-                    resolve()
-                })
-            }))
-            .catch((error) => {
                 sessionStorage.clear()
+                resolve()
+                }))
+            }
+            }
+            )
+            .catch((error) => {
                 commit('setUser', null)
                 commit('setIsAuthenticated', false)
                 this.dispatch('general/resetIsLoading')

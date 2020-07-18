@@ -135,7 +135,7 @@ const actions = {
                     clients.push(clientData)
                 })
                 commit('updateClients', clients)
-                activeClients = clients.filter(obj => obj.status !== "Desativado" )
+                activeClients = clients.filter(obj => obj.status !== "Inativo" )
                 commit('updateActiveClients', activeClients)
                 this.dispatch('general/resetIsLoading')
             }).catch(error => {

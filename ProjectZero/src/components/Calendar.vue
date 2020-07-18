@@ -110,9 +110,15 @@
               <v-text-field @input="setStartTime" v-model="startTime" type="time" label="Qual o horário de início?"></v-text-field>
               <v-text-field @input="setEnd" v-model="end"  type="date" label="Qual a data de encerramento?"></v-text-field>
               <v-text-field @input="setEndTime" v-model="endTime"  type="time" label="Qual o horário de encerramento?"></v-text-field>
-              <v-text-field @input="setColor" v-model="color" type="color" label="Escolha a cor do lembrete"></v-text-field>
-              <div >
-                <v-radio-group v-model="picked"  :mandatory="true" row>
+              <div>
+                <v-radio-group v-model="pickedColor" label="Qual a cor:" :mandatory="true" row>
+                  <v-radio label="Preto" value="true"></v-radio>
+                  <v-radio label="Outro" value="false"></v-radio>
+                </v-radio-group>
+              </div>
+              <v-color-picker @input="setColor" v-model="color" v-if="pickedColor == 'false'" />
+              <div>
+                <v-radio-group v-model="picked" label="Recipiente:" :mandatory="true" row>
                   <v-radio label="Todos" value="Todos"></v-radio>
                   <v-radio label="Usuários" value="Usuários"></v-radio>
                 </v-radio-group>
@@ -247,7 +253,8 @@ export default {
     selectedOpen: false,
     dialog: false,
     dialogDate: false,
-    picked: 'Todos'
+    picked: 'Todos',
+    pickedColor: 'true'
   }),
   mounted () {
     this.getEvents()
@@ -262,6 +269,17 @@ export default {
     },
     toMoment(){
       return moment(this.start).format('DD-MM-YYYY')
+    },
+    swatchStyle() {
+      const { color, menu } = this
+      return {
+        backgroundColor: color,
+        cursor: 'pointer',
+        height: '30px',
+        width: '30px',
+        borderRadius: menu ? '50%' : '4px',
+        transition: 'border-radius 200ms ease-in-out'
+      }
     }
   }),
   methods: {

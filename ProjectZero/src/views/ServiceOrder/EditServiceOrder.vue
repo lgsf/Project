@@ -352,16 +352,29 @@ export default {
         }
       },
       checkOrderStatus(selected){
-        switch (selected.status){
-          case "Pendente":
-            return 
-          case "Em progresso":
-            return this.items[0].title='Finalizar'
-          case "Finalizada":
-            return this.items = this.items.slice(2)
-          case "Cancelada":
-            return this.items = this.items.slice(2)
-        }
+        setInterval(() => {
+          switch (selected.status){
+            case "Pendente":
+              return 
+            case "Em progresso":
+              return this.items = 
+                [
+                  { title: 'Finalizar' },
+                  { title: 'Cancelar' },
+                  { title: 'Excluir' },
+                ]
+            case "Finalizada":
+              return this.items = 
+                [
+                  { title: 'Excluir' },
+                ]
+            case "Cancelada":
+              return this.items = 
+                [
+                  { title: 'Excluir' },
+                ]
+          }
+        }, 300)
       },
       checkIfTasksDone(selected){
         if(selected.tasks.some(e => e.status === "Pendente" || "Em progresso" )){
@@ -388,7 +401,7 @@ export default {
     this.loadGroups()
     this.checkOrderStatus(this.selected)
     this.checkScreenWidth()
-  }
+  },
 }
 </script>
 

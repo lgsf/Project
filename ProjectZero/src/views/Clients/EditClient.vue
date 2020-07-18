@@ -39,7 +39,7 @@
               <div>
                 <v-radio-group v-model="status" @change="editStatus" :mandatory="true" row>
                   <v-radio label="Ativo" value="Ativo"></v-radio>
-                  <v-radio label="Desativado" value="Desativado"></v-radio>
+                  <v-radio label="Inativo" value="Inativo"></v-radio>
                 </v-radio-group>
               </div>
               </v-row>
