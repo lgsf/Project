@@ -8,21 +8,21 @@
           <v-icon right class="white--text">pie_chart</v-icon>
         </v-toolbar>
         <v-row>
-          <v-col cols="6">
+          <v-col cols="12"  >
             <v-row>
-              <v-col cols="2">
-                <div class="text-right mt-1 pt-4">Período:</div>
+              <v-col cols="3" md="2" lg="2" xl="2">
+                <div class=" text-center mt-1 pt-4">Período:</div>
               </v-col>
-              <v-col cols="3">
+              <v-col cols="8" md="3" lg="3" xl="3">
                 <date-picker date-label="Início" v-model="startedAt" />
               </v-col>
-              <v-col cols="1">
+              <v-col cols="2" md="1" lg="1" xl="1">
                 <div class="text-center mt-1 pt-4">até</div>
               </v-col>
-              <v-col cols="3">
+              <v-col cols="4" md="3" lg="3" xl="3">
                 <date-picker date-label="Fim" v-model="endedAt" />
               </v-col>
-              <v-col cols="3">
+              <v-col cols="3" md="3" lg="3" xl="3">
                 <div class="mt-1 pt-2">
                   <v-btn color="success" dark @click="reloadCharts">
                     <v-icon>search</v-icon>Carregar
@@ -172,6 +172,12 @@ const computed = Object.assign(
         text: `${m.tasksCount}`
       }));
     },
+    checkWidth() {
+            if(this.width > 752){
+              return true
+            }
+            else return false
+        },
     chartSeries(state, store) {
       let filters = {
         startedAt: this.startedAt.unix(),
@@ -217,6 +223,7 @@ export default {
   components: { DonutChart, BarChart, LineChart, DatePicker },
   data() {
     return {
+      width: 0,
       dntOrderPerClients: 0,
       dntTaskPerClients: 5,
       dntOrderPerUsers: 10,
