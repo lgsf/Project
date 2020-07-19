@@ -397,11 +397,11 @@ const computed = Object.assign(
             possibleGroup => possibleGroup.id == user.group_id.id
           )
         );
-        if (permissionByGroup.isArray) permission.concat(permissionByGroup);
+        if (permissionByGroup.isArray) permission.concat(permissionByGroup)
         else permission.push(permissionByGroup);
       }
 
-      return permission.length > 0 ? permission : state.users.userList;
+      return permission.length > 0 ? permission : state.users.userList
     },
     groups: state => state.groups.groups,
     selectedUsers: state => state.serviceOrders.selectedTask.users,
@@ -411,22 +411,22 @@ const computed = Object.assign(
     userRole: function(state) {
       let role = "NotRelated";
       if (state.auth.userGroup.id == "bmyiE5pvx66Ct7Wmj78b")
-        role = "SystemAdmin";
+        role = "SystemAdmin"
       if (
         state.auth.user.email ==
         state.serviceOrders.selected.administrator?.email
       )
-        role = "OrdemAdmin";
+        role = "OrdemAdmin"
       else if (
         state.auth.user.email ==
           state.serviceOrders.selectedTask.created_by?.email ||
         !state.serviceOrders.selectedTask.id
       )
-        role = "TaskCreator";
+        role = "TaskCreator"
       else if (
         state.serviceOrders.selectedTask.users?.email == state.auth.user.email
       )
-        role = "Responsible";
+        role = "Responsible"
       else if (
         (!state.serviceOrders.selectedTask.possibleUsers &&
           !state.serviceOrders.selectedTask.possibleGroups) ||
@@ -437,37 +437,37 @@ const computed = Object.assign(
           group => group.id == state.auth.userGroup.id
         )
       )
-        role = "PossibleUser";
-      return role;
+        role = "PossibleUser"
+      return role
     },
     allOrderTasksBut: function(state, store) {
       let filters = {
         orderId: state.serviceOrders.selected.id,
         taskId: state.serviceOrders.selectedTask.id
-      };
-      let getAllTasksByOrderBut = store["serviceOrders/getAllTasksByOrderBut"];
-      return getAllTasksByOrderBut(filters);
+      }
+      let getAllTasksByOrderBut = store["serviceOrders/getAllTasksByOrderBut"]
+      return getAllTasksByOrderBut(filters)
     },
     priorityIcon: function(state){
-      if(state.serviceOrders.selectedTask.priority == 'Critica')
-        return { icon: 'mdi-chevron-triple-up', color: 'red darken-1' };
+      if(state.serviceOrders.selectedTask.priority == 'Crítica')
+        return { icon: 'mdi-chevron-triple-up', color: 'red darken-1' }
       if(state.serviceOrders.selectedTask.priority == 'Alta')
-        return { icon: 'mdi-chevron-double-up', color: 'red darken-1' };
-      if(state.serviceOrders.selectedTask.priority == 'Media')
-        return { icon: 'mdi-chevron-up', color: 'amber' };
+        return { icon: 'mdi-chevron-double-up', color: 'red darken-1' }
+      if(state.serviceOrders.selectedTask.priority == 'Média')
+        return { icon: 'mdi-chevron-up', color: 'amber' }
       if(state.serviceOrders.selectedTask.priority == 'Baixa')
-        return { icon: 'mdi-chevron-up', color: 'success lighten-2' };
-      return '';
+        return { icon: 'mdi-chevron-up', color: 'success lighten-2' }
+      return ''
     }
   }),
   mapGetters("serviceOrders", ["getAllTasksByOrderBut"])
-);
+)
 
-const getters = mapGetters("users", ["getUserByEmail"]);
+const getters = mapGetters("users", ["getUserByEmail"])
 
-const userMethods = mapActions("users", ["readUsers"]);
+const userMethods = mapActions("users", ["readUsers"])
 
-const userGroupsMethods = mapActions("groups", ["loadGroups"]);
+const userGroupsMethods = mapActions("groups", ["loadGroups"])
 
 const methods = mapActions("serviceOrders", [
   "closeTaskModal",
@@ -475,7 +475,7 @@ const methods = mapActions("serviceOrders", [
   "setOrUnsetEditMode",
   "deleteTask",
   "saveComment"
-]);
+])
 
 export default {
   components: { InputTag },
@@ -491,81 +491,81 @@ export default {
       filesAlertMessage: "",
       showFiles: true,
       comment: ""
-    };
+    }
   },
   watch: {
     files(newValue) {
-      this.filesAlertMessage = "";
-      if (!newValue.length || !this.selectedTask.files?.length) return;
-      let existingFiles = this.selectedTask.files.map(m => m.name);
-      let addedFiles = newValue.map(m => m.name);
+      this.filesAlertMessage = ""
+      if (!newValue.length || !this.selectedTask.files?.length) return
+      let existingFiles = this.selectedTask.files.map(m => m.name)
+      let addedFiles = newValue.map(m => m.name)
       let changedFiles = existingFiles.filter(m => addedFiles.includes(m));
       if (changedFiles.length)
         this.filesAlertMessage = `Os seguintes arquivos serão substituídos: ${changedFiles.join(
           ", "
-        )}`;
+        )}`
     }
   },
   methods: Object.assign({}, methods, userMethods, userGroupsMethods, {
     appendTaskItem() {
-      this.counter = this.counter + 1;
+      this.counter = this.counter + 1
       this.selectedTask.items.push({
         description: "",
         id: this.counter
-      });
+      })
     },
     removeTaskOrItem(item) {
       this.selectedTask.items = this.selectedTask.items.filter(
         m => m.id != item.id
-      );
+      )
     },
     addFiles() {
-      this.selectedTask.files = this.selectedTask.files || [];
+      this.selectedTask.files = this.selectedTask.files || []
       this.files.forEach(element => {
         this.selectedTask.files = this.selectedTask.files.filter(
           m => m.name != element.name
-        );
+        )
         this.selectedTask.files.push({
           newFile: true,
           name: element.name,
           lastModified: moment().format("DD/MM/YYYY HH:mm:ss"),
           file: element
-        });
-      });
-      this.files = [];
+        })
+      })
+      this.files = []
       this.showFiles =
-        this.selectedTask.files && this.selectedTask.files.length;
+        this.selectedTask.files && this.selectedTask.files.length
     },
     removeFile(file) {
       this.selectedTask.files = this.selectedTask.files.filter(
         item => item.name != file.name
-      );
+      )
       this.showFiles =
-        this.selectedTask.files && this.selectedTask.files.length;
-      console.log(this.showFiles);
+        this.selectedTask.files && this.selectedTask.files.length
+      console.log(this.showFiles)
     },
     close() {
-      this.showFiles = true;
-      this.closeTaskModal();
+      this.showFiles = true
+      this.closeTaskModal()
     },
     saveAndClose() {
-      this.showFiles = true;
-      this.saveTask();
+      this.showFiles = true
+      this.saveTask()
     },
     getCommentTitle(item){
-      return item.created_by.name + ' - ' + moment.unix(item.creation_date).format('DD/MM/YYYY HH:mm:ss');
+      return item.created_by.name + ' - ' + moment.unix(item.creation_date).format('DD/MM/YYYY HH:mm:ss')
     },
     saveNewComment(comment){
-      this.saveComment(comment).then(() => this.comment = '');
+      this.saveComment(comment).then(() => this.comment = '')
     }
   }),
   computed,
   getters,
   mounted() {
-    this.readUsers();
-    this.loadGroups();
+    this.readUsers()
+    this.loadGroups()
   }
-};
+}
 </script>
 
 <style>

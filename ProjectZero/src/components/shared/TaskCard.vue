@@ -4,13 +4,13 @@
       <v-col cols="12" class="pt-0">
         <v-row class="primary">
           <v-col cols="6" class="ma-0 pa-1 body-2">
-            <v-tooltip bottom v-if="task.priority == 'Critica'">
+            <v-tooltip bottom v-if="task.priority == 'Crítica'">
               <template v-slot:activator="{ on, attrs }">
                 <v-icon
                   v-bind="attrs"
                   v-on="on"
                   color="red accent-3"
-                  v-if="task.priority == 'Critica'"
+                  v-if="task.priority == 'Crítica'"
                 >mdi-chevron-triple-up</v-icon>
               </template>
               <span>{{task.priority}} prioridade</span>
@@ -26,13 +26,13 @@
               </template>
               <span>{{task.priority}} prioridade</span>
             </v-tooltip>
-            <v-tooltip bottom v-if="task.priority == 'Media'">
+            <v-tooltip bottom v-if="task.priority == 'Média'">
               <template v-slot:activator="{ on, attrs }">
                 <v-icon
                   v-bind="attrs"
                   v-on="on"
                   color="amber"
-                  v-if="task.priority == 'Media'"
+                  v-if="task.priority == 'Média'"
                 >mdi-chevron-up</v-icon>
               </template>
               <span>{{task.priority}} prioridade</span>
