@@ -48,7 +48,7 @@ const actions = {
                     .then((snapshots) => {
                         let currentUser = snapshots.data()
                         commit('setUserName', currentUser.name)
-                        commit('setUserGroup', currentUser.group_id.id)
+                        commit('setUserGroup', currentUser.group.id)
                     })
                 this.dispatch('general/resetIsLoading')
             })
@@ -72,7 +72,8 @@ const actions = {
             uid: state.user.uid,
             session_start: state.sessionStart,
             session_end: moment().unix()
-        }).then( docRef => {
+        }).then(docRef => {
+            console.log(docRef)
             if (docRef) {
             firebase
             .auth()

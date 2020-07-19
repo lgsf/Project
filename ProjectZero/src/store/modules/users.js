@@ -192,7 +192,7 @@ function createUser(state) {
                     email: state.editUserEmail,
                     phone: state.editUserPhone,
                     birth_date: state.editUserBirthDate,
-                    group_id: state.editUserGroup
+                    group: state.editUserGroup
                 })
         })
         .catch(error => {
@@ -210,7 +210,7 @@ function updateUser(state) {
             email: state.editUserEmail,
             phone: state.editUserPhone,
             birth_date: state.editUserBirthDate,
-            group_id: state.editUserGroup,
+            group: state.editUserGroup,
         })
         .catch(error => {
             let errorMessage = catchError(error)
