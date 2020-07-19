@@ -39,7 +39,7 @@ function onSessionInfosLoaded(context, payload) {
     payload.forEach(infosSnapShot => {
         let infoData = infosSnapShot.data();
         infoData.id = infosSnapShot.id;
-        infoData.sessionDate = moment.unix(infoData.sesstion_start);
+        infoData.sessionDate = moment.unix(infoData.session_start);
         infos.push(infoData);
     });
     context.commit('setSessionInfos', infos);
@@ -125,7 +125,7 @@ const getters = {
             allUsers.forEach(user => {
                 ordersPerUsers.push({
                     user: user,
-                    ordersCount: mapOrders.filter(m => m.users.includes(user.id) || m.groups.includes(user.group_id.id)).length
+                    ordersCount: mapOrders.filter(m => m.users.includes(user.id) || m.groups.includes(user.group.id)).length
                 })
             });
             let unassignedOrders = filteredOrders.filter(m => m.users.length == 0 && m.userGroups.length == 0);
@@ -223,12 +223,12 @@ const getters = {
     getWorkedHoursByUsersByDate(state, getters, rootState) {
         return (filters) => {
             let filteredInfos = state.sessionInfos.filter(info =>
-                (!filters.startedAt || info.sesstion_start >= filters.startedAt) &&
+                (!filters.startedAt || info.session_start >= filters.startedAt) &&
                 (!filters.endedAt || info.session_end <= filters.endedAt));
 
 
             filteredInfos.forEach(elem => elem.workingDate = elem.sessionDate.format("DD/MM/YYYY"));
-            filteredInfos = filteredInfos.sort((m, n) => m.sesstion_start > n.sesstion_start ? 1 : -1);
+            filteredInfos = filteredInfos.sort((m, n) => m.session_start > n.session_start ? 1 : -1);
             let period = [...new Set(filteredInfos.map(m => m.workingDate))];
 
 
@@ -243,10 +243,10 @@ const getters = {
                 };
                 let daysWorked = user.groupBy(m => m.workingDate);
                 period.forEach(day => {
-                    let dayData = daysWorked.get(day) || [{ workingDate: day, session_end: 0, sesstion_start: 0 }];
+                    let dayData = daysWorked.get(day) || [{ workingDate: day, session_end: 0, session_start: 0 }];
                     userData.workedHoursByDay.push({
                         day: dayData[0].workingDate,
-                        hours: Math.round(dayData.sum(m => (m.session_end - m.sesstion_start)) / 60)
+                        hours: Math.round(dayData.sum(m => (m.session_end - m.session_start)) / 60)
                     });
                 });
                 data.push(userData);
