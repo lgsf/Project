@@ -19,11 +19,16 @@
               <v-col cols="2" md="1" lg="1" xl="1">
                 <div class="text-center mt-1 pt-4">até</div>
               </v-col>
-              <v-col cols="4" md="3" lg="3" xl="3">
+              <v-col cols="9" md="3" lg="3" xl="3">
                 <date-picker date-label="Fim" v-model="endedAt" />
               </v-col>
-              <v-col cols="3" md="3" lg="3" xl="3">
-                <div class="mt-1 pt-2">
+              <v-col cols="11" md="3" lg="3" xl="3">
+                <div class="mt-1 pt-2" v-if="checkWidth">
+                  <v-btn color="success" dark @click="reloadCharts">
+                    <v-icon>search</v-icon>Carregar
+                  </v-btn>
+                </div>
+                 <div class="text-right mt-1 pt-2" v-else>
                   <v-btn color="success" dark @click="reloadCharts">
                     <v-icon>search</v-icon>Carregar
                   </v-btn>
@@ -130,6 +135,12 @@ const computed = Object.assign(
         text: `${m.tasksCount}`
       }));
     },
+    checkWidth() {
+            if(this.width > 960){
+              return true
+            }
+            else return false
+        },
     workedDaysPerClient(state, store) {
       let filters = {
         startedAt: this.startedAt.unix(),
@@ -172,12 +183,6 @@ const computed = Object.assign(
         text: `${m.tasksCount}`
       }));
     },
-    checkWidth() {
-            if(this.width > 752){
-              return true
-            }
-            else return false
-        },
     chartSeries(state, store) {
       let filters = {
         startedAt: this.startedAt.unix(),
@@ -218,7 +223,12 @@ export default {
       this.barTimePerClients += 1;
       this.lineWorkedTime += 1;
       this.showCharts = true;
-    }
+    },
+    checkScreenWidth() {
+            setInterval(() => {
+                this.width = window.innerWidth
+            }, 100)
+        },
   }),
   components: { DonutChart, BarChart, LineChart, DatePicker },
   data() {
@@ -253,9 +263,10 @@ export default {
     }
   },
   mounted() {
-    this.loadOrders();
-    this.loadSessionInfo();
-    this.readUsers();
+    this.loadOrders()
+    this.loadSessionInfo()
+    this.readUsers()
+    this.checkScreenWidth()
   }
 };
 </script>
