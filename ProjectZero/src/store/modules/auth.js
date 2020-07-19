@@ -88,10 +88,11 @@ const actions = {
                 sessionStorage.clear()
                 resolve()
                 }))
-            }
-            }
+              }
+             }
             )
             .catch((error) => {
+                sessionStorage.clear()
                 commit('setUser', null)
                 commit('setIsAuthenticated', false)
                 this.dispatch('general/resetIsLoading')

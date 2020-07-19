@@ -41,7 +41,7 @@ const mutations = {
         state.editUserEmail= anySelected ? state.selected.email : ''
         state.editUserPhone= anySelected ? state.selected.phone : ''
         state.editUserBirthDate = anySelected ? state.selected.birth_date :''
-        state.editUserGroup = anySelected ? state.selected.group_id : {}
+        state.editUserGroup = anySelected ? state.selected.group : {}
         state.showEditModal = payload
     },
 
