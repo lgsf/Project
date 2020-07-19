@@ -333,7 +333,9 @@ const actions = {
             tasks: tasks
         })
             .then(() => {
-                this.dispatch('serviceOrders/reloadOrders').then(() => { context.commit('updateShowCreateOrderDialog', false) })
+                this.dispatch('serviceOrders/reloadOrders').then(() => { 
+                context.commit('updateNewOrder', { name: '', creation_date: new Date().toLocaleString('pt-br'), start_date: '', end_date: '', users: [], userGroups: [], status: 'Pendente' })
+                context.commit('updateShowCreateOrderDialog', false) })
             })
     },
     selectOrder(context, payload) {
@@ -395,6 +397,7 @@ const actions = {
         }
         else {
             context.commit('updateOrderEndDate', moment().unix())
+            context.commit('updateOrderEndDateTime', moment().format('DD/MM/YYYY, HH:mm:ss'))
             this.dispatch('serviceOrders/finalizeOrder')
         }
         
