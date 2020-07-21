@@ -5,6 +5,7 @@ import Login from '../views/Auth/Login.vue'
 import ResetPassword from '../views/Auth/ResetPassword.vue'
 import Clients from '../views/Clients/Clients.vue'
 import Home from '../views/Home.vue'
+import ImportUtilities from '../views/Import.vue'
 import Setup from '../views/Setup.vue'
 import Erp from '../views/ErpOrder/Erp.vue'
 import ServiceOrder from '../views/ServiceOrder/ServiceOrder.vue'
@@ -39,6 +40,14 @@ const routes = [
     path: '/home', //Home
     name: 'Home',
     component: Home,
+    meta: {
+      authRequired: true
+    }
+  },
+  {
+    path: '/import', //Home
+    name: 'Import',
+    component: ImportUtilities,
     meta: {
       authRequired: true
     }

@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import vuetify from './plugins/vuetify'
-import firebase from "firebase";
+import firebase from "firebase"
 import VueTextareaAutosize from 'vue-textarea-autosize'
 import AlertCmp from './components/shared/Alert.vue'
 import { store } from './store'
