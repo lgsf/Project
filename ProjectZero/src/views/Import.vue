@@ -17,24 +17,21 @@
         <v-icon right class="white--text">import_export</v-icon>
         </v-toolbar>
         <Alert class="mt-2 ml-1 mr-1" />
-            
               <v-row>
-                <v-col class='ms-6 me-6'>
-                 <div>
+                <v-col cols="9" class='ms-6 me-6'>
                 <v-radio-group v-model="picked" label="O que deseja importar:" row>
                   <v-radio label="Clientes" value="clients"></v-radio>
                   <v-radio label="Usuários" value="users"   ></v-radio>
                 </v-radio-group>
-              </div >
                 </v-col>
                 </v-row>
                 <div v-if="picked === 'clients'" >
                 <v-row>
-                    <v-col cols="9" class='ms-6 me-6'>
+                    <v-col cols="5" xl="10" md="10" lg="10" class='ms-6 me-6'>
                     <v-file-input
                         v-model="file"
-                        placeholder="Selecione o arquivo de clientes"
-                        label="Anexos:"
+                        placeholder="Selecione"
+                        label="Anexo de clientes:"
                         prepend-icon="mdi-paperclip"
                     >
                         <template v-slot:selection="{ text }">
@@ -42,7 +39,7 @@
                         </template>
                     </v-file-input>
                     </v-col>
-                    <v-col cols="2">
+                    <v-col cols="1">
                     <v-btn
                         v-if="file"
                         dark
