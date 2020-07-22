@@ -150,16 +150,16 @@ const actions = {
         commit('setSelectedUser', false)
     },
 
-    save({ state }) {
+    save({ state, dispatch }) {
         if (!state.selected)
             createUser(state).then(() => {
-                this.dispatch('users/readUsers')
-                this.dispatch('users/closeEditUserModal')
+                dispatch('users/readUsers')
+                dispatch('users/closeEditUserModal')
             })
         else
             updateUser(state).then(() => {
-                this.dispatch('users/readUsers')
-                this.dispatch('users/closeEditUserModal')
+                dispatch('users/readUsers')
+                dispatch('users/closeEditUserModal')
             })
     }
 

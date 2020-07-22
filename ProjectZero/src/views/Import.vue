@@ -22,12 +22,67 @@
                 <v-col class='ms-6 me-6'>
                  <div>
                 <v-radio-group v-model="picked" label="O que deseja importar:" row>
-                  <v-radio label="Clientes" value="clients" @change="check()"></v-radio>
-                  <v-radio label="Usuários" value="users" @change="check()"></v-radio>
+                  <v-radio label="Clientes" value="clients"></v-radio>
+                  <v-radio label="Usuários" value="users"   ></v-radio>
                 </v-radio-group>
-              </div>
+              </div >
                 </v-col>
-              </v-row>
+                </v-row>
+                <div v-if="picked === 'clients'" >
+                <v-row>
+                    <v-col cols="9" class='ms-6 me-6'>
+                    <v-file-input
+                        v-model="files"
+                        placeholder="Selecione o arquivo de clientes"
+                        label="Anexos:"
+                        prepend-icon="mdi-paperclip"
+                    >
+                        <template v-slot:selection="{ text }">
+                        <v-chip small label color="primary">{{ text }}</v-chip>
+                        </template>
+                    </v-file-input>
+                    </v-col>
+                    <v-col cols="2">
+                    <v-btn
+                        v-if="!isInEditMode"
+                        dark
+                        color="primary"
+                        class="mt-4"
+                        @click="addFiles('clients')"
+                    >
+                        <v-icon>mdi-plus</v-icon>Adicionar
+                    </v-btn>
+                    
+                    </v-col>
+                </v-row>
+                </div>
+                  <div v-if="picked === 'users'" >
+                <v-row>
+                    <v-col cols="9">
+                    <v-file-input
+                        v-model="files"
+                        placeholder="Selecione o arquivo de usuários"
+                        label="Anexos:"
+                        prepend-icon="mdi-paperclip"
+                    >
+                        <template v-slot:selection="{ text }">
+                        <v-chip small label color="primary">{{ text }}</v-chip>
+                        </template>
+                    </v-file-input>
+                    </v-col>
+                    <v-col cols="2">
+                    <v-btn
+                        v-if="!isInEditMode"
+                        dark
+                        color="primary"
+                        class="mt-4"
+                        @click="addFiles('users')"
+                    >
+                        <v-icon>mdi-plus</v-icon>Adicionar
+                    </v-btn>
+                    </v-col>
+                </v-row>
+                </div>
         </v-card>
         </v-col>
     </v-row>
@@ -36,6 +91,8 @@
 <script>
 import Alert from "@/components/shared/Alert"
 import {  mapState  } from "vuex"
+import XLSX from "xlsx"
+import sendToDatabase from '@/utilities/sendDataToDB'
 
 const computedGeneral = mapState("general", {
     isLoading: state => state.isLoading
@@ -48,21 +105,41 @@ export default {
     return {
       screenTitle: 'Importações',
       picked: '',
+      files: null
     } 
   },
   
   methods: Object.assign({}, {
-    uploadLogoButtonClick(){
-        this.$refs.uploadLogo.click()
-      },
-      check(){
-          console.log(this.picked)
-      }
+    addFiles(payload) {
+     if(payload === "users") {
+      let usersFiles = this.files
+      let reader = new FileReader()
+      reader.onload = function(e) {
+            let data = new Uint8Array(e.target.result)
+            let workbook = XLSX.read(data, {type: 'array'})
+            let sheetName = workbook.SheetNames[0]
+            let worksheet = workbook.Sheets[sheetName]
+            sendToDatabase(XLSX.utils.sheet_to_json(worksheet), payload)
+          }
+          reader.readAsArrayBuffer(usersFiles)
+       }
+     else if(payload === "clients") {
+        let clientsFiles = this.files
+        let reader = new FileReader()
+        reader.onload = function(e) {
+                let data = new Uint8Array(e.target.result)
+                let workbook = XLSX.read(data, {type: 'array'})
+                let sheetName = workbook.SheetNames[0]
+                let worksheet = workbook.Sheets[sheetName]
+                sendToDatabase(XLSX.utils.sheet_to_json(worksheet), payload)
+            }
+            reader.readAsArrayBuffer(clientsFiles)
+        }
+      this.files = []
+    }
   }),
 
   computed: Object.assign({}, computedGeneral),
-    mounted(){
-        this.check()
-    }
+  
 }
 </script>
