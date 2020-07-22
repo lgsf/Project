@@ -32,7 +32,7 @@
                 <v-row>
                     <v-col cols="9" class='ms-6 me-6'>
                     <v-file-input
-                        v-model="files"
+                        v-model="file"
                         placeholder="Selecione o arquivo de clientes"
                         label="Anexos:"
                         prepend-icon="mdi-paperclip"
@@ -44,13 +44,13 @@
                     </v-col>
                     <v-col cols="2">
                     <v-btn
-                        v-if="!isInEditMode"
+                        v-if="file"
                         dark
                         color="primary"
                         class="mt-4"
                         @click="addFiles('clients')"
                     >
-                        <v-icon>mdi-plus</v-icon>Adicionar
+                        <v-icon>mdi-import</v-icon>Importar
                     </v-btn>
                     
                     </v-col>
@@ -60,7 +60,7 @@
                 <v-row>
                     <v-col cols="9">
                     <v-file-input
-                        v-model="files"
+                        v-model="file"
                         placeholder="Selecione o arquivo de usuários"
                         label="Anexos:"
                         prepend-icon="mdi-paperclip"
@@ -72,7 +72,7 @@
                     </v-col>
                     <v-col cols="2">
                     <v-btn
-                        v-if="!isInEditMode"
+                        v-if="file"
                         dark
                         color="primary"
                         class="mt-4"
@@ -83,6 +83,7 @@
                     </v-col>
                 </v-row>
                 </div>
+
         </v-card>
         </v-col>
     </v-row>
@@ -90,13 +91,14 @@
 </template>
 <script>
 import Alert from "@/components/shared/Alert"
-import {  mapState  } from "vuex"
+import {  mapState, mapActions  } from "vuex"
 import XLSX from "xlsx"
 import sendToDatabase from '@/utilities/sendDataToDB'
 
 const computedGeneral = mapState("general", {
     isLoading: state => state.isLoading
 })
+
 
 export default {
   components: { Alert },
@@ -105,39 +107,44 @@ export default {
     return {
       screenTitle: 'Importações',
       picked: '',
-      files: null
+      file: null
     } 
   },
   
-  methods: Object.assign({}, {
+  methods:  {
+    ...mapActions("general", ["setSuccessMessage"]),
+
     addFiles(payload) {
-     if(payload === "users") {
-      let usersFiles = this.files
+     if(payload === "clients") {
+      let clientsFile = this.file
       let reader = new FileReader()
       reader.onload = function(e) {
             let data = new Uint8Array(e.target.result)
             let workbook = XLSX.read(data, {type: 'array'})
             let sheetName = workbook.SheetNames[0]
             let worksheet = workbook.Sheets[sheetName]
-            sendToDatabase(XLSX.utils.sheet_to_json(worksheet), payload)
+            sendToDatabase(XLSX.utils.sheet_to_json(worksheet))
           }
-          reader.readAsArrayBuffer(usersFiles)
+          reader.readAsArrayBuffer(clientsFile)
+          this.setSuccessMessage("Os clientes foram importados com sucesso!")
        }
-     else if(payload === "clients") {
-        let clientsFiles = this.files
+     else if(payload === "users") {
+        let usersFile = this.file
         let reader = new FileReader()
         reader.onload = function(e) {
                 let data = new Uint8Array(e.target.result)
                 let workbook = XLSX.read(data, {type: 'array'})
                 let sheetName = workbook.SheetNames[0]
                 let worksheet = workbook.Sheets[sheetName]
-                sendToDatabase(XLSX.utils.sheet_to_json(worksheet), payload)
+                console.log(worksheet)
+                //to implement cloud functions
             }
-            reader.readAsArrayBuffer(clientsFiles)
+            reader.readAsArrayBuffer(usersFile)
+            this.setSuccessMessage("Os usuários foram importados com sucesso!")
         }
-      this.files = []
-    }
-  }),
+      this.file = []
+    },
+  },
 
   computed: Object.assign({}, computedGeneral),
   

@@ -5,7 +5,7 @@ const state = () => ({
     statusList: ['Pendente', 'Em progresso', 'Finalizada'],
     selectedOrderTasks: [],
     kanbanColumns: [],
-    taskPriorityList: ['', 'Baixa', 'Media', 'Alta', 'Critica']
+    taskPriorityList: ['', 'Baixa', 'Média', 'Alta', 'Crítica']
 })
 
 const mutations = {
@@ -30,9 +30,9 @@ function comparePriorities(a, b){
     let priorityLevel = [
         {name: '', value: 0},
         {name: 'Baixa', value: 1},
-        {name: 'Media', value: 2},
+        {name: 'Média', value: 2},
         {name: 'Alta', value: 3},
-        {name: 'Critica', value: 4},
+        {name: 'Crítica', value: 4},
     ]
     let priorityA = priorityLevel.find(p => p.name == (a.priority || '')).value
     let priorityB = priorityLevel.find(p => p.name == (b.priority || '')).value
