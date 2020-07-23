@@ -53,8 +53,7 @@ const actions = {
                 this.dispatch('general/resetIsLoading')
             })
             .then(() => new Promise(function (resolve) {
-                router.push('/home')
-                resolve()
+                resolve(router.push('/home'))
             }))
             .catch((error) => {
                 sessionStorage.clear()
@@ -73,7 +72,6 @@ const actions = {
             session_start: state.sessionStart,
             session_end: moment().unix()
         }).then(docRef => {
-            console.log(docRef)
             if (docRef) {
             firebase
             .auth()
@@ -84,9 +82,8 @@ const actions = {
                 commit('setUserGroup', '')
                 commit('setUserName', '')
                 this.dispatch('general/setSuccessMessage', 'Você saiu com sucesso!')
-                router.push('/')
                 sessionStorage.clear()
-                resolve()
+                resolve(router.push('/'))
                 }))
               }
              }

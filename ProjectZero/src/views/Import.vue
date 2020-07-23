@@ -2,13 +2,7 @@
 <div class="import">
     <v-row style="min-width:70vw;">
       <v-col>
-        <div class="text-center screen-margin-top" v-if="isLoading">
-          <v-progress-circular
-            indeterminate
-            color="primary"
-          ></v-progress-circular>
-        </div>
-        <v-card v-if="!isLoading">
+        <v-card >
         <v-toolbar class="primary white--text" >
           <h3>
             {{ screenTitle }}
@@ -20,8 +14,8 @@
               <v-row>
                 <v-col cols="9" class='ms-6 me-6'>
                 <v-radio-group v-model="picked" label="O que deseja importar:" row>
-                  <v-radio label="Clientes" value="clients"></v-radio>
-                  <v-radio label="Usuários" value="users"   ></v-radio>
+                  <v-radio label="Clientes" value="clients" @change="sendInfoMessage('clients')"></v-radio>
+                  <v-radio label="Usuários" value="users" @change="sendInfoMessage('users')"></v-radio>
                 </v-radio-group>
                 </v-col>
                 </v-row>
@@ -55,11 +49,11 @@
                 </div>
                   <div v-if="picked === 'users'" >
                 <v-row>
-                    <v-col cols="9">
+                    <v-col cols="5" xl="10" md="10" lg="10" class='ms-6 me-6'>
                     <v-file-input
                         v-model="file"
-                        placeholder="Selecione o arquivo de usuários"
-                        label="Anexos:"
+                        placeholder="Selecione "
+                        label="Anexo de usuários:"
                         prepend-icon="mdi-paperclip"
                     >
                         <template v-slot:selection="{ text }">
@@ -67,7 +61,7 @@
                         </template>
                     </v-file-input>
                     </v-col>
-                    <v-col cols="2">
+                    <v-col cols="1">
                     <v-btn
                         v-if="file"
                         dark
@@ -75,7 +69,7 @@
                         class="mt-4"
                         @click="addFiles('users')"
                     >
-                        <v-icon>mdi-plus</v-icon>Adicionar
+                        <v-icon>mdi-import</v-icon>Importar
                     </v-btn>
                     </v-col>
                 </v-row>
@@ -88,14 +82,10 @@
 </template>
 <script>
 import Alert from "@/components/shared/Alert"
-import {  mapState, mapActions  } from "vuex"
+import { mapActions  } from "vuex"
 import XLSX from "xlsx"
 import sendToDatabase from '@/utilities/sendDataToDB'
-
-const computedGeneral = mapState("general", {
-    isLoading: state => state.isLoading
-})
-
+import { functions } from '@/main'
 
 export default {
   components: { Alert },
@@ -109,10 +99,20 @@ export default {
   },
   
   methods:  {
-    ...mapActions("general", ["setSuccessMessage"]),
+    ...mapActions("general", ["setSuccessMessage", "setInfoMessage", "resetAllMessages"]),
+
+    sendInfoMessage(payload) { 
+      this.resetAllMessages()
+      if (payload === "users") {
+        this.setInfoMessage("O arquivo deve conter ao menos duas colunas com títulos: email, name.")
+      }
+      else {
+        this.setInfoMessage("O arquivo deve conter ao menos três colunas com títulos: cnpj, name, email.")
+      }
+    },
 
     addFiles(payload) {
-     if(payload === "clients") {
+     if (payload === "clients") {
       let clientsFile = this.file
       let reader = new FileReader()
       reader.onload = function(e) {
@@ -123,9 +123,10 @@ export default {
             sendToDatabase(XLSX.utils.sheet_to_json(worksheet))
           }
           reader.readAsArrayBuffer(clientsFile)
+          this.resetAllMessages()
           this.setSuccessMessage("Os clientes foram importados com sucesso!")
        }
-     else if(payload === "users") {
+     else if (payload === "users") {
         let usersFile = this.file
         let reader = new FileReader()
         reader.onload = function(e) {
@@ -133,17 +134,16 @@ export default {
                 let workbook = XLSX.read(data, {type: 'array'})
                 let sheetName = workbook.SheetNames[0]
                 let worksheet = workbook.Sheets[sheetName]
-                console.log(worksheet)
-                //to implement cloud functions
+                let saveUsersToDB = functions.httpsCallable('saveUsers')
+                saveUsersToDB(XLSX.utils.sheet_to_json(worksheet))
             }
             reader.readAsArrayBuffer(usersFile)
+            this.resetAllMessages()
             this.setSuccessMessage("Os usuários foram importados com sucesso!")
         }
       this.file = []
     },
-  },
-
-  computed: Object.assign({}, computedGeneral),
+  }
   
 }
 </script>

@@ -1,6 +1,6 @@
 import { db } from "@/main"
-import { auth } from "@/main"
 import catchError from '@/utilities/firebaseErrors'
+import { functions } from '@/main'
 
 const state = () => ({
     search: "",
@@ -148,18 +148,19 @@ const actions = {
     closeEditUserModal({ commit }) {
         commit('setShowEditModal', false)
         commit('setSelectedUser', false)
+        commit('setBirthDate', '')
     },
 
     save({ state, dispatch }) {
         if (!state.selected)
             createUser(state).then(() => {
-                dispatch('users/readUsers')
-                dispatch('users/closeEditUserModal')
+                dispatch('readUsers', true)
+                dispatch('closeEditUserModal')
             })
         else
             updateUser(state).then(() => {
-                dispatch('users/readUsers')
-                dispatch('users/closeEditUserModal')
+                dispatch('readUsers', true)
+                dispatch('closeEditUserModal')
             })
     }
 
@@ -183,23 +184,13 @@ function onUsersLoaded(context, rootState, payload) {
 
 
 function createUser(state) {
-    return auth.createUserWithEmailAndPassword(state.editUserEmail, "temporario")
-        .then(user => {
-            db.collection("users")
-                .doc(user.user.uid)
-                .set({
-                    name: state.editUserName,
-                    email: state.editUserEmail,
-                    phone: state.editUserPhone,
-                    birth_date: state.editUserBirthDate,
-                    group: state.editUserGroup
-                })
-        })
-        .catch(error => {
-            let errorMessage = catchError(error)
-            this.dispatch('general/setErrorMessage', errorMessage)
-        })
-
+    let saveUser = functions.httpsCallable('saveUser')
+    return new Promise(function (resolve, reject) {
+        if (!state)
+            reject(state)
+        else
+            resolve(saveUser(state))    
+    })
 }
 
 function updateUser(state) {

@@ -35,6 +35,7 @@ firebase.initializeApp({
 export const db = firebase.firestore()
 export const fileStorage = firebase.storage()
 export const auth = firebase.auth()
+export const functions = firebase.functions()
 
 // To avoid some annoying warning
 // https://github.com/vuetifyjs/vuetify/issues/9999
