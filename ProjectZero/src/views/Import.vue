@@ -134,8 +134,8 @@ export default {
                 let workbook = XLSX.read(data, {type: 'array'})
                 let sheetName = workbook.SheetNames[0]
                 let worksheet = workbook.Sheets[sheetName]
-                let saveUsersToDB = functions.httpsCallable('saveUsers')
-                saveUsersToDB(XLSX.utils.sheet_to_json(worksheet))
+                let importUsers = functions.httpsCallable('importUsers')
+                importUsers(XLSX.utils.sheet_to_json(worksheet))
             }
             reader.readAsArrayBuffer(usersFile)
             this.resetAllMessages()

@@ -1,22 +1,24 @@
-var functions = require('firebase-functions')
-var admin = require('firebase-admin')
+var functions = require('firebase-functions');
+var admin = require('firebase-admin');
 
 admin.initializeApp({
-    databaseURL: 'https://projectzero-9bff2.firebaseio.com'
 })
 
- exports.saveUsers = functions.https.onCall((data) => {
+const db = admin.firestore()
+const auth = admin.auth()
+
+ exports.importUsers = functions.https.onCall((data) => {
     data && Object.keys(data).forEach(key => {
-        const nestedContent = data[key]
-        admin.auth().createUser({
+        let nestedContent = data[key]
+        auth.createUser({
             email: nestedContent.email,
             password: 'temporario'
             }).then(userRecord => {
-                return admin.firestore().collection('users')
+                return db.collection('users')
                 .doc(userRecord.uid)
                 .set({
-                    name: nestedContent.name,
-                    email: nestedContent.email,
+                    name: nestedContent.name || '',
+                    email: nestedContent.email || '',
                     phone: nestedContent.phone || '',
                     birth_date: nestedContent.birth_date || '',
                     group: ''
@@ -29,12 +31,12 @@ admin.initializeApp({
 
 exports.saveUser = functions.https.onCall(async (state) => {
     try {
-        const userRecord = await admin.auth().createUser({
+        const record = await auth.createUser({
             email: state.editUserEmail,
             password: 'temporario'
         })
-        return admin.firestore().collection('users')
-            .doc(userRecord.uid)
+        return db.collection('users')
+            .doc(record.uid)
             .set({
                 name: state.editUserName,
                 email: state.editUserEmail,
