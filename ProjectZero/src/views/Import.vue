@@ -139,7 +139,7 @@ export default {
             }
             reader.readAsArrayBuffer(usersFile)
             this.resetAllMessages()
-            this.setSuccessMessage("Os usuários foram importados com sucesso!")
+            this.setSuccessMessage("Os dados estão sendo carregados, em instantes estarão disponíveis.")
         }
       this.file = []
     },
