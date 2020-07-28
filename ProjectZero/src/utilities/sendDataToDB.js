@@ -20,7 +20,7 @@ function sendToDatabase(data) {
             userArray.push(nestedContent)
         }
     })
-    return userArray
+    return [data.length, userArray]
 }
 
 export default sendToDatabase

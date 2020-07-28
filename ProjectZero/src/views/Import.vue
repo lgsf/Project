@@ -112,17 +112,17 @@ export default {
     },
 
     checkSuccess(result) { 
-      if (result.length == 0){
+      if (result[1].length == 0){
         this.resetAllMessages()
-        this.setSuccessMessage("Os clientes foram importados com sucesso!")
+        this.setSuccessMessage("Os"+ result[0] +"clientes foram importados com sucesso!")
       }
-      else if (result.length == 1) {
+      else if (result[1].length == 1) {
         this.resetAllMessages()
-        this.setWarningMessage("1 cliente não pôde ser importado pois haviam campos inválidos de e-mail ou cnpj no arquivo importado.")
+        this.setWarningMessage("1 cliente dos "+ result[0] +" importados não pôde ser adicionado! Campos inválidos de e-mail ou cnpj no arquivo importado.")
       }
       else {
         this.resetAllMessages()
-        this.setWarningMessage(result.length + " clientes não puderam ser importados pois haviam campos inválidos de e-mail ou cnpj no arquivo importado.")
+        this.setWarningMessage(result[1].length + " clientes dos "+ result[0] +" importados não puderam ser adicionados! Campos inválidos de e-mail ou cnpj no arquivo importado.")
       }
         
       
