@@ -39,7 +39,7 @@
                         dark
                         color="primary"
                         class="mt-4"
-                        @click="addFiles('clients')"
+                        @click="addFiles('clients', checkSuccess)"
                     >
                         <v-icon>mdi-import</v-icon>Importar
                     </v-btn>
@@ -99,7 +99,7 @@ export default {
   },
   
   methods:  {
-    ...mapActions("general", ["setSuccessMessage", "setInfoMessage", "resetAllMessages"]),
+    ...mapActions("general", ["setSuccessMessage", "setInfoMessage", "setWarningMessage", "resetAllMessages"]),
 
     sendInfoMessage(payload) { 
       this.resetAllMessages()
@@ -111,7 +111,24 @@ export default {
       }
     },
 
-    addFiles(payload) {
+    checkSuccess(result) { 
+      if (result.length == 0){
+        this.resetAllMessages()
+        this.setSuccessMessage("Os clientes foram importados com sucesso!")
+      }
+      else if (result.length == 1) {
+        this.resetAllMessages()
+        this.setWarningMessage("1 cliente não pôde ser importado pois haviam campos inválidos de e-mail ou cnpj no arquivo importado.")
+      }
+      else {
+        this.resetAllMessages()
+        this.setWarningMessage(result.length + " clientes não puderam ser importados pois haviam campos inválidos de e-mail ou cnpj no arquivo importado.")
+      }
+        
+      
+    },
+
+    addFiles (payload, callback) {
      if (payload === "clients") {
       let clientsFile = this.file
       let reader = new FileReader()
@@ -120,11 +137,9 @@ export default {
             let workbook = XLSX.read(data, {type: 'array'})
             let sheetName = workbook.SheetNames[0]
             let worksheet = workbook.Sheets[sheetName]
-            sendToDatabase(XLSX.utils.sheet_to_json(worksheet))
+            callback(sendToDatabase(XLSX.utils.sheet_to_json(worksheet)))
           }
           reader.readAsArrayBuffer(clientsFile)
-          this.resetAllMessages()
-          this.setSuccessMessage("Os clientes foram importados com sucesso!")
        }
      else if (payload === "users") {
         let usersFile = this.file
@@ -143,6 +158,10 @@ export default {
         }
       this.file = []
     },
+  },
+
+  mounted(){
+    this.resetAllMessages()
   }
   
 }
