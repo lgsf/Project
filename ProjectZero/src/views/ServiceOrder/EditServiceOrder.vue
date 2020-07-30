@@ -377,8 +377,16 @@ export default {
         }, 300)
       },
       checkIfTasksDone(selected){
-        if(selected.tasks.some(e => e.status === "Pendente" || "Em progresso" )){
-          alert("Você não pode finalizar a ordem: " + selected.name + "! Ainda existem tarefas pendentes ou em andamento.")
+        console.log(selected.tasks.some(e => e.status === "Em progresso"))
+        if (selected.tasks.some(e => e.status == "Em progresso")){
+          alert("Você não pode finalizar a ordem: " + selected.name + "! Ainda existem tarefas em progresso.")
+        }
+        else if (selected.tasks.some(e => e.status == "Pendente")){
+          if (confirm("Ainda existem tarefas pendentes na ordem: " + selected.name + ". Deseja finalizar?"))
+            {
+              this.updateStatus('Finalizada')
+            }
+          else return
         }
         else this.updateStatus('Finalizada')
       }

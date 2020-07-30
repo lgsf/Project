@@ -64,6 +64,7 @@ const mutations = {
     },
     updateSelectedOrderTasks(state, payload) {
         state.selectedOrderTasks = payload
+        state.selected.tasks = payload
     },
     updateShowTaskDialog(state, payload) {
         state.showTaskDialog = payload
@@ -264,7 +265,7 @@ function loadTasksByOrder(context, filterCurrentUser, resolve) {
             .then(snapshot => {
                 let selectedOrderTasks = snapshot.data()
                     .tasks
-                    .filter(task => !filterCurrentUser || (task.users && task.users.email == context.rootState.auth.user.email));
+                    .filter(task => !filterCurrentUser || (task.users && task.users.email == context.rootState.auth.user.email))
                 context.dispatch('updateSelectedOrderTask', selectedOrderTasks)
                     .then(() => {
                         context.commit('updateKanbanColumns')
