@@ -1,6 +1,7 @@
 import { db, fileStorage, moment } from "@/main"
 import router from '@/router'
 import catchError from '@/utilities/firebaseErrors'
+import uuidv4 from '@/utilities/uidGenerator'
 
 const state = () => ({
     client: undefined,
@@ -216,12 +217,7 @@ function saveCurrentSelectedTask(order, context, resolve) {
         })
 }
 
-function uuidv4() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8)
-        return v.toString(16)
-    })
-}
+
 
 function addNewTaskToOrder(context, order, resolve) {
     context.state.selectedTask.status = "Pendente"
@@ -230,7 +226,7 @@ function addNewTaskToOrder(context, order, resolve) {
 
     let orderData = order.data()
 
-    context.state.selectedTask.id = uuidv4();
+    context.state.selectedTask.id = uuidv4()
     let newTask = Object.assign({}, context.state.selectedTask, { files: [] })
     let user = context.rootGetters['users/getUserByEmail'](context.rootState.auth.user.email)
     newTask.created_by = user[0]

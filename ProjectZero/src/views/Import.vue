@@ -114,7 +114,7 @@ export default {
     checkSuccess(result) { 
       if (result[1].length == 0){
         this.resetAllMessages()
-        this.setSuccessMessage("Os"+ result[0] +"clientes foram importados com sucesso!")
+        this.setSuccessMessage("Os"+ result[0] +" clientes foram importados com sucesso!")
       }
       else if (result[1].length == 1) {
         this.resetAllMessages()

@@ -10,27 +10,27 @@
           <v-container>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Nome" v-model="selected.name" required></v-text-field>
+                <v-text-field label="Nome" :value="name" @input="editName" required></v-text-field>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12">
                 <v-autocomplete
-                  v-model="selected.administrator"
+                  :value="editingAdmin"
                   :items="users"
                   color="primary"
                   item-text="name"
                   label="Administrador"
                   return-object
                   dense
-                  required
+                  @input="editAdmin"
                 ></v-autocomplete>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12">
                 <v-autocomplete
-                  v-model="selected.users"
+                  v-model="editingUser"
                   :items="users"
                   color="primary"
                   item-text="name"
@@ -39,6 +39,7 @@
                   dense
                   multiple
                   required
+                  @input="editUser"
                 ></v-autocomplete>
               </v-col>
             </v-row>
@@ -56,6 +57,7 @@
                   item-key="id"
                   selected-color="accent"
                   color="primary"
+                  open-all
                 >
                   <template v-slot:prepend="{ leaf }">
                     <v-icon v-if="!leaf">mdi-calendar-today</v-icon>
@@ -89,9 +91,9 @@
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
-          <v-btn color="error" text v-show="selected" @click="deleteErp">Deletar</v-btn>
+          <v-btn color="error" text v-show="Object.keys(selected).length !== 0" @click="deleteErp">Deletar</v-btn>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="closeSelectedErpOrder(false)">Fechar</v-btn>
+          <v-btn color="blue darken-1" text @click="closeSelectedErpOrder">Fechar</v-btn>
           <v-btn color="blue darken-1" text @click="saveErpOrder">Salvar</v-btn>
         </v-card-actions>
       </v-card>
@@ -100,11 +102,17 @@
 </template>
 <script>
 import { mapState, mapActions } from "vuex"
+import uuidv4 from '@/utilities/uidGenerator'
 
 const computed = mapState({
   selected: state => state.erp.selected,
   dialog: state => state.erp.editErp,
-  users: state => state.users.userList
+  users: state => state.users.userList,
+  name: state => state.erp.editingName,
+  detail: state => state.erp.editingDetail,
+  editingUser: state => state.erp.editingUser,
+  editingAdmin: state => state.erp.editingAdmin,
+  editingTask: state => state.erp.editingTask
 })
 
 const userMethods = mapActions("users", ["readUsers"])
@@ -113,6 +121,9 @@ const erpMethods = mapActions("erp",
 ["saveErpOrder", 
 "editErpOrder", 
 "deleteErp",
+"editName",
+"editUser",
+"editAdmin",
 "closeSelectedErpOrder"
 ])
 
@@ -120,26 +131,25 @@ export default {
   computed,
   methods: Object.assign({}, erpMethods, userMethods, {
     addTask() {
-      if (!this.selected.tasks) this.selected.tasks = []
-      let length = this.selected.tasks.length
-      let currentCount = !length
-        ? 0
-        : this.selected.tasks[length - 1].id + 5000
       this.selected.tasks.push({
-        id: currentCount,
+        id: uuidv4(),
         name: this.newTask,
         items: [],
-        status: 'Pendente'
+        status: 'Pendente',
+        priority: '',
+        tags: [],
+        users: [],
+        created_by: this.editingAdmin
       })
+      console.log(this.selected.tasks)
       this.newTask = ""
     },
     editNewTask(payload) {
       this.newTask = payload
     },
     appendTaskItem(item) {
-        console.log("teste")
-        let currentCount = item.id + item.items.length + 1
-        item.items.push({ id: currentCount, name: '', description: "", done: false })
+        let currentCount = item.items.length + 1
+        item.items.push({ id: currentCount })
         console.log(item.items)
     },
     removeTaskOrItem(item) {

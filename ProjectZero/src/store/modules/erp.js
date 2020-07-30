@@ -4,8 +4,9 @@ import { db } from "@/main"
 const state = () => ({
     label: '',
     listTitle: "Ordem Erp",
-    selected: '',
-    selectedOrder: {},
+    selected: {
+        tasks:[]
+    },
     search: '',
     searchLabel: 'Buscar',
     header: [
@@ -15,25 +16,27 @@ const state = () => ({
             value: "name"
         },
         {
-            text: "Tarefas",
+            text: "Número de Tarefas",
             align: "start",
-            value: "task"
+            value: "tasks.length"
         },
         {
-            text: "Usuário",
+            text: "Usuário(s)",
             align: "start",
-            value: "user"
+            value: "usersConcatenated"
         }
     ]
     ,
     erpOrders: [],
-    editErp: false
+    editErp: false,
+    editingName: '',
+    editingAdmin: {},
+    editingUser:[],
 })
 
 const mutations = {
     selectErpOrder(state, payload) {
         state.selected = payload
-        state.selectedOrder = state.selected ? state.selected : { tasks: [] }
     },
     searchFor(state, payload) {
         state.search = payload
@@ -42,63 +45,64 @@ const mutations = {
         state.erpOrders = payload
     },
     editErpOrder(state, payload) {
-        let anySelected = state.selected
-        state.editingName = anySelected ? state.selected.name : ''
-        state.editingTask = anySelected ? state.selected.task : ''
-        state.editingUser = anySelected ? state.selected.user : ''
+        state.editingName = state.selected.name || ''
+        state.editingUser = state.selected.users || []
+        state.editingAdmin = state.selected.administrator || {}
         state.editErp = payload
+    },
+    editName(state, payload) {
+        state.editingName = payload
+    },
+    editUser(state, payload) {
+        state.editingUser = payload
+    },
+    editAdmin(state, payload) {
+        state.editingAdmin = payload
     }
 }
 
 function createNewErp(state) {
-    let admin = mapUser(state.selectedOrder.administrator)
-    let users = (state.selectedOrder.users || []).map(m => mapUser(m))
-
-    if (state.selectedOrder.tasks) {
+    if (state.selected.tasks) {
         let newTaskList = []
-        state.selectedOrder.tasks.forEach(task => {
+        state.selected.tasks.forEach(task => {
             task.items.forEach(item => {
                 item.description = item.name
             })
             newTaskList.push(task)
         })
-
-        state.selectedOrder.tasks = newTaskList
+        state.selected.tasks = newTaskList
     }
 
-    return db.collection("erp")
+    return db.collection("erpOrder")
         .add({
-            name: state.selectedOrder.name || '',
-            administrator: admin,
-            tasks: state.selectedOrder.tasks || [],
-            users: users
+            name: state.editingName || '',
+            administrator: state.editingAdmin || '',
+            users: state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
+            tasks: state.selected.tasks?.map((obj) => { return Object.assign({}, obj) }) || []
         })
 }
 
-function mapUser(user) {
-    let userMapped = ''
-    if (!user)
-        return userMapped
-    userMapped = {
-        id: user.id,
-        name: user.name,
-        group_id: user.group_id,
-        email: user.email
-    }
-    return userMapped
-}
 
 function updateExistingErp(state) {
-    let admin = mapUser(state.selectedOrder.administrator)
-    let users = (state.selectedOrder.users || []).map(m => mapUser(m))
 
-    return db.collection("erp")
-        .doc(state.selectedOrder.id)
+    if (state.selected.tasks) {
+        let newTaskList = []
+        state.selected.tasks.forEach(task => {
+            task.items.forEach(item => {
+                item.description = item.name
+            })
+            newTaskList.push(task)
+        })
+        state.selected.tasks = newTaskList
+    }
+
+    return db.collection("erpOrder")
+        .doc(state.selected.id)
         .set({
-            name: state.selectedOrder.name || '',
-            administrator: admin,
-            tasks: state.selectedOrder.tasks || [],
-            users: users
+            name: state.editingName || '',
+            administrator: state.editingAdmin || '',
+            users: state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
+            tasks: state.selected.tasks?.map((obj) => { return Object.assign({}, obj) }) || []
         })
 }
 
@@ -109,9 +113,10 @@ const actions = {
         commit('editErpOrder', true)
     },
     
-    closeSelectedErpOrder({ commit }, payload) {
-        var selected = payload
-        commit('selectErpOrder', selected)
+    closeSelectedErpOrder({ commit }) {
+        commit('selectErpOrder', {
+            tasks:[]
+        })
         commit('editErpOrder', false)
     },
     
@@ -119,16 +124,32 @@ const actions = {
         commit('searchFor', payload)
     },
 
+    editName({ state, commit }, payload) {
+        if (!state) console.log('Error, state is undifined.')
+        commit('editName', payload)
+    },
+
+    editUser({ state, commit }, payload) {
+        if (!state) console.log('Error, state is undifined.')
+        commit('editUser', payload)
+    },
+
+    editAdmin({ state, commit }, payload) {
+        if (!state) console.log('Error, state is undifined.')
+        commit('editAdmin', payload)
+    },
+
     loadErpOrders(context) {
         this.dispatch('general/setIsLoading')
         this.dispatch('general/resetAllMessages', '')
-        db.collection("erp")
+        db.collection("erpOrder")
             .get()
             .then((snapshots) => {
                 let erpOrders = []
                 snapshots.forEach(erpSnapShot => {
                     let erpData = erpSnapShot.data()
                     erpData.id = erpSnapShot.id
+                    erpData.usersConcatenated = erpData.users.map(u => u.name).join(', ')
                     erpOrders.push(erpData)
                 })
                 context.commit('updateErpOrders', erpOrders)
@@ -141,15 +162,15 @@ const actions = {
     },
 
     saveErpOrder({ commit, state }) {
-        if (!state.selectedOrder.id)
+        if (!state.selected.id)
             createNewErp(state).then(() => {
-                commit("selectErpOrder", [])
+                commit("selectErpOrder", {})
                 this.dispatch('erp/loadErpOrders')
                 this.dispatch('erp/closeSelectedErpOrder')
             })
         else
             updateExistingErp(state).then(() => {
-                commit("selectErpOrder", []);
+                commit("selectErpOrder", {})
                 this.dispatch('erp/loadErpOrders')
                 this.dispatch('erp/closeSelectedErpOrder')
             })
@@ -162,8 +183,8 @@ const actions = {
     },
 
     deleteErp(context) {
-        if (context.state.selectedOrder.id)
-            db.collection("erp").doc(context.state.selectedOrder.id)
+        if (context.state.selected.id)
+            db.collection("erpOrder").doc(context.state.selected.id)
             .delete().then(() => { this.dispatch('erp/closeSelectedErpOrder')
             .then(() => { this.dispatch('erp/loadErpOrders') }) })
         else

@@ -25,13 +25,13 @@ const state = () => ({
             value: "dateFormated"
           },
         {
-            text: "Usuários",
+            text: "Usuário(s)",
             align: "start",
             value: "userConcatenated",
             hide: "true"
           },
         {
-          text: "Grupos",
+          text: "Grupo(s)",
           align: "start",
           value: "groupConcatenated"
         },

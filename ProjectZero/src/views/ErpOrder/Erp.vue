@@ -37,7 +37,7 @@
                 ></v-data-table>
               </v-col>
             </v-row>
-            <v-btn color="error" dark fixed bottom right v-show="!selected" fab @click="editErpOrder(true)">
+            <v-btn color="error" dark fixed bottom right v-show="Object.keys(selected).length === 1" fab @click="editErpOrder(true)">
               <v-icon >mdi-plus</v-icon>
             </v-btn>
           </v-col>
