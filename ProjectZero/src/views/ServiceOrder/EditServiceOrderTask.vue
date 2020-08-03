@@ -242,7 +242,7 @@
                             <v-text-field v-model="item.description" />
                           </template>
                           <template v-slot:append="{ item }">
-                            <v-btn icon color="green" @click="appendTaskItem()">
+                            <v-btn icon color="green" :disabled="item.description === ''" @click="appendTaskItem()">
                               <v-icon>mdi-plus</v-icon>
                             </v-btn>
                             <v-btn icon color="red" @click="removeTaskOrItem(item)">
@@ -355,7 +355,7 @@
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
-          <v-btn color="error" text @click="deleteTask" :disabled="!isInEditMode">Deletar</v-btn>
+          <v-btn color="error" text @click="deleteTask" :disabled="!isInEditMode">Excluir</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="close">Fechar</v-btn>
           <v-btn color="blue darken-1" text @click="saveAndClose">Salvar</v-btn>
@@ -409,10 +409,10 @@ const computed = Object.assign(
     taskPriorityList: state => state.serviceOrders.taskPriorityList,
     createdBy: state => state.serviceOrders.selectedTask.created_by?.name || "",
     userRole: function(state) {
-      let role = "NotRelated";
-      if (state.auth.userGroup.id == "bmyiE5pvx66Ct7Wmj78b")
+      let role = "NotRelated"
+      if (state.auth.userGroup == "bmyiE5pvx66Ct7Wmj78b")
         role = "SystemAdmin"
-      if (
+      else if (
         state.auth.user.email ==
         state.serviceOrders.selected.administrator?.email
       )

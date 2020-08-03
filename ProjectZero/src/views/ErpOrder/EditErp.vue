@@ -91,7 +91,7 @@
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
-          <v-btn color="error" text v-show="Object.keys(selected).length !== 0" @click="deleteErp">Deletar</v-btn>
+          <v-btn color="error" text v-show="Object.keys(selected).length > 1" @click="deleteErp">Excluir</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="closeSelectedErpOrder">Fechar</v-btn>
           <v-btn color="blue darken-1" text @click="saveErpOrder">Salvar</v-btn>
@@ -150,7 +150,6 @@ export default {
     appendTaskItem(item) {
         let currentCount = item.items.length + 1
         item.items.push({ id: currentCount })
-        console.log(item.items)
     },
     removeTaskOrItem(item) {
       this.selected.tasks = this.selected.tasks.filter(m => m.id != item.id)
