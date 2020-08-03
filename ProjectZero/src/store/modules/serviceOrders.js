@@ -316,7 +316,6 @@ const actions = {
         if (context.state.newOrder.template) {
             tasks = context.state.newOrder.template.tasks.map((obj) => { return Object.assign({}, obj, { creation_date: formatDate(new Date().toLocaleString('pt-br').substr(0, 10)) }) }) || []
         }
-
         db.collection("serviceOrder").add({
             name: context.state.newOrder.name,
             status: context.state.newOrder.status || 'Pendente',
@@ -330,6 +329,15 @@ const actions = {
             tasks: tasks
         })
             .then(() => {
+                this.dispatch('notifications/sendNotification', {
+                    name: "Sistema",
+                    title: "Nova ordem de serviço",
+                    detail: "Uma nova ordem de serviço, na qual você está vinculado, foi criada!  <br>Nome da ordem: <b>" + context.state.newOrder.name + "</b>",
+                    date: new Date().toLocaleString('pt-br'),
+                    user: context.state.newOrder.users.map((obj) => { return Object.assign({}, obj) }) || [],
+                    group: context.state.newOrder.userGroups.map((obj) => { return Object.assign({}, obj) }) || [],
+                    read: []
+                })
                 this.dispatch('serviceOrders/reloadOrders').then(() => { 
                 context.commit('updateNewOrder', { name: '', creation_date: new Date().toLocaleString('pt-br'), start_date: '', end_date: '', users: [], userGroups: [], status: 'Pendente' })
                 context.commit('updateShowCreateOrderDialog', false) })
@@ -550,6 +558,7 @@ const actions = {
         let serviceOrder = context.state.selected
         if (!serviceOrder)
             return
+            
         db.collection("serviceOrder")
             .doc(serviceOrder.id)
             .update({
