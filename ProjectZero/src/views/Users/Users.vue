@@ -1,5 +1,6 @@
 <template>
   <div class="users">
+    <Alert class="mt-2"></Alert>
       <v-row style="min-width:70vw;">
         <v-col>
           <div class="text-center screen-margin-top" v-if="isLoading">
@@ -47,6 +48,7 @@
 <script>
 import { mapState, mapActions } from "vuex"
 import EditUser from "./EditUser"
+import Alert from "@/components/shared/Alert"
 
 const computed = mapState("users", {
   search: state => state.search,
@@ -68,7 +70,9 @@ const methods = mapActions("users", [
 ])
 
 export default {
-  components: { EditUser },
+  components: { EditUser,
+  Alert
+  },
   data() {
     return {
       headers: [

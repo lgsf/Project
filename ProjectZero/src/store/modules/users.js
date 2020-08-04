@@ -3,14 +3,14 @@ import catchError from '@/utilities/firebaseErrors'
 import { functions } from '@/main'
 
 const state = () => ({
-    search: "",
+    search: '',
     showEditModal: false,
     selected: '',
     editUserName: '',
     editUserEmail: '',
     editUserPhone: '',
     editUserBirthDate: '',
-    editUserGroup: '',
+    editUserGroup: {},
     userList: [],
     userListModified:[],
     userJustMe:[],
@@ -147,7 +147,7 @@ const actions = {
 
     closeEditUserModal({ commit }) {
         commit('setShowEditModal', false)
-        commit('setSelectedUser', false)
+        commit('setSelectedUser', '')
         commit('setBirthDate', '')
     },
 
@@ -156,11 +156,20 @@ const actions = {
             createUser(state).then(() => {
                 dispatch('readUsers', true)
                 dispatch('closeEditUserModal')
+                if (Object.keys(state.editUserGroup).length == Object.keys({}).length)
+                    dispatch('general/setWarningMessage', 'Usuário criado com sucesso, porém nennhum grupo foi atribuído à ele!', {root: true})
+                else 
+                    dispatch('general/setSuccessMessage', 'Usuário criado com sucesso!', {root: true})
             })
         else
             updateUser(state).then(() => {
                 dispatch('readUsers', true)
                 dispatch('closeEditUserModal')
+                if (Object.keys(state.editUserGroup).length == Object.keys({}).length)
+                    dispatch('general/setWarningMessage', 'Usuário modificado com sucesso, porém nennhum grupo foi atribuído à ele!', {root: true})
+                else 
+                    dispatch('general/setSuccessMessage', 'Usuário modificado com sucesso!', {root: true})
+
             })
     }
 

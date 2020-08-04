@@ -49,7 +49,8 @@
           <v-divider></v-divider>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" text @click="closeSelectionClient(false)">Fechar</v-btn>
+            <v-btn color="blue darken-1" text @click="cleanSelectionClient">Limpar</v-btn>
+            <v-btn color="blue darken-1" text @click="closeSelectionClient('')">Fechar</v-btn>
             <v-btn color="blue darken-1" :disabled="!isNotValid" text @click="saveClient">Salvar</v-btn>
           </v-card-actions>
         </v-card>
@@ -79,6 +80,7 @@ const methods = mapActions("clients", [
   "editClient",
   "saveClient",
   "closeSelectionClient",
+  "cleanSelectionClient",
   "editStatus"
 ])
 

@@ -116,6 +116,13 @@ const actions = {
         commit('editClient', false)
     },
 
+    cleanSelectionClient({ commit }) {
+       commit('editName', '')
+       commit('editEmail', '')
+       commit('editCnpj', '')
+       
+    },
+
     searchFor({ state, commit }, payload) {
         if (!state) console.log('Error, state is undifined.')
         commit('searchFor', payload)

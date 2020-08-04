@@ -91,7 +91,7 @@
         </v-card-text>
         <v-divider></v-divider>
         <v-card-actions>
-          <v-btn color="error" text v-show="Object.keys(selected).length > 1" @click="deleteErp">Excluir</v-btn>
+          <v-btn color="error" text v-if="Object.keys(selected).length > 1" @click="deleteErp">Excluir</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="closeSelectedErpOrder">Fechar</v-btn>
           <v-btn color="blue darken-1" text @click="saveErpOrder">Salvar</v-btn>
