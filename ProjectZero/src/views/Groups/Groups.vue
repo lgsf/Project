@@ -1,5 +1,6 @@
 <template>
   <div class="groups">
+    <Alert class="mt-2"></Alert>
     <v-row style="min-width:70vw;">
       <v-col>
          <div class="text-center screen-margin-top" v-if="isLoading">
@@ -50,6 +51,7 @@
 <script>
 import { mapState, mapActions } from "vuex"
 import EditGroup from "./EditGroup"
+import Alert from "@/components/shared/Alert"
 
 const computed = mapState("groups", {
   selected: state => state.selected,
@@ -60,10 +62,11 @@ const computedGeneral = mapState("general", {
     isLoading: state => state.isLoading
 })
 
-const methods = mapActions("groups", ["select", "loadGroups", "editGroup"])
+const methods = mapActions("groups",
+ ["select", "loadGroups", "editGroup"])
 
 export default {
-  components: { EditGroup },
+  components: { EditGroup, Alert },
   data() {
     return {
       search: "",

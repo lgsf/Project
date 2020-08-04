@@ -151,6 +151,14 @@ const actions = {
         commit('setBirthDate', '')
     },
 
+    cleanEditUserModal({ commit }) {
+        commit('setName', '')
+        commit('setEmail', '')
+        commit('setPhone', '')
+        commit('setBirthDate', '')
+        commit('setGroup', {})
+    },
+
     save({ state, dispatch }) {
         if (!state.selected)
             createUser(state).then(() => {

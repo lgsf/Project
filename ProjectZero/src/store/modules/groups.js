@@ -2,6 +2,8 @@ import { db } from "@/main"
 
 const state = () => ({
     selected: '',
+    groupName: '',
+    groupEmail: '',
     groups: [],
     menuItems: [],
     selectedMenuItems: [],
@@ -11,6 +13,8 @@ const state = () => ({
 const mutations = {
     selectGroup(state, payload) {
         state.selected = payload
+        state.groupName = state.selected.name
+        state.groupEmail = state.selected.email
         state.selectedMenuItems = []
         if (state.selected)
             state.selected.menu?.forEach(item => {
@@ -23,13 +27,26 @@ const mutations = {
     },
     editGroup(state, payload) {
         state.editGroup = payload
+        if (payload == false) {
+            state.selected = ''
+            state.groupName = ''
+            state.groupEmail = ''
+            state.selectedMenuItems = []
+        }
     },
     updateMenuItems(state, payload) {
         state.menuItems = payload
     },
     setSelectedMenuItems(state, payload) {
         state.selectedMenuItems = payload
-    }
+    },
+    setName(state, payload) {
+        state.groupName = payload
+    },
+    setEmail(state, payload) {
+        state.groupEmail = payload
+    },
+
 }
 
 
@@ -42,34 +59,47 @@ function getMenuSelectedItems(context) {
     )
 }
 
-function createNewGroup(context, selectedGroup) {
+function createNewGroup(context) {
     let menu = getMenuSelectedItems(context)
     return db.collection("groups")
         .add({
-            name: selectedGroup.name || "",
-            email: selectedGroup.email || "",
+            name: context.state.groupName || "",
+            email: context.state.groupEmail || "",
             menu: menu || []
         })
 }
 
 
 
-function updateExistingGroup(context, selectedGroup) {
-    if (!selectedGroup.name) return
+function updateExistingGroup(context) {
     let menu = getMenuSelectedItems(context)
     return db.collection("groups")
-        .doc(selectedGroup.id)
+        .doc(context.state.selected.id)
         .set({
-            name: selectedGroup.name || "",
-            email: selectedGroup.email || "",
+            name: context.state.groupName || "",
+            email: context.state.groupEmail || "",
             menu: menu || []
         })
 }
 
 const actions = {
-    select(context, selected) {
-        context.commit('selectGroup', selected)
-        context.commit('editGroup', true)
+    select({ commit }, payload) {
+        commit('selectGroup', payload)
+        commit('editGroup', true)
+    },
+
+    clean({ commit}){
+        commit('setName', '')
+        commit('setEmail', '')
+        commit('setSelectedMenuItems', [])
+    },
+
+    setName({ commit }, payload) {
+        commit('setName', payload)
+    },
+
+    setEmail({ commit }, payload) {
+        commit('setEmail', payload)
     },
 
     loadGroups(context) {
@@ -113,15 +143,18 @@ const actions = {
     
     saveGroup(context) {
         let selectedGroup = context.state.selected
-        let recordActionPromise = undefined
         if (!selectedGroup.id)
-            recordActionPromise = createNewGroup(context, selectedGroup)
+            createNewGroup(context).then(() => {
+                this.dispatch('groups/loadGroups')
+                context.commit("editGroup", false)
+                this.dispatch('general/setSuccessMessage', 'Grupo criado com sucesso!')
+            })
         else
-            recordActionPromise = updateExistingGroup(context, selectedGroup)
-        recordActionPromise?.then(() => {
-            this.dispatch('groups/loadGroups')
-            context.commit('selectGroup', '')
-            context.commit("editGroup", false)
+            updateExistingGroup(context).then(() => {
+                this.dispatch('groups/loadGroups')
+                context.commit('selectGroup', '')
+                context.commit("editGroup", false)
+                this.dispatch('general/setSuccessMessage', 'Grupo modificado com sucesso!')
         })
     }
 }

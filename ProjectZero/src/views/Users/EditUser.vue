@@ -58,6 +58,7 @@
           <v-divider></v-divider>
           <v-card-actions>
             <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" text @click="cleanEditUserModal">Limpar</v-btn>
             <v-btn color="blue darken-1" text @click="closeEditUserModal">Fechar</v-btn>
             <v-btn color="blue darken-1" :disabled="!isNotValid" text @click="save">Salvar</v-btn>
           </v-card-actions>
@@ -90,7 +91,8 @@ const methods = mapActions("users", [
   "setBirthDate",
   "setGroup",
   "save",
-  "closeEditUserModal"
+  "closeEditUserModal",
+  "cleanEditUserModal"
 ])
 
 export default {

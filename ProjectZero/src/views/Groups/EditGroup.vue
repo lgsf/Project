@@ -17,12 +17,12 @@
             <v-container>
               <v-row>
                 <v-col cols="12">
-                  <v-text-field label="Grupo*" v-model="selected.name" :rules="[rules.required]"></v-text-field>
+                  <v-text-field label="Grupo*" :value="name" @input="setName" :rules="[rules.required]"></v-text-field>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col cols="12">
-                  <email-field label="Email" v-model="selected.email"></email-field>
+                  <email-field label="Email" :value="email" @input="setEmail" ></email-field>
                 </v-col>
               </v-row>
               <v-row>
@@ -50,6 +50,7 @@
           <v-divider></v-divider>
           <v-card-actions>
             <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" text @click="clean">Limpar</v-btn>
             <v-btn color="blue darken-1" text @click="editGroup(false)">Fechar</v-btn>
             <v-btn color="blue darken-1" :disabled="!isNotValid" text @click="saveGroup">Salvar</v-btn>
           </v-card-actions>
@@ -59,22 +60,27 @@
   </v-form>
 </template>
 <script>
-import { mapState, mapActions } from "vuex";
-import EmailField from "@/components/shared/EmailField";
+import { mapState, mapActions } from "vuex"
+import EmailField from "@/components/shared/EmailField"
 
 const computed = mapState("groups", {
   selected: state => state.selected,
+  name: state => state.groupName,
+  email: state => state.groupEmail,
   items: state => state.menuItems,
   selection: state => state.selectedMenuItems,
   dialog: state => state.editGroup
-});
+})
 
 const methods = mapActions("groups", [
   "loadMenuOptions",
   "editGroup",
   "saveGroup",
+  "setName",
+  "setEmail",
+  "clean",
   "setSelectedMenuItems"
-]);
+])
 
 export default {
   components: { EmailField },
@@ -85,12 +91,12 @@ export default {
       rules: {
         required: value => !!value || "Campo obrigatório."
       }
-    };
+    }
   },
   methods,
   mounted() {
-    this.loadMenuOptions();
+    this.loadMenuOptions()
   }
-};
+}
 </script>
 <style lang="stylus"></style>

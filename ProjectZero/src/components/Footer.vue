@@ -35,7 +35,6 @@
     data: () => ({
       links: [
         {name:'Home', href: 'https://project42-saas.web.app/#/'},
-        {name: 'Sobre', href: 'https://project42-saas.web.app/#/about'},
         {name:'Entre em contato', href: 'https://project42-saas.web.app/#/contact'}
       ]
     }),
