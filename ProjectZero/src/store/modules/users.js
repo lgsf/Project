@@ -165,7 +165,7 @@ const actions = {
                 dispatch('readUsers', true)
                 dispatch('closeEditUserModal')
                 if (Object.keys(state.editUserGroup).length == Object.keys({}).length)
-                    dispatch('general/setWarningMessage', 'Usuário criado com sucesso, porém nennhum grupo foi atribuído à ele!', {root: true})
+                    dispatch('general/setWarningMessage', 'Usuário criado com sucesso, porém nenhum grupo foi atribuído à ele! As permissões de acesso as páginas são condicionadas aos grupos, portanto o usuário não terá acesso.', {root: true})
                 else 
                     dispatch('general/setSuccessMessage', 'Usuário criado com sucesso!', {root: true})
             })
@@ -174,7 +174,7 @@ const actions = {
                 dispatch('readUsers', true)
                 dispatch('closeEditUserModal')
                 if (Object.keys(state.editUserGroup).length == Object.keys({}).length)
-                    dispatch('general/setWarningMessage', 'Usuário modificado com sucesso, porém nennhum grupo foi atribuído à ele!', {root: true})
+                    dispatch('general/setWarningMessage', 'Usuário modificado com sucesso, porém nenhum grupo foi atribuído à ele! As permissões de acesso as páginas são condicionadas aos grupos, portanto o usuário não terá acesso.', {root: true})
                 else 
                     dispatch('general/setSuccessMessage', 'Usuário modificado com sucesso!', {root: true})
 
