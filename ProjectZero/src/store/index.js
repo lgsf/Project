@@ -13,6 +13,8 @@ import management from './modules/management'
 import setup from './modules/setup'
 import calendar from './modules/calendar'
 import createPersistedState from "vuex-persistedstate"
+import { vuexfireMutations,  firestoreAction  } from 'vuexfire'
+import { db } from "@/main"
 
 Vue.use(Vuex)
 
@@ -26,13 +28,20 @@ export const store = new Vuex.Store({
   ],
 
   state: {
+    newNotifications: [],
+    newNotifications1: []
 
   },
   mutations: {
-
+  ...vuexfireMutations
   },
   actions: {
-
+    getNotifications: firestoreAction(({ bindFirestoreRef, state }) => {
+       bindFirestoreRef('newNotifications', db.collection('notifications')
+      .where("userIds", "array-contains", state.auth.user.uid)) 
+       bindFirestoreRef('newNotifications1', db.collection('notifications')
+      .where("groupIds", "array-contains", state.auth.userGroup))
+    }),
   },
   getters: {
 

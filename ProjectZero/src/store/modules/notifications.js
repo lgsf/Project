@@ -2,6 +2,7 @@ import { db, moment} from "@/main"
 import catchError from '@/utilities/firebaseErrors'
 
 
+
 const state = () => ({
     label: '',
     listTitle: "Notificações",
@@ -41,6 +42,7 @@ const state = () => ({
           value: "detail"
         }
         ],
+      newNotifications: [],
       notifications: [],
       uniqueNotifications: [],
       editNotification: false,
@@ -102,8 +104,12 @@ const state = () => ({
                 detail: state.editingDetail || "",
                 date: moment().unix(),
                 user: state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
+                userIds: state.editingUser?.map(k => { return k.id}) || [],
+                groupIds: state.editingGroup?.map(k => { return k.id})  || [],
                 group: state.editingGroup?.map((obj) => { return Object.assign({}, obj) }) || [],
                 read: []
+            }).then( docRef => {
+                db.collection('notifications').doc(docRef.id).update({id: docRef})
             })
     }
 
@@ -112,10 +118,13 @@ const state = () => ({
             .doc(state.selected[0].id)
             .set({
                 title: state.editingTitle || "",
+                id: state.selected[0].id,
                 name: state.editingName || "",
                 detail: state.editingDetail || "",
                 date: moment().unix(),
                 user: state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
+                userIds: state.editingUser?.map(k => { return k.id}) || [],
+                groupIds: state.editingGroup?.map(k => { return k.id})  || [],
                 group: state.editingGroup?.map((obj) => { return Object.assign({}, obj) }) || [],
                 read: []
             })
@@ -360,6 +369,8 @@ const state = () => ({
                 detail: payload.detail,
                 date: moment().unix(),
                 user: payload.user,
+                userIds: payload.userIds,
+                groupIds: payload.groupIds,
                 group: payload.group,
                 read: []
             })

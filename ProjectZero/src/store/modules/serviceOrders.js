@@ -335,6 +335,8 @@ const actions = {
                     detail: "Uma nova ordem de serviço, na qual você está vinculado, foi criada!  <br>Nome da ordem: <b>" + context.state.newOrder.name + "</b>",
                     date: new Date().toLocaleString('pt-br'),
                     user: context.state.newOrder.users.map((obj) => { return Object.assign({}, obj) }) || [],
+                    userIds: context.state.newOrder.users.map(k => { return k.id}) || [],
+                    groupIds: context.state.newOrder.userGroups.map(k => { return k.id}) || [],
                     group: context.state.newOrder.userGroups.map((obj) => { return Object.assign({}, obj) }) || [],
                     read: []
                 })
@@ -487,6 +489,8 @@ const actions = {
                 detail: "Houve uma alteração em uma de suas tarefas ou você foi vinculado a uma tarefa nova. Confira:" + " <br><br><a href='" + window.location.href + "'>Link para ordem</a><br>Nome da tarefa: <b>" + context.state.selectedTask.name + "</b> <br>Nome da ordem: <b>" + context.state.selected.name + "</b>",
                 date: new Date().toLocaleString('pt-br'),
                 user: [context.state.selectedTask.users],
+                userIds: [context.state.selectedTask.users.id],
+                groupIds: [],
                 group: [],
                 read: []
             })
@@ -543,6 +547,8 @@ const actions = {
                                 detail: "Uma tarefa que você é responsável teve seu status alterado. <br><br>Nome da tarefa: <b>" + context.state.selectedTask.name + "</b> <br>Nome da ordem: <b>" + context.state.selected.name + "</b>",
                                 date: new Date().toLocaleString('pt-br'),
                                 user: [context.state.selectedTask.users],
+                                userIds: [context.state.selectedTask.users.id],
+                                groupIds: [],
                                 group: [],
                                 read: []
                             })

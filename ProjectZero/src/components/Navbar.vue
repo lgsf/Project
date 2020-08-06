@@ -1,13 +1,13 @@
 <template>
   <nav>
     <v-app-bar app flat>
-      <v-app-bar-nav-icon @click="drawer = !drawer" class></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon color="primary" @click="drawer = !drawer" class></v-app-bar-nav-icon>
       <v-toolbar-title>
-        <router-link to="/home"><v-img  :src="imgUrl" height="90" width="80" contain></v-img></router-link>
+        <router-link to="/home"><v-img  :src="imgUrl" height="150" width="150" contain></v-img></router-link>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn @click="userSignOut" color="grey-2">
-        <span>Sair</span>
+      <v-btn @click="userSignOut" color="grey-2" class="primary--text">
+        <span >Sair</span>
         <v-icon right>exit_to_app</v-icon>
       </v-btn>
     </v-app-bar>
