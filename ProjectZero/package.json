@@ -24,7 +24,10 @@
     "vuetify": "^2.2.11",
     "vuex": "^3.4.0",
     "vuex-persistedstate": "^3.0.1",
+<<<<<<< HEAD
     "vuexfire": "^3.2.4",
+=======
+>>>>>>> 76238b7349587f70f7a3251ef4f5eff0f52e05e6
     "xlsx": "^0.16.5"
   },
   "devDependencies": {
