@@ -169,8 +169,6 @@ export default {
    },
    
    methods: {
-    
-
      ...mapActions("notifications", ["deleteNotificationItem", "readNotifications", "readItem", "unreadItem"]),
 
      ...mapActions( ['getNotifications']),
