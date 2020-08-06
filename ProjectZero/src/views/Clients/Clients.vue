@@ -1,5 +1,6 @@
 <template>
   <div class="groups">
+    <Alert class="mt-2"></Alert>
       <v-row style="min-width:70vw;">
         <v-col>
           <div class="text-center screen-margin-top" v-if="isLoading">
@@ -55,6 +56,7 @@
 <script>
 import { mapState, mapActions } from "vuex"
 import EditClient from "./EditClient"
+import Alert from "@/components/shared/Alert"
 
 const computed = mapState("clients", {
   selected: state => state.selected,
@@ -77,7 +79,7 @@ const methods = mapActions("clients", [
 ])
 
 export default {
-  components: { EditClient },
+  components: { EditClient, Alert },
   data() {
     return {}
   },

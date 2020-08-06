@@ -181,11 +181,13 @@ const actions = {
             createNewClient(state).then(() => {
                 this.dispatch('clients/loadClients')
                 this.dispatch('clients/closeSelectionClient')
+                this.dispatch('general/setSuccessMessage', 'Cliente criado com sucesso!')
             })
         else
             updateExistingClient(state).then(() => {
                 this.dispatch('clients/loadClients')
                 this.dispatch('clients/closeSelectionClient')
+                this.dispatch('general/setSuccessMessage', 'Cliente modificado com sucesso!')
             })
     }
 }
