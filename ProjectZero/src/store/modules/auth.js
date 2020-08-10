@@ -82,8 +82,8 @@ const actions = {
                 commit('setUserGroup', '')
                 commit('setUserName', '')
                 this.dispatch('general/setSuccessMessage', 'Você saiu com sucesso!')
-                sessionStorage.clear()
-                resolve(router.push('/'))
+                resolve(sessionStorage.clear())
+                router.push('/')
                 }))
               }
              }

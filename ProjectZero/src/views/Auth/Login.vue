@@ -1,10 +1,9 @@
 <template>
   <div class="login">
-    <br />
     <v-banner>
-      <router-link to="/home"><v-img  :src="imgUrl" height="90" width="80" contain></v-img></router-link>
+      <router-link to="/home"><v-img  :src="imgUrl" height="200" width="200" contain></v-img></router-link>
       <template v-slot:actions>
-        <h3>{{screenCompany}}</h3>
+        <h3 class="primary--text">{{screenCompany}}</h3>
       </template>
     </v-banner>
     <br />

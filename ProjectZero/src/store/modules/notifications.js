@@ -2,6 +2,16 @@ import { db, moment} from "@/main"
 import catchError from '@/utilities/firebaseErrors'
 
 
+Array.prototype.unique = function (compare) {
+    var a = this.concat()
+    for (var i = 0; i < a.length; ++i) {
+        for (var j = i + 1; j < a.length; ++j) {
+            if (!compare && a[i] === a[j] || compare && compare(a[i], a[j]))
+                a.splice(j--, 1)
+        }
+    }
+    return a;
+}
 
 const state = () => ({
     label: '',
@@ -76,6 +86,7 @@ const state = () => ({
             state.editingGroup =  state.selected[0]?.group || []
             state.editNotification = payload
         },
+        
         editName(state, payload) {
             state.editingName = payload
         },
@@ -105,15 +116,32 @@ const state = () => ({
                 date: moment().unix(),
                 user: state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
                 userIds: state.editingUser?.map(k => { return k.id}) || [],
-                groupIds: state.editingGroup?.map(k => { return k.id})  || [],
                 group: state.editingGroup?.map((obj) => { return Object.assign({}, obj) }) || [],
                 read: []
-            }).then( docRef => {
-                db.collection('notifications').doc(docRef.id).update({id: docRef})
             })
     }
 
     function updateExistingNotification(state) {
+        if(state.editingGroup.length>0){
+            let user_Ids = []
+            let group_Ids = state.editingGroup.map(k => { return k.id})
+            group_Ids.forEach(item => {
+            db.collection("users")
+            .where("group_id", "==", item).get().then(snapshots => {
+                snapshots.docs.forEach(item2 => {
+                    user_Ids.push(item2.id)
+                })
+          })
+        })
+        console.log(user_Ids)
+        let intermediateArray = state.editingUser?.map(k => { return k.id})
+        console.log(intermediateArray)
+       console.log(intermediateArray.concat(user_Ids ))
+
+
+
+     
+
         return db.collection("notifications")
             .doc(state.selected[0].id)
             .set({
@@ -123,8 +151,23 @@ const state = () => ({
                 detail: state.editingDetail || "",
                 date: moment().unix(),
                 user: state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
+                userIds: user_Ids,
+                group: state.editingGroup?.map((obj) => { return Object.assign({}, obj) }) || [],
+                read: []
+            })
+
+    }
+        else
+            return db.collection("notifications")
+            .doc(state.selected[0].id)
+            .set({
+                title: state.editingTitle || "",
+                id: state.selected[0].id,
+                name: state.editingName || "",
+                detail: state.editingDetail || "",
+                date: moment().unix(),
+                user: state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
                 userIds: state.editingUser?.map(k => { return k.id}) || [],
-                groupIds: state.editingGroup?.map(k => { return k.id})  || [],
                 group: state.editingGroup?.map((obj) => { return Object.assign({}, obj) }) || [],
                 read: []
             })
@@ -266,12 +309,24 @@ const state = () => ({
                  })
                  setTimeout(() => {
                     dispatch('readNotifications')
+                    this.dispatch('getNotificationsToUser', {root:true})
+                    this.dispatch('getNotificationsToGroup', {root:true})
                   }, 500)
           },
         
         editNotification({ state, commit }, payload) {
             if (!state) console.log('Error, state is undifined.')
             commit('editNotification', payload)
+        },
+
+        cleanNotification({ state, commit }) {
+            if (!state) console.log('Error, state is undifined.')
+            commit('editName', '')
+            commit('editTitle', '')
+            commit('editDetail', '')
+            commit('editDate', '')
+            commit('editUser', [])
+            commit('editGroup', [])
         },
 
         editName({ state, commit }, payload) {
@@ -309,11 +364,13 @@ const state = () => ({
                 createNewNotification(state).then(() => {
                     this.dispatch('notifications/loadNotifications')
                     this.dispatch('notifications/editNotification', false)
+                    this.dispatch('general/setSuccessMessage', 'Notificação criada com sucesso!')
                 })
             else
                 updateExistingNotification(state).then(() => {
                     this.dispatch('notifications/loadNotifications')
                     this.dispatch('notifications/editNotification', false)
+                    this.dispatch('general/setSuccessMessage', 'Notificação modificada com sucesso!')
                 })
         },
 
@@ -324,6 +381,7 @@ const state = () => ({
             .then(()=>{
                 this.dispatch('notifications/loadNotifications')
                 this.dispatch('notifications/editNotification')
+                this.dispatch('general/setSuccessMessage', 'Notificação excluída com sucesso!')
             })
             .catch((error) => {
                 let errorMessage = catchError(error)
@@ -351,14 +409,19 @@ const state = () => ({
             .doc(doc.id)
             .delete()
             .then(() => {
-                this.dispatch('notifications/loadNotifications')
-                this.dispatch('notifications/editNotification')
+                Promise.all(state.selected).then(()=> {
+                    this.dispatch('notifications/loadNotifications')
+                    this.dispatch('notifications/editNotification')
+                    this.dispatch('general/setSuccessMessage', 'Notificações excluídas com sucesso!')
+                })
             }).catch((error) => {
                 let errorMessage = catchError(error)
                 this.dispatch('general/setErrorMessage', errorMessage)
             })
           })
         },
+
+     
 
         sendNotification(context, payload){
             if(context)

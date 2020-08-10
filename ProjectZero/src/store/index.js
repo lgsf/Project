@@ -28,20 +28,24 @@ export const store = new Vuex.Store({
   ],
 
   state: {
-    newNotifications: [],
-    newNotifications1: []
+    newNotificationsUser: [],
+    newNotificationsGroup: []
 
   },
   mutations: {
   ...vuexfireMutations
   },
   actions: {
-    getNotifications: firestoreAction(({ bindFirestoreRef, state }) => {
-       bindFirestoreRef('newNotifications', db.collection('notifications')
+    getNotificationsToUser: firestoreAction(({ bindFirestoreRef, state }) => {
+       bindFirestoreRef('newNotificationsUser', db.collection('notifications')
       .where("userIds", "array-contains", state.auth.user.uid)) 
-       bindFirestoreRef('newNotifications1', db.collection('notifications')
-      .where("groupIds", "array-contains", state.auth.userGroup))
+      console.log(state.newNotificationsUser)
     }),
+    getNotificationsToGroup: firestoreAction(({ bindFirestoreRef, state }) => {
+      bindFirestoreRef('newNotificationsGroup', db.collection('notifications')
+      .where("groupIds", "array-contains", state.auth.userGroup))
+      console.log(state.newNotificationsGroup)
+    })
   },
   getters: {
 

@@ -130,8 +130,11 @@ import { moment } from "@/main"
 import { mapActions, mapState  } from "vuex"
 
 
+
 export default {
   name: 'Notifications',
+
+  
 
   data() {
     return {
@@ -145,9 +148,10 @@ export default {
       date: null,
       read: null,
       model: false,
-      check: false
+      check: false,
     }
   },
+
 
    computed: {
     isLoading() {
@@ -160,32 +164,35 @@ export default {
       return this.$store.state.auth.userGroup == "bmyiE5pvx66Ct7Wmj78b"
     },
     ...mapActions("general", ["setIsLoading"]),
-    ...mapState({ uniqueNotifications: function(state){
-      return Array.from(new Set (state.newNotifications.concat(state.newNotifications1)
-      .map(e => JSON.stringify(e))))
-      .map(e => JSON.parse(e))
-    }
+
+
+
+    ...mapState({ uniqueNotifications: state => state.newNotificationsUser 
     }),
+    ...mapState({ newNotificationsGroup: state => state.newNotificationsGroup 
+    })
    },
    
    methods: {
-     ...mapActions("notifications", ["deleteNotificationItem", "readNotifications", "readItem", "unreadItem"]),
+    ...mapActions("notifications", ["deleteNotificationItem", "readNotifications", "readItem", "unreadItem"]),
 
-     ...mapActions( ['getNotifications']),
-
-     toMoment(date){
+    ...mapActions( ['getNotificationsToUser', 'getNotificationsToGroup']),
+     
+    toMoment(date){
        return moment.unix(date).format('DD/MM/YYYY, HH:mm:ss')
     },
 
-      orderNotificationDate(){
+   
+
+    orderNotificationDate(){
           this.check = true
       },
 
-       orderNotificationNotRead(){
+    orderNotificationNotRead(){
          this.check = false
       },
 
-     markRead(item){
+    markRead(item){
        if(item.read.some(e => e.id === this.$store.state.auth.user.uid)){
          return this.model = true
        }
@@ -203,8 +210,12 @@ export default {
    },
 
   mounted(){
-    this.getNotifications
+    this.getNotificationsToUser()
+    this.getNotificationsToGroup()
   }
+   
+
+ 
 
 }
 </script>

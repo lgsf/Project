@@ -1,5 +1,6 @@
 <template>
   <div class="notifications">
+    <Alert class="mt-2"></Alert>
     <v-row style="min-width:70vw;">
       <v-col>
         <div class="text-center screen-margin-top" v-if="isLoading">
@@ -79,13 +80,16 @@
                       </v-col>
                     </template>
                     <template #item.detail="{item}">
-                      <v-col cols="12">
+                      <v-col v-if="item.detail.length > 25" cols="12">
                         <v-tooltip bottom color="grey lighten-4">
                           <template v-slot:activator="{ on, attrs }">
                             <span v-bind="attrs" v-on="on"> {{ item.detail.substr(0,25) + '...' }}</span>
                           </template>
                           <span v-html="item.detail" class="black--text"></span>
                         </v-tooltip>
+                      </v-col>
+                      <v-col v-if="item.detail.length < 25" cols="12">
+                        <span v-html="item.detail" class="black--text"></span>
                       </v-col>
                     </template>
                   </v-data-table>
@@ -111,6 +115,7 @@
 
 import { mapState, mapActions } from "vuex"
 import EditNotification from "./EditNotification"
+import Alert from "@/components/shared/Alert"
 
 
 const computed = mapState("notifications", {
@@ -139,7 +144,7 @@ const userMethods = mapActions("users", [
 ])
 
 export default {
-  components: { EditNotification },
+  components: { EditNotification, Alert },
   data() {
     return {}
   },

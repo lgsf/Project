@@ -1,4 +1,5 @@
 <template>
+<v-form v-model="isNotValid">
   <v-row justify="center">
     <v-dialog v-model="dialog" persistent max-width="600px" @click:outside="editNotification(false)">
       <v-card>
@@ -10,17 +11,17 @@
           <v-container>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Título*" :value="title" @input="editTitle" required></v-text-field>
+                <v-text-field label="Título*" :value="title" :rules="[rules.titleRequired]" @input="editTitle" required></v-text-field>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Autor*" :value="name" @input="editName" required></v-text-field>
+                <v-text-field label="Autor*" :value="name" :rules="[rules.authorRequired]" @input="editName" required></v-text-field>
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Detalhes*" :value="detail" @input="editDetail" required></v-text-field>
+                <v-text-field label="Detalhes*" :value="detail" :rules="[rules.detailRequired]" @input="editDetail" required></v-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -60,12 +61,14 @@
         <v-card-actions>
           <v-btn color="error" v-if="selected.length > 0" text @click="deleteNotification">Excluir</v-btn>
           <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="cleanNotification">Limpar</v-btn>
           <v-btn color="blue darken-1" text @click="editNotification(false)">Fechar</v-btn>
-          <v-btn color="blue darken-1" text @click="saveNotification">Salvar</v-btn>
+          <v-btn color="blue darken-1" text :disabled="!isNotValid" @click="saveNotification">Salvar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
   </v-row>
+  </v-form>
 </template>
 <script>
 import { mapState, mapActions } from "vuex"
@@ -95,12 +98,20 @@ const methods = mapActions("notifications", [
   "editGroup",
   "editNotification",
   "saveNotification",
-  "deleteNotification"
+  "deleteNotification",
+  "cleanNotification"
 ])
 
 export default {
   data() {
-    return {}
+    return {
+      isNotValid: false,
+      rules: {
+        titleRequired: value => !!value || `O campo Título é obrigatório.`,
+        authorRequired: value => !!value || `O campo Autor é obrigatório.`,
+        detailRequired: value => !!value || `O campo Detalhes é obrigatório.`
+      }
+    }
   },
   computed,
   methods: Object.assign({}, methods, userMethods),
