@@ -21,7 +21,8 @@ const auth = admin.auth()
                     email: nestedContent.email || '',
                     phone: nestedContent.phone || '',
                     birth_date: nestedContent.birth_date || '',
-                    group: ''
+                    group: '',
+                    group_id: ''
                 })
               }).catch(err => {
                     throw new functions.https.HttpsError(err)
@@ -42,7 +43,8 @@ exports.saveUser = functions.https.onCall(async (state) => {
                 email: state.editUserEmail,
                 phone: state.editUserPhone,
                 birth_date: state.editUserBirthDate,
-                group: state.editUserGroup
+                group: state.editUserGroup,
+                group_id: state.editUserGroup.id
             })
     }
     catch (err) {

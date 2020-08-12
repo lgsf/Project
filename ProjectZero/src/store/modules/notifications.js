@@ -107,42 +107,58 @@ const state = () => ({
         }
     }
 
-    function createNewNotification(state) {
-        return db.collection("notifications")
+  async function createNewNotification(state) {
+        if (state.editingGroup.length > 0){
+            let group_Ids = state.editingGroup.map(k => { return k.id})
+            let groupUser_Ids = await updateUserIdsVector(group_Ids)
+            let userUser_Ids = state.editingUser?.map(k => { return k.id}) || []
+            let finalArray_Ids = groupUser_Ids.concat(userUser_Ids).unique()
+            return db.collection("notifications")
             .add({
-                name: state.editingName || "",
                 title: state.editingTitle || "",
+                id: state.selected[0].id,
+                name: state.editingName || "",
                 detail: state.editingDetail || "",
                 date: moment().unix(),
                 user: state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
-                userIds: state.editingUser?.map(k => { return k.id}) || [],
+                userIds: finalArray_Ids,
                 group: state.editingGroup?.map((obj) => { return Object.assign({}, obj) }) || [],
                 read: []
             })
     }
-
-    function updateExistingNotification(state) {
-        if(state.editingGroup.length>0){
-            let user_Ids = []
-            let group_Ids = state.editingGroup.map(k => { return k.id})
-            group_Ids.forEach(item => {
-            db.collection("users")
-            .where("group_id", "==", item).get().then(snapshots => {
-                snapshots.docs.forEach(item2 => {
-                    user_Ids.push(item2.id)
+        else
+            return db.collection("notifications")
+                .add({
+                    name: state.editingName || "",
+                    title: state.editingTitle || "",
+                    detail: state.editingDetail || "",
+                    date: moment().unix(),
+                    user: state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
+                    userIds: state.editingUser?.map(k => { return k.id}) || [],
+                    group: state.editingGroup?.map((obj) => { return Object.assign({}, obj) }) || [],
+                    read: []
                 })
-          })
-        })
-        console.log(user_Ids)
-        let intermediateArray = state.editingUser?.map(k => { return k.id})
-        console.log(intermediateArray)
-       console.log(intermediateArray.concat(user_Ids ))
+        }
 
+   async function updateUserIdsVector(group_Ids) {
+        let user_Ids = []
+        for (const item of group_Ids){
+            let snapshots = await db.collection("users").where("group_id", "==", item).get()
+            snapshots.docs.forEach(item2 => {
+                user_Ids.push(item2.id)
+                })
+        }
+        return user_Ids
+        
+    }
 
-
-     
-
-        return db.collection("notifications")
+   async function updateExistingNotification(state) {
+        if (state.editingGroup.length > 0){
+            let group_Ids = state.editingGroup.map(k => { return k.id})
+            let groupUser_Ids = await updateUserIdsVector(group_Ids)
+            let userUser_Ids = state.editingUser?.map(k => { return k.id}) || []
+            let finalArray_Ids = groupUser_Ids.concat(userUser_Ids).unique()
+            return db.collection("notifications")
             .doc(state.selected[0].id)
             .set({
                 title: state.editingTitle || "",
@@ -151,11 +167,10 @@ const state = () => ({
                 detail: state.editingDetail || "",
                 date: moment().unix(),
                 user: state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
-                userIds: user_Ids,
+                userIds: finalArray_Ids,
                 group: state.editingGroup?.map((obj) => { return Object.assign({}, obj) }) || [],
                 read: []
             })
-
     }
         else
             return db.collection("notifications")

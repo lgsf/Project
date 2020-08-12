@@ -219,6 +219,7 @@ function updateUser(state) {
             phone: state.editUserPhone,
             birth_date: state.editUserBirthDate,
             group: state.editUserGroup,
+            group_id: state.editUserGroup.id
         })
         .catch(error => {
             let errorMessage = catchError(error)
