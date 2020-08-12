@@ -39,12 +39,6 @@ export const store = new Vuex.Store({
     getNotificationsToUser: firestoreAction(({ bindFirestoreRef, state }) => {
        bindFirestoreRef('newNotificationsUser', db.collection('notifications')
       .where("userIds", "array-contains", state.auth.user.uid)) 
-      console.log(state.newNotificationsUser)
-    }),
-    getNotificationsToGroup: firestoreAction(({ bindFirestoreRef, state }) => {
-      bindFirestoreRef('newNotificationsGroup', db.collection('notifications')
-      .where("groupIds", "array-contains", state.auth.userGroup))
-      console.log(state.newNotificationsGroup)
     })
   },
   getters: {

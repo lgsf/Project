@@ -116,7 +116,6 @@ const state = () => ({
             return db.collection("notifications")
             .add({
                 title: state.editingTitle || "",
-                id: state.selected[0].id,
                 name: state.editingName || "",
                 detail: state.editingDetail || "",
                 date: moment().unix(),
@@ -162,7 +161,6 @@ const state = () => ({
             .doc(state.selected[0].id)
             .set({
                 title: state.editingTitle || "",
-                id: state.selected[0].id,
                 name: state.editingName || "",
                 detail: state.editingDetail || "",
                 date: moment().unix(),
@@ -177,7 +175,6 @@ const state = () => ({
             .doc(state.selected[0].id)
             .set({
                 title: state.editingTitle || "",
-                id: state.selected[0].id,
                 name: state.editingName || "",
                 detail: state.editingDetail || "",
                 date: moment().unix(),
@@ -219,102 +216,18 @@ const state = () => ({
                 })   
         },
 
-        readNotifications({ commit, rootState }) {
-            this.dispatch('general/resetAllMessages', '')
-            let notifications = []
-            db.collection("notifications")
-              .get()
-              .then(querySnapshot => {
-                querySnapshot.forEach(doc => {
-                  let userArray = []
-                  let groupArray = []
-                  userArray = doc.data().user
-                  groupArray = doc.data().group
-                  if(userArray.length == 0 && groupArray.length == 0){
-                        notifications.push({
-                          id: doc.id,
-                          title: doc.data().title,
-                          name: doc.data().name,
-                          detail: doc.data().detail,
-                          date: doc.data().date,
-                          read: doc.data().read
-                        })
-                  }
-                  else if (userArray.length > 0 && groupArray.length == 0) {
-                        userArray.forEach (item =>  {
-                        if(item.id == rootState.auth.user.uid){
-                            notifications.push({
-                              id: doc.id,
-                              title: doc.data().title,
-                              name: doc.data().name,
-                              detail: doc.data().detail,
-                              date: doc.data().date,
-                              read: doc.data().read
-                              })
-                            }
-                          })
-                      }
-                    else if (groupArray.length > 0 && userArray.length == 0){
-                      groupArray.forEach (item => {
-                        if(item.id == rootState.auth.userGroup){
-                          notifications.push({
-                            id: doc.id,
-                            title: doc.data().title,
-                            name: doc.data().name,
-                            detail: doc.data().detail,
-                            date: doc.data().date,
-                            read: doc.data().read
-                       })
-                      }
-                     })
-                    }
-                    else {
-                        userArray.forEach (item =>  {
-                        if(item.id == rootState.auth.user.uid){
-                            notifications.push({
-                              id: doc.id,
-                              title: doc.data().title,
-                              name: doc.data().name,
-                              detail: doc.data().detail,
-                              date: doc.data().date,
-                              read: doc.data().read
-                              })
-                            }
-                          })
-                          groupArray.forEach (item => {
-                            if(item.id == rootState.auth.userGroup){
-                              notifications.push({
-                                id: doc.id,
-                                title: doc.data().title,
-                                name: doc.data().name,
-                                detail: doc.data().detail,
-                                date: doc.data().date,
-                                read: doc.data().read
-                          })
-                          }
-                        })
-                    }
-                })
-              let uniqueSet = new Set (notifications.map(e => JSON.stringify(e)))
-              let uniqueNotifications = Array.from(uniqueSet).map(e => JSON.parse(e))
-              uniqueNotifications.sort((a, b) => (a.read.some(obj => obj.id == rootState.auth.user.uid) && !b.read.some(obj => obj.id == rootState.auth.user.uid)) ? 1 : (!(a.read.some(obj => obj.id == rootState.auth.user.uid)) && !(b.read.some(obj => obj.id == rootState.auth.user.uid)) || (a.read.some(obj => obj.id == rootState.auth.user.uid)) && (b.read.some(obj => obj.id == rootState.auth.user.uid))) ? ((a.date < b.date) ? 1 : -1) : -1 )
-              commit('updateMyNotifications', uniqueNotifications)
-              this.dispatch('general/resetIsLoading')
-            })
-        },
-
         readItem({ commit, rootState }, payload){
             commit('selectNotification', [])
             let readArray = payload.read
             readArray.push({id: rootState.auth.user.uid})
-               db.collection("notifications")
-                     .doc(payload.id)
-                     .update({
-                         read: readArray
-                     })
+            db.collection("notifications")
+                    .doc(payload.id)
+                    .update({
+                        read: readArray
+                    })
           },
      
-        unreadItem({ commit, rootState, dispatch }, payload){
+        unreadItem({ commit, rootState }, payload){
             commit('selectNotification', [])
             let readArray = payload.read.filter(obj => obj.id !== rootState.auth.user.uid)
             db.collection("notifications")
@@ -322,11 +235,6 @@ const state = () => ({
                  .update({
                      read: readArray
                  })
-                 setTimeout(() => {
-                    dispatch('readNotifications')
-                    this.dispatch('getNotificationsToUser', {root:true})
-                    this.dispatch('getNotificationsToGroup', {root:true})
-                  }, 500)
           },
         
         editNotification({ state, commit }, payload) {

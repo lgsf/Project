@@ -163,26 +163,20 @@ export default {
     isAdmin() {
       return this.$store.state.auth.userGroup == "bmyiE5pvx66Ct7Wmj78b"
     },
-    ...mapActions("general", ["setIsLoading"]),
-
-
 
     ...mapState({ uniqueNotifications: state => state.newNotificationsUser 
-    }),
-    ...mapState({ newNotificationsGroup: state => state.newNotificationsGroup 
     })
+
    },
    
    methods: {
-    ...mapActions("notifications", ["deleteNotificationItem", "readNotifications", "readItem", "unreadItem"]),
+    ...mapActions("notifications", ["deleteNotificationItem", "readItem", "unreadItem"]),
 
-    ...mapActions( ['getNotificationsToUser', 'getNotificationsToGroup']),
+    ...mapActions( ['getNotificationsToUser']),
      
     toMoment(date){
        return moment.unix(date).format('DD/MM/YYYY, HH:mm:ss')
     },
-
-   
 
     orderNotificationDate(){
           this.check = true
@@ -211,11 +205,6 @@ export default {
 
   mounted(){
     this.getNotificationsToUser()
-    this.getNotificationsToGroup()
   }
-   
-
- 
-
 }
 </script>
