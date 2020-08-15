@@ -61,7 +61,7 @@
                 />
               </v-col>
             </v-row>
-            <v-row >
+            <v-row v-if="checkWidth">
               <v-col class='ms-6 me-6' >
                  <v-btn
                     color="success"
@@ -74,6 +74,30 @@
                   </v-btn>
                   </v-col>
                   <v-col  class="d-flex justify-end ms-6 me-6">
+                   <v-btn
+                    color="primary"
+                    depressed
+                    :disabled="!valid"
+                    @click="changePassword"
+                  > 
+                    Mudar a senha
+                    <v-icon style="margin-left:8px;">send</v-icon>
+                  </v-btn>
+              </v-col>
+            </v-row>
+            <v-row v-if="!checkWidth" >
+              <v-col class='d-flex justify-center' cols="12">
+                 <v-btn
+                    color="success"
+                    depressed
+                    @click="readConfiguration"
+                  > 
+                    Mudar o tema
+                    <v-icon style="margin-left:8px;">cloud_download
+                    </v-icon>
+                  </v-btn>
+                  </v-col>
+                  <v-col  class="d-flex justify-center" cols="12">
                    <v-btn
                     color="primary"
                     depressed
@@ -119,6 +143,7 @@ export default {
   data() {
     return {
       screenTitle: 'Perfil',
+      width: 0,
       valid: false,
       password: '',
       confirmedPassword: '',
@@ -139,16 +164,27 @@ export default {
       },
     changePassword(){
         this.changePasswordStore(this.password)
+    },
+    checkScreenWidth() {
+      setInterval(() => {
+        this.width = window.innerWidth
+      }, 100)
     }
   }),
   computed: Object.assign({}, computed, computedGeneral, {
       comparePasswords(){
           return this.password !== this.confirmedPassword ? this.message : ''
-      }
+      },
+      checkWidth() {
+      if (this.width > 620) {
+        return true
+      } else return false
+    }
   }),
 
   mounted() {
     this.readUsers(true)
+    this.checkScreenWidth()
   }
 }
 </script>

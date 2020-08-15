@@ -6,9 +6,12 @@
         <router-link to="/home"><v-img  :src="imgUrl" height="150" width="150" contain></v-img></router-link>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn @click="$router.push('/profile')" color="grey-2" class="mr-3 primary--text">
-        <span >Perfil</span>
+      <v-btn v-if="checkWidth" @click="$router.push('/profile')" color="grey-2" class="mr-3 primary--text">
+        <span>Perfil</span>
         <v-icon right>mdi-account</v-icon>
+      </v-btn>
+      <v-btn v-if="!checkWidth" @click="$router.push('/profile')" color="grey-2" class="mr-3 primary--text">
+        <v-icon>mdi-account</v-icon>
       </v-btn>
       <v-btn @click="userSignOut" color="grey-2" class="primary--text">
         <span >Sair</span>
@@ -67,38 +70,52 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions } from "vuex"
 
-const methods = mapActions("auth", ["userSignOut"]);
+const methods = mapActions("auth", ["userSignOut"])
 
-const generalMethods = mapActions("general", ["loadMenu"]);
+const generalMethods = mapActions("general", ["loadMenu"])
 
-const setupMethods = mapActions("setup", ["readLogo"]);
+const setupMethods = mapActions("setup", ["readLogo"])
 
 const computed = mapState({
   imgUrl: state => state.setup.imgUrl,
   links: state => state.general.links
-});
+})
 
 const computedGeneral = mapState("general", {
   isLoading: state => state.loadingNavbar
-});
+})
 
 export default {
   data() {
     return {
-      drawer: true
-    };
+      drawer: true,
+      width: 0
+    }
   },
-  computed: Object.assign({}, computed, computedGeneral),
+  computed: Object.assign({}, computed, computedGeneral, {
+    checkWidth() {
+      if (this.width > 620) {
+        return true
+      } else return false
+    }
+  }),
 
-  methods: Object.assign({}, methods, generalMethods, setupMethods),
+  methods: Object.assign({}, methods, generalMethods, setupMethods, {
+    checkScreenWidth() {
+      setInterval(() => {
+        this.width = window.innerWidth
+      }, 100)
+    }
+  }),
 
   mounted() {
-    this.readLogo();
-    this.loadMenu();
+    this.readLogo()
+    this.loadMenu()
+    this.checkScreenWidth()
   }
-};
+}
 </script>
 
 <style>
