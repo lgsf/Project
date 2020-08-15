@@ -1,4 +1,4 @@
-import { db } from "@/main"
+import { db, moment } from "@/main"
 
 const state = () => ({
     events: [],
@@ -50,6 +50,7 @@ const state = () => ({
 
 const actions = {
     setEvent: async context => {
+      context.dispatch('general/setIsLoading', '', {root:true})
       let snapshot = await db.collection('calEvent').get()
       const events = []
       snapshot.forEach(doc => {
@@ -76,6 +77,7 @@ const actions = {
         }
       })
       context.commit('setEvents', events)
+      context.dispatch('general/resetIsLoading', '', {root:true})
     },
     async updateEventStore (context, payload) {
       if (context.state.name && context.state.start && context.state.end && !context.state.startTime && !context.state.endTime) {
@@ -87,7 +89,7 @@ const actions = {
           color: context.state.color
         })
         context.dispatch('setEvent')
-      } else if(context.state.name && context.state.start && context.state.end && context.state.startTime && context.state.endTime){
+      } else if (context.state.name && context.state.start && context.state.end && context.state.startTime && context.state.endTime){
           await db.collection("calEvent").doc(payload.id).update({
           name: context.state.name,
           details: context.state.details,
@@ -115,8 +117,35 @@ const actions = {
           author: context.rootState.auth.user.uid,
           user: context.state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
         })
-        context.dispatch('setEvent')
-      } else if(context.state.name && context.state.start && context.state.end && context.state.startTime && context.state.endTime){
+          if (context.state.editingUser.length == 0)
+            context.dispatch('notifications/sendNotification', {
+              name: "Sistema",
+              title: "Novo evento",
+              detail: "Um novo evento em que você está vinculado foi marcado! <br>Título do evento: <b>" + context.state.name + "</b> </br>Data do evento: <b>" + moment(context.state.start).format('DD/MM/YYYY') + "</b>" ,
+              date: new Date().toLocaleString('pt-br'),
+              user: [],
+              userIds: context.rootState.users.userList.map(k => { return k.id}) || [],
+              group: [],
+              read: []
+          }, {root:true})
+          else
+          context.dispatch('notifications/sendNotification', {
+            name: "Sistema",
+            title: "Novo evento",
+            detail: "Um novo evento em que você está vinculado foi marcado! <br>Título do evento: <b>" + context.state.name + "</b> </br>Data do evento: <b>" + moment(context.state.start).format('DD/MM/YYYY') + "</b>" ,
+            date: new Date().toLocaleString('pt-br'),
+            user: context.state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
+            userIds: context.state.editingUser.map(k => { return k.id}) || [],
+            group: [],
+            read: []
+        }, {root:true})
+
+          context.dispatch('setEvent')
+      } 
+
+
+
+      else if(context.state.name && context.state.start && context.state.end && context.state.startTime && context.state.endTime){
           await db.collection("calEvent").add({
           name: context.state.name,
           details: context.state.details,

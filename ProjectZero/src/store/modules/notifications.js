@@ -151,8 +151,8 @@ const state = () => ({
         
     }
 
-   async function updateExistingNotification(state) {
-        if (state.editingGroup.length > 0){
+   async function updateExistingNotification(state, rootState) {
+        if (state.editingGroup.length > 0) {
             let group_Ids = state.editingGroup.map(k => { return k.id})
             let groupUser_Ids = await updateUserIdsVector(group_Ids)
             let userUser_Ids = state.editingUser?.map(k => { return k.id}) || []
@@ -170,6 +170,19 @@ const state = () => ({
                 read: []
             })
     }
+        else if (state.editingUser.length == 0 && state.editingGroup == 0) 
+            return db.collection("notifications")
+            .doc(state.selected[0].id)
+            .set({
+                title: state.editingTitle || "",
+                name: state.editingName || "",
+                detail: state.editingDetail || "",
+                date: moment().unix(),
+                user: state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
+                userIds: rootState.users.userList.map(k => { return k.id}) || [],
+                group: state.editingGroup?.map((obj) => { return Object.assign({}, obj) }) || [],
+                read: []
+            })
         else
             return db.collection("notifications")
             .doc(state.selected[0].id)
@@ -282,15 +295,15 @@ const state = () => ({
             commit('editGroup', payload)
         },
 
-        saveNotification({ state }) {
+        saveNotification({ state, rootState }) {
             if (state.selected.length == 0 || !state.selected[0].id)
-                createNewNotification(state).then(() => {
+                createNewNotification(state, rootState).then(() => {
                     this.dispatch('notifications/loadNotifications')
                     this.dispatch('notifications/editNotification', false)
                     this.dispatch('general/setSuccessMessage', 'Notificação criada com sucesso!')
                 })
             else
-                updateExistingNotification(state).then(() => {
+                updateExistingNotification(state, rootState).then(() => {
                     this.dispatch('notifications/loadNotifications')
                     this.dispatch('notifications/editNotification', false)
                     this.dispatch('general/setSuccessMessage', 'Notificação modificada com sucesso!')
@@ -331,20 +344,17 @@ const state = () => ({
             db.collection("notifications")
             .doc(doc.id)
             .delete()
-            .then(() => {
-                Promise.all(state.selected).then(()=> {
-                    this.dispatch('notifications/loadNotifications')
-                    this.dispatch('notifications/editNotification')
-                    this.dispatch('general/setSuccessMessage', 'Notificações excluídas com sucesso!')
-                })
-            }).catch((error) => {
+            .catch((error) => {
                 let errorMessage = catchError(error)
                 this.dispatch('general/setErrorMessage', errorMessage)
             })
           })
+          Promise.all(state.selected).then(() => {
+            this.dispatch('notifications/loadNotifications')
+            this.dispatch('notifications/editNotification')
+            this.dispatch('general/setSuccessMessage', 'Notificações excluídas com sucesso!')
+          })
         },
-
-     
 
         sendNotification(context, payload){
             if(context)
@@ -356,7 +366,6 @@ const state = () => ({
                 date: moment().unix(),
                 user: payload.user,
                 userIds: payload.userIds,
-                groupIds: payload.groupIds,
                 group: payload.group,
                 read: []
             })

@@ -28,9 +28,7 @@ export const store = new Vuex.Store({
   ],
 
   state: {
-    newNotificationsUser: [],
-    newNotificationsGroup: []
-
+    newNotificationsUser: []
   },
   mutations: {
   ...vuexfireMutations
@@ -38,7 +36,7 @@ export const store = new Vuex.Store({
   actions: {
     getNotificationsToUser: firestoreAction(({ bindFirestoreRef, state }) => {
        bindFirestoreRef('newNotificationsUser', db.collection('notifications')
-      .where("userIds", "array-contains", state.auth.user.uid)) 
+      .where("userIds", "array-contains", state.auth.user.uid).orderBy("date", "desc"))
     })
   },
   getters: {

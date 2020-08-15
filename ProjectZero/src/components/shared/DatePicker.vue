@@ -20,9 +20,9 @@
     </template>
     <v-date-picker :disabled="disable" v-model="date" no-title scrollable locale="pt-br">
       <v-spacer></v-spacer>
-      <v-btn :disabled="disable" text color="error lighten-1" @click="clear">Limpar</v-btn>
-      <v-btn :disabled="disable" text color="primary" @click="menu = false">Cancelar</v-btn>
-      <v-btn :disabled="disable" text color="success darken-1" @click="updateValue(date)">OK</v-btn>
+      <v-btn :disabled="disable" text color="blue darken-1" @click="clear">Limpar</v-btn>
+      <v-btn :disabled="disable" text color="blue darken-1" @click="menu = false">Cancelar</v-btn>
+      <v-btn :disabled="disable" text color="blue darken-1" @click="updateValue(date)">OK</v-btn>
     </v-date-picker>
   </v-menu>
 </template>

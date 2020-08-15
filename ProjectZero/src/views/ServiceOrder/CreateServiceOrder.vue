@@ -126,6 +126,7 @@
         <v-divider></v-divider>
         <v-card-actions>
           <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="cleanCreateOrderModal">Limpar</v-btn>
           <v-btn color="blue darken-1" text @click="closeCreateOrderModal">Fechar</v-btn>
           <v-btn color="blue darken-1" :disabled="!valid" text @click="saveNewOrder">Salvar</v-btn>
         </v-card-actions>
@@ -151,6 +152,7 @@ const userMethods = mapActions("users", ["readUsers"])
 
 const methods = mapActions("serviceOrders", [
   "closeCreateOrderModal",
+  "cleanCreateOrderModal",
   "saveNewOrder",
   "updateNewOrderStartDate",
   "updateNewOrderEndDate"

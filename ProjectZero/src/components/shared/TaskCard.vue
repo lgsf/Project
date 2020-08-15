@@ -165,6 +165,21 @@
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   icon
+                  v-if="task.items && task.items.length"
+                  v-bind="attrs"
+                  v-on="on"
+                  color="gray lighten-2 small-button"
+                  @click="executeAction"
+                >
+                  <v-icon small>mdi-check</v-icon>
+                </v-btn>
+              </template>
+             <span>{{(!task.items ? '' : task.items.length == 1 ? `${ task.items.filter(m => m.done == true).length}/1 checklist` : `${ task.items.filter(m => m.done == true).length}/${task.items.length} checklists`)}}</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  icon
                   v-if="task.files && task.files.length"
                   v-bind="attrs"
                   v-on="on"

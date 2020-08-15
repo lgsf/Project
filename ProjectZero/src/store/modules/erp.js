@@ -117,7 +117,19 @@ const actions = {
         commit('selectErpOrder', {
             tasks:[]
         })
-        commit('editErpOrder', false)
+        commit('editUser', [])
+        commit('editAdmin', {})
+        commit('editName', '') 
+        commit('editErpOrder', false)      
+    },
+
+    cleanSelectedErpOrder({ commit }) {
+        commit('selectErpOrder', {
+            tasks:[]
+        })
+        commit('editUser', [])
+        commit('editAdmin', {})
+        commit('editName', '')  
     },
     
     searchFor({ commit }, payload) {

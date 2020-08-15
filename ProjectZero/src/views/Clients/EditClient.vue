@@ -27,12 +27,12 @@
               </v-row>
               <v-row>
                 <v-col cols="12">
-                  <cnpj-field label="CNPJ*" :rules="[rules.cnpjRequired]" :value="cnpj" @input="editCnpj" required="true"></cnpj-field>
+                  <cnpj-field label="CNPJ*" :rules="[rules.cnpjRequired]" :value="cnpj" @input="editCnpj"></cnpj-field>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col cols="12">
-                  <email-field label="Email*" :value="email" @input="editEmail" required="true"></email-field>
+                  <email-field label="Email*" :value="email" @input="editEmail" ></email-field>
                 </v-col>
               </v-row>
               <v-row>

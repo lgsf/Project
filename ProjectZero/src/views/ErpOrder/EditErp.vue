@@ -1,5 +1,4 @@
 <template>
-  <v-container>
     <v-dialog :value="dialog" persistent scrollable max-width="800px" @click:outside="closeSelectedErpOrder(false)">
       <v-card>
         <v-toolbar class="primary" dark>
@@ -8,9 +7,10 @@
         <v-divider></v-divider>
         <v-card-text>
           <v-container>
+          <v-form v-model="valid">
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Nome" :value="name" @input="editName" required></v-text-field>
+                <v-text-field label="Nome*" :value="name" @input="editName" :rules="nameRules"></v-text-field>
               </v-col>
             </v-row>
             <v-row>
@@ -38,7 +38,6 @@
                   return-object
                   dense
                   multiple
-                  required
                   @input="editUser"
                 ></v-autocomplete>
               </v-col>
@@ -67,7 +66,7 @@
                     <v-text-field v-model="item.name" />
                   </template>
                   <template v-slot:append="{ item, leaf }">
-                    <v-btn v-if="!leaf" icon color="green" @click="appendTaskItem(item)">
+                    <v-btn v-if="!leaf" icon color="green" :disabled="item.items.some(obj => obj.name == '')" @click="appendTaskItem(item)">
                       <v-icon>mdi-plus</v-icon>
                     </v-btn>
                     <v-btn icon color="red" @click="removeTaskOrItem(item)">
@@ -81,11 +80,12 @@
               <v-col cols="12">
                 <v-text-field label="Adicionar Tarefa" :value="newTask" @input="editNewTask">
                   <template v-slot:append>
-                    <v-icon @click="addTask">mdi-plus</v-icon>
+                    <v-icon color="green" :disabled="newTask == ''" @click="addTask">mdi-plus</v-icon>
                   </template>
                 </v-text-field>
               </v-col>
             </v-row>
+          </v-form>
           </v-container>
           <small>*Obrigatório</small>
         </v-card-text>
@@ -93,12 +93,12 @@
         <v-card-actions>
           <v-btn color="error" text v-if="Object.keys(selected).length > 1" @click="deleteErp">Excluir</v-btn>
           <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="cleanSelectedErpOrder">Limpar</v-btn>
           <v-btn color="blue darken-1" text @click="closeSelectedErpOrder">Fechar</v-btn>
-          <v-btn color="blue darken-1" text @click="saveErpOrder">Salvar</v-btn>
+          <v-btn color="blue darken-1" :disabled="!valid" text @click="saveErpOrder">Salvar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-container>
 </template>
 <script>
 import { mapState, mapActions } from "vuex"
@@ -124,7 +124,8 @@ const erpMethods = mapActions("erp",
 "editName",
 "editUser",
 "editAdmin",
-"closeSelectedErpOrder"
+"closeSelectedErpOrder",
+"cleanSelectedErpOrder"
 ])
 
 export default {
@@ -141,7 +142,6 @@ export default {
         users: [],
         created_by: this.editingAdmin
       })
-      console.log(this.selected.tasks)
       this.newTask = ""
     },
     editNewTask(payload) {
@@ -149,7 +149,7 @@ export default {
     },
     appendTaskItem(item) {
         let currentCount = item.items.length + 1
-        item.items.push({ id: currentCount })
+        item.items.push({ id: currentCount, name: '' })
     },
     removeTaskOrItem(item) {
       this.selected.tasks = this.selected.tasks.filter(m => m.id != item.id)
@@ -161,7 +161,11 @@ export default {
   data() {
     return {
       newTask: "",
-      taskCounter: 0
+      taskCounter: 0,
+      valid: false,
+      nameRules: [
+        v => !!v || 'É obrigatório selecionar um nome para a ordem'
+      ]
     }
   },
   mounted() {

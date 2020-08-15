@@ -311,6 +311,9 @@ const actions = {
         context.commit('updateShowCreateOrderDialog', false)
         context.commit('updateNewOrder', { name: '', creation_date: new Date().toLocaleString('pt-br'), start_date: '', end_date: '', users: [], userGroups: [], status: 'Pendente' })
     },
+    cleanCreateOrderModal(context) {
+        context.commit('updateNewOrder', { name: '', creation_date: new Date().toLocaleString('pt-br'), start_date: '', end_date: '', users: [], userGroups: [], status: 'Pendente' })
+    },
     saveNewOrder(context) {
         let tasks = []
         if (context.state.newOrder.template) {
@@ -336,7 +339,6 @@ const actions = {
                     date: new Date().toLocaleString('pt-br'),
                     user: context.state.newOrder.users.map((obj) => { return Object.assign({}, obj) }) || [],
                     userIds: context.state.newOrder.users.map(k => { return k.id}) || [],
-                    groupIds: context.state.newOrder.userGroups.map(k => { return k.id}) || [],
                     group: context.state.newOrder.userGroups.map((obj) => { return Object.assign({}, obj) }) || [],
                     read: []
                 })
@@ -490,7 +492,6 @@ const actions = {
                 date: new Date().toLocaleString('pt-br'),
                 user: [context.state.selectedTask.users],
                 userIds: [context.state.selectedTask.users.id],
-                groupIds: [],
                 group: [],
                 read: []
             })
@@ -527,8 +528,21 @@ const actions = {
                         context.state.selectedTask = context.state.selectedOrderTasks.find(c => c.id == payload.added.element.id)
                         context.state.selectedTask.status = column.title
 
+                        if(column.title == 'Pendente'){
+                            context.state.selectedTask.started_date = ''
+                            context.state.selectedTask.end_date = ''
+                        }
+
                         if (column.title == "Finalizada") {
-                            context.state.selectedTask.end_date = new Date().toLocaleString('pt-br')
+                            if (context.state.selectedTask.started_date == undefined || context.state.selectedTask.started_date == '' ){
+                                context.state.selectedTask.started_date = new Date().toLocaleString('pt-br')
+                                context.state.selectedTask.end_date = new Date().toLocaleString('pt-br')
+                            }
+                            
+                            else {
+                                context.state.selectedTask.end_date = new Date().toLocaleString('pt-br')
+                            }
+                            
                         }
                         else {
                             if (column.title == "Em progresso") {
@@ -548,7 +562,6 @@ const actions = {
                                 date: new Date().toLocaleString('pt-br'),
                                 user: [context.state.selectedTask.users],
                                 userIds: [context.state.selectedTask.users.id],
-                                groupIds: [],
                                 group: [],
                                 read: []
                             })
