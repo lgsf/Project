@@ -17,7 +17,6 @@
           <v-spacer></v-spacer>
         <v-icon right class="white--text">mdi-account</v-icon>
         </v-toolbar>
-
             <v-form v-model="valid">
             <v-row>
               <v-col class='ms-6 me-6'>
@@ -55,7 +54,7 @@
                   v-model="confirmedPassword"
                   label="Confirme a nova senha"
                   @input="confirmPassword"
-                  :rules="comparePasswords"
+                  :rules="passwordCompareRules"
                   type="password"
                   autocomplete="on"
                 />
@@ -147,10 +146,13 @@ export default {
       valid: false,
       password: '',
       confirmedPassword: '',
-      message: 'As senhas não são iguais',
       passwordRules: [
         v => !!v || "A senha é obrigatória",
         v => v.length >= 6 || "A senha deve conter mais de 6 caracteres"
+      ],
+      passwordCompareRules: [
+        v => !!v || "A senha é obrigatória",
+        v => v == this.password || "As senhas não são iguais"
       ]
     } 
   },
@@ -172,9 +174,6 @@ export default {
     }
   }),
   computed: Object.assign({}, computed, computedGeneral, {
-      comparePasswords(){
-          return this.password !== this.confirmedPassword ? this.message : ''
-      },
       checkWidth() {
       if (this.width > 620) {
         return true
