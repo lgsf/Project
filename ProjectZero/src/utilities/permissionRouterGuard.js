@@ -2,6 +2,9 @@ function hasPermissionsNeeded(to, from, permission) {
     if (permission.some(e => e.route === to.path)) {
         return true
     }
+    else if (to.path === "/profile") {
+        return true
+    }
     else if (from.path === "/" && to.path === "/home" && permission.length === 0) {
         return true
     }

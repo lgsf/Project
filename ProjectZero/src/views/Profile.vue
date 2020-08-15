@@ -1,0 +1,153 @@
+<template>
+<div class="profile">
+    <v-row style="min-width:70vw;">
+      <v-col>
+        <div class="text-center screen-margin-top" v-if="isLoading">
+          <v-progress-circular
+            indeterminate
+            color="primary"
+          ></v-progress-circular>
+        </div>
+        <v-card v-if="!isLoading">
+        <v-toolbar class="primary white--text" >
+          <h3>
+            {{ screenTitle }}
+          </h3>
+          <v-spacer></v-spacer>
+        <v-icon right class="white--text">mdi-account</v-icon>
+        </v-toolbar>
+        <Alert class="mt-2 ml-1 mr-1" />
+            <v-form v-model="valid">
+            <v-row>
+              <v-col class='ms-6 me-6'>
+                <v-text-field
+                  v-model="this.$store.state.auth.userName"
+                  label="Nome"
+                  :disabled="true"
+                />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col class='ms-6 me-6'>
+                <v-text-field
+                  v-model="this.$store.state.auth.user.email"
+                  label="E-mail"
+                  :disabled="true"
+                />
+             </v-col>
+            </v-row>
+            <v-row>
+              <v-col class='ms-6 me-6'>
+                <v-text-field
+                  v-model="password"
+                  label="Nova senha"
+                  @input="setPassword"
+                  :rules="passwordRules"
+                  type="password"
+                  autocomplete="on"
+                />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col class='ms-6 me-6'>
+                <v-text-field
+                  v-model="confirmedPassword"
+                  label="Confirme a nova senha"
+                  @input="confirmPassword"
+                  :rules="comparePasswords"
+                  type="password"
+                  autocomplete="on"
+                />
+              </v-col>
+            </v-row>
+            <v-row >
+              <v-col class='ms-6 me-6' >
+                 <v-btn
+                    color="success"
+                    depressed
+                    @click="readConfiguration"
+                  > 
+                    Mudar o tema
+                    <v-icon style="margin-left:8px;">cloud_download
+                    </v-icon>
+                  </v-btn>
+                  </v-col>
+                  <v-col  class="d-flex justify-end ms-6 me-6">
+                   <v-btn
+                    color="primary"
+                    depressed
+                    :disabled="!valid"
+                    @click="changePassword"
+                  > 
+                    Mudar a senha
+                    <v-icon style="margin-left:8px;">send</v-icon>
+                  </v-btn>
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-card>
+        </v-col>
+    </v-row>
+  </div>
+</template>
+
+<script>
+import Alert from "@/components/shared/Alert"
+import { mapActions, mapState  } from "vuex"
+
+
+const computed = mapState("users", {
+  userJustMe: state => state.userJustMe
+})
+
+const computedGeneral = mapState("general", {
+    isLoading: state => state.isLoading
+})
+
+const methods = mapActions("users", [
+  "readUsers"
+])
+
+const authMethods = mapActions("auth", [
+  "changePasswordStore"
+])
+
+export default {
+  components: { Alert },
+  name: "Perfil",
+  data() {
+    return {
+      screenTitle: 'Perfil',
+      valid: false,
+      password: '',
+      confirmedPassword: '',
+      message: 'As senhas não são iguais',
+      passwordRules: [
+        v => !!v || "A senha é obrigatória",
+        v => v.length >= 6 || "A senha deve conter mais de 6 caracteres"
+      ]
+    } 
+  },
+  
+  methods: Object.assign({}, methods, authMethods, {
+    setPassword(payload){
+        this.password = payload
+      },
+    confirmPassword(payload) {
+        this.confirmedPassword = payload
+      },
+    changePassword(){
+        this.changePasswordStore(this.password)
+    }
+  }),
+  computed: Object.assign({}, computed, computedGeneral, {
+      comparePasswords(){
+          return this.password !== this.confirmedPassword ? this.message : ''
+      }
+  }),
+
+  mounted() {
+    this.readUsers(true)
+  }
+}
+</script>

@@ -8,7 +8,8 @@ const state = () => ({
     isAuthenticated: false,
     userName: '',
     userGroup: '',
-    sessionStart: undefined
+    sessionStart: undefined,
+    nothing: ''
 })
 
 const mutations = {
@@ -63,6 +64,18 @@ const actions = {
                 let errorMessage = catchError(error)
                 this.dispatch('general/setErrorMessage', errorMessage)
             })
+    },
+
+    changePasswordStore({dispatch}, payload ){
+        var user = firebase.auth().currentUser
+        var newPassword = payload
+        user.updatePassword(newPassword).then(() => {
+            dispatch('general/setSuccessMessage', 'Sua senha foi trocada com sucesso!', {root:true})
+        }).catch((error) => {
+            let errorMessage = catchError(error)
+            dispatch('general/setErrorMessage', errorMessage, {root:true})
+        })
+
     },
 
     userSignOut({ commit, state }) {

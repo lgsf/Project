@@ -7,6 +7,7 @@ import Clients from '../views/Clients/Clients.vue'
 import Home from '../views/Home.vue'
 import ImportUtilities from '../views/Import.vue'
 import Setup from '../views/Setup.vue'
+import Profile from '../views/Profile.vue'
 import Erp from '../views/ErpOrder/Erp.vue'
 import ServiceOrder from '../views/ServiceOrder/ServiceOrder.vue'
 import EditServiceOrder from '../views/ServiceOrder/EditServiceOrder.vue'
@@ -45,9 +46,17 @@ const routes = [
     }
   },
   {
-    path: '/import', //Home
+    path: '/import', //Importações
     name: 'Import',
     component: ImportUtilities,
+    meta: {
+      authRequired: true
+    }
+  },
+  {
+    path: '/profile', //Perfil
+    name: 'Profile',
+    component: Profile,
     meta: {
       authRequired: true
     }

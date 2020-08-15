@@ -6,6 +6,10 @@
         <router-link to="/home"><v-img  :src="imgUrl" height="150" width="150" contain></v-img></router-link>
       </v-toolbar-title>
       <v-spacer></v-spacer>
+      <v-btn @click="$router.push('/profile')" color="grey-2" class="mr-3 primary--text">
+        <span >Perfil</span>
+        <v-icon right>mdi-account</v-icon>
+      </v-btn>
       <v-btn @click="userSignOut" color="grey-2" class="primary--text">
         <span >Sair</span>
         <v-icon right>exit_to_app</v-icon>
