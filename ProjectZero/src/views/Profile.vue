@@ -1,5 +1,6 @@
 <template>
 <div class="profile">
+    <Alert class="mt-2"/>
     <v-row style="min-width:70vw;">
       <v-col>
         <div class="text-center screen-margin-top" v-if="isLoading">
@@ -16,7 +17,7 @@
           <v-spacer></v-spacer>
         <v-icon right class="white--text">mdi-account</v-icon>
         </v-toolbar>
-        <Alert class="mt-2 ml-1 mr-1" />
+
             <v-form v-model="valid">
             <v-row>
               <v-col class='ms-6 me-6'>

@@ -1,6 +1,6 @@
 <template>
   <div class="groups">
-    <Alert class="mt-2"></Alert>
+    <Alert class="mt-2"/>
     <v-row style="min-width:70vw;">
       <v-col>
          <div class="text-center screen-margin-top" v-if="isLoading">
