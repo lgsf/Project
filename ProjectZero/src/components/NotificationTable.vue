@@ -57,7 +57,7 @@
                   </v-row>
                   <br> 
                   <v-row>
-                    <v-btn color="error" v-if="isAdmin" text @click="deleteNotificationItem(item)">Excluir</v-btn>
+                    <v-btn color="error" v-if="isAdmin" text @click="deleteNotification(item)">Excluir</v-btn>
                     <v-spacer></v-spacer>
                     <v-btn color="blue darken-1" v-show="item.read.some(obj => obj.id == isUser)" text @click="markUnread(item)">Não-lido</v-btn>
                   </v-row>
@@ -141,12 +141,9 @@ export default {
       return `Grupo(s): ${groups}`
     },
 
-    orderNotificationDate(){
-        this.check = true
-      },
-
-    orderNotificationNotRead(){
-        this.check = false
+    deleteNotification(item){
+        this.model = false
+        this.deleteNotificationItem(item)
       },
 
     markRead(item){

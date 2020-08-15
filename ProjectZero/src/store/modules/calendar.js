@@ -80,7 +80,7 @@ const actions = {
       context.dispatch('general/resetIsLoading', '', {root:true})
     },
     async updateEventStore (context, payload) {
-      if (context.state.name && context.state.start && context.state.end && !context.state.startTime && !context.state.endTime) {
+      if (context.state.name && context.state.start && context.state.end && !context.state.startTime && !context.state.endTime){
         await db.collection("calEvent").doc(payload.id).update({
           name: context.state.name,
           details: context.state.details,
@@ -88,8 +88,31 @@ const actions = {
           end: context.state.end,
           color: context.state.color
         })
+        if (context.state.editingUser.length == 0)
+          context.dispatch('notifications/sendNotification', {
+            name: "Sistema",
+            title: "Evento alterado",
+            detail: "Um evento em que você está vinculado foi alterado! <br>Título do evento: <b>" + context.state.name + "</b> </br>Data do evento: <b>" + moment(context.state.start).format('DD/MM/YYYY') + "</b>" ,
+            date: new Date().toLocaleString('pt-br'),
+            user: [],
+            userIds: context.rootState.users.userList.map(k => { return k.id}) || [],
+            group: [],
+            read: []
+        }, {root:true})
+        else 
+          context.dispatch('notifications/sendNotification', {
+            name: "Sistema",
+            title: "Novo evento",
+            detail: "Um evento em que você está vinculado foi alterado! <br>Título do evento: <b>" + context.state.name + "</b> </br>Data do evento: <b>" + moment(context.state.start).format('DD/MM/YYYY') + "</b>" ,
+            date: new Date().toLocaleString('pt-br'),
+            user: context.state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
+            userIds: context.state.editingUser.map(k => { return k.id}) || [],
+            group: [],
+            read: []
+          }, {root:true})
         context.dispatch('setEvent')
-      } else if (context.state.name && context.state.start && context.state.end && context.state.startTime && context.state.endTime){
+      } 
+      else if (context.state.name && context.state.start && context.state.end && context.state.startTime && context.state.endTime){
           await db.collection("calEvent").doc(payload.id).update({
           name: context.state.name,
           details: context.state.details,
@@ -97,7 +120,35 @@ const actions = {
           end: context.state.end + ' ' + context.state.endTime,
           color: context.state.color
         })
+        let timeOfEvent = context.state.start + ' ' + context.state.startTime
+        if (context.state.editingUser.length == 0)
+          context.dispatch('notifications/sendNotification', {
+            name: "Sistema",
+            title: "Evento alterado",
+            detail: "Um evento em que você está vinculado foi alterado! <br>Título do evento: <b>" + context.state.name + "</b> </br>Data do evento: <b>" + moment(timeOfEvent).format('DD/MM/YYYY, HH:mm:ss') + "</b>" ,
+            date: new Date().toLocaleString('pt-br'),
+            user: [],
+            userIds: context.rootState.users.userList.map(k => { return k.id}) || [],
+            group: [],
+            read: []
+        }, {root:true})
+      else 
+        context.dispatch('notifications/sendNotification', {
+          name: "Sistema",
+          title: "Novo evento",
+          detail: "Um evento em que você está vinculado foi alterado! <br>Título do evento: <b>" + context.state.name + "</b> </br>Data do evento: <b>" + moment(timeOfEvent).format('DD/MM/YYYY, HH:mm:ss') + "</b>" ,
+          date: new Date().toLocaleString('pt-br'),
+          user: context.state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
+          userIds: context.state.editingUser.map(k => { return k.id}) || [],
+          group: [],
+          read: []
+        }, {root:true})
         context.dispatch('setEvent')
+      }
+      else if (context.state.name && context.state.start && context.state.end && context.state.startTime && !context.state.endTime)
+        alert('Você deve inserir o horário de término do evento')
+      else {
+        alert('Você deve inserir o nome, início e fim do evento')
       }
     },
 
@@ -129,23 +180,20 @@ const actions = {
               read: []
           }, {root:true})
           else
-          context.dispatch('notifications/sendNotification', {
-            name: "Sistema",
-            title: "Novo evento",
-            detail: "Um novo evento em que você está vinculado foi marcado! <br>Título do evento: <b>" + context.state.name + "</b> </br>Data do evento: <b>" + moment(context.state.start).format('DD/MM/YYYY') + "</b>" ,
-            date: new Date().toLocaleString('pt-br'),
-            user: context.state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
-            userIds: context.state.editingUser.map(k => { return k.id}) || [],
-            group: [],
-            read: []
-        }, {root:true})
-
+            context.dispatch('notifications/sendNotification', {
+              name: "Sistema",
+              title: "Novo evento",
+              detail: "Um novo evento em que você está vinculado foi marcado! <br>Título do evento: <b>" + context.state.name + "</b> </br>Data do evento: <b>" + moment(context.state.start).format('DD/MM/YYYY') + "</b>" ,
+              date: new Date().toLocaleString('pt-br'),
+              user: context.state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
+              userIds: context.state.editingUser.map(k => { return k.id}) || [],
+              group: [],
+              read: []
+          }, {root:true})
           context.dispatch('setEvent')
       } 
 
-
-
-      else if(context.state.name && context.state.start && context.state.end && context.state.startTime && context.state.endTime){
+      else if (context.state.name && context.state.start && context.state.end && context.state.startTime && context.state.endTime){
           await db.collection("calEvent").add({
           name: context.state.name,
           details: context.state.details,
@@ -155,8 +203,33 @@ const actions = {
           author: context.rootState.auth.user.uid,
           user: context.state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
         })
+        let timeOfEvent = context.state.start + ' ' + context.state.startTime
+        if (context.state.editingUser.length == 0)
+          context.dispatch('notifications/sendNotification', {
+            name: "Sistema",
+            title: "Novo evento",
+            detail: "Um novo evento em que você está vinculado foi marcado! <br>Título do evento: <b>" + context.state.name + "</b> </br>Data do evento: <b>" + moment(timeOfEvent).format('DD/MM/YYYY, HH:mm:ss') + "</b>" ,
+            date: new Date().toLocaleString('pt-br'),
+            user: [],
+            userIds: context.rootState.users.userList.map(k => { return k.id}) || [],
+            group: [],
+            read: []
+        }, {root:true})
+        else
+          context.dispatch('notifications/sendNotification', {
+            name: "Sistema",
+            title: "Novo evento",
+            detail: "Um novo evento em que você está vinculado foi marcado! <br>Título do evento: <b>" + context.state.name + "</b> </br>Data do evento: <b>" + moment(timeOfEvent).format('DD/MM/YYYY, HH:mm:ss') + "</b>" ,
+            date: new Date().toLocaleString('pt-br'),
+            user: context.state.editingUser?.map((obj) => { return Object.assign({}, obj) }) || [],
+            userIds: context.state.editingUser.map(k => { return k.id}) || [],
+            group: [],
+            read: []
+        }, {root:true})
         context.dispatch('setEvent')
       }
+      else if (context.state.name && context.state.start && context.state.end && context.state.startTime && !context.state.endTime)
+        alert('Você deve inserir o horário de término do evento')
       else {
         alert('Você deve inserir o nome, início e fim do evento')
       }
