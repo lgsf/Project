@@ -212,7 +212,7 @@
                   @change="onTaskDrag($event, column.task)"
                 >
                   <!-- <transition-group> -->
-                  <task-card
+                  <task-card 
                     v-for="(task) in column.tasks"
                     :key="task.id"
                     :task="task"
@@ -231,7 +231,7 @@
     <v-btn color="primary" dark fixed bottom right fab @click="saveServiceOrder">
       <v-icon>mdi-content-save</v-icon>
     </v-btn>
-    <EditServiceOrderTask></EditServiceOrderTask>
+    <EditServiceOrderTask />
   </div>
 </template>
 
@@ -255,6 +255,7 @@ const computed = mapState({
   activeClientList: state => state.clients.activeClients,
   users: state => state.users.userList,
   groups: state => state.groups.groups,
+  showTaskDialog1: state => state.serviceOrders.showTaskDialog,
   currentUserEmail: state => state.auth.user.email,
   isAdmin: function(state) {
     return (
@@ -309,9 +310,7 @@ export default {
     EditServiceOrderTask,
     DatePicker
   },
-  computed: Object.assign(
-    {}, computed,
-    {
+  computed: Object.assign({}, computed, {
        checkWidth() {
             if(this.width > 752){
               return true
@@ -319,13 +318,7 @@ export default {
             else return false
         }
     }),
-  methods: Object.assign(
-    {},
-    orderMethods,
-    clientMethods,
-    userMethods,
-    groupMethods,
-    {
+  methods: Object.assign({}, orderMethods, clientMethods, userMethods, groupMethods, {
       filtertasks() {
         this.showOnlyMine = !this.showOnlyMine
         this.loadTasksByOrder({ filterCurrentUser: this.showOnlyMine })
@@ -334,11 +327,6 @@ export default {
         if (this.currentUserEmail != evt.draggedContext.element.users?.email && this.orderStatus != 'Em progresso')
           return false
       },
-      checkScreenWidth() {
-            setInterval(() => {
-                this.width = window.innerWidth
-            }, 100)
-        },
       checkOrderMethod(title){
         switch (title){
           case "Iniciar":
@@ -377,7 +365,6 @@ export default {
         }, 300)
       },
       checkIfTasksDone(selected){
-        console.log(selected.tasks.some(e => e.status === "Em progresso"))
         if (selected.tasks.some(e => e.status == "Em progresso")){
           alert("Você não pode finalizar a ordem: " + selected.name + "! Ainda existem tarefas em progresso.")
         }
@@ -399,16 +386,17 @@ export default {
         { title: 'Cancelar' },
         { title: 'Excluir' },
       ],
-    width: 0
-
+    width: window.innerWidth
   }),
   mounted() {
+    window.onresize = () => {
+        this.width = window.innerWidth
+    }
     this.loadTasksByOrder()
     this.loadClients()    
     this.readUsers()
     this.loadGroups()
     this.checkOrderStatus(this.selected)
-    this.checkScreenWidth()
   },
 }
 </script>

@@ -34,15 +34,15 @@
               </v-col>
               <v-col cols="1" md="2" class="pt-0 pb-0">
                 <v-btn
-                  class="d-none d-md-block"
-                  color="gray"
+                  class="d-none d-md-block primary--text"
+                  color="grey-2"
                   @click="setOrUnsetEditMode"
                   :disabled="userRole != 'SystemAdmin' && userRole != 'OrdemAdmin' && userRole != 'TaskCreator'"
-                >Edit</v-btn>
+                >Editar<v-icon style="padding-left:8px;">mdi-pencil-circle-outline</v-icon></v-btn>
                 <v-btn
                   icon
                   class="d-md-none"
-                  color="grey"
+                  color="primary"
                   @click="setOrUnsetEditMode"
                   :disabled="userRole != 'SystemAdmin' && userRole != 'OrdemAdmin' && userRole != 'TaskCreator'"
                 >
@@ -66,22 +66,23 @@
                 ></v-textarea>
               </v-col>
             </v-row>
-
             <v-row>
               <v-col cols="12">
-                <v-tabs center-active show-arrows>
-                  <v-tab>
+                <v-tabs centered show-arrows v-model="tab">
+                  <v-tab @click="updateTab(0)">
                     <v-icon left>mdi-file</v-icon>Detalhes
                   </v-tab>
-                  <v-tab>
+                  <v-tab @click="updateTab(1)">
                     <v-icon left>mdi-check</v-icon>Checklist
                   </v-tab>
-                  <v-tab>
+                  <v-tab @click="updateTab(2)">
                     <v-icon left>mdi-paperclip</v-icon>Anexos
                   </v-tab>
-                  <v-tab>
+                  <v-tab @click="updateTab(3  )">
                     <v-icon left>mdi-chat</v-icon>Comentários
                   </v-tab>
+                  </v-tabs>
+                  <v-tabs-items v-model="tab">
                   <v-tab-item>
                     <v-card flat>
                       <v-cart-text>
@@ -348,7 +349,7 @@
                       </v-card-text>
                     </v-card>
                   </v-tab-item>
-                </v-tabs>
+                </v-tabs-items>
               </v-col>
             </v-row>
           </v-container>
@@ -374,6 +375,7 @@ const moment = require("moment");
 const computed = Object.assign(
   {},
   mapState({
+    tab: state => state.serviceOrders.currentTaskTab,
     dialog: state => state.serviceOrders.showTaskDialog,
     selectedTask: state => state.serviceOrders.selectedTask,
     selectedOrder: state => state.serviceOrders.selected,
@@ -514,6 +516,7 @@ export default {
         id: this.counter
       })
     },
+    ...mapActions("serviceOrders", ["updateTab"]),
     removeTaskOrItem(item) {
       this.selectedTask.items = this.selectedTask.items.filter(
         m => m.id != item.id

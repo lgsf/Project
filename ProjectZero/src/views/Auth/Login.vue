@@ -104,7 +104,7 @@ export default {
   name: "Login",
   data() {
     return {
-      width: 0,
+      width: window.innerWidth,
       valid: false,
       screenTitle: "Login",
       email: "",
@@ -130,11 +130,6 @@ export default {
         email: this.email,
         password: this.password
       })
-    },
-    checkScreenWidth() {
-      setInterval(() => {
-        this.width = window.innerWidth
-      }, 100)
     }
   },
 
@@ -147,9 +142,11 @@ export default {
   }),
 
   mounted() {
+    window.onresize = () => {
+        this.width = window.innerWidth
+    }
     this.readLogo()
     this.readCompanyName()
-    this.checkScreenWidth()
   }
 }
 </script>

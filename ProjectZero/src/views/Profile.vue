@@ -60,8 +60,8 @@
                 />
               </v-col>
             </v-row>
-            <v-row v-if="checkWidth">
-              <v-col class='ms-6 me-6' >
+            <v-row>
+              <v-col class='ms-6 me-6 d-none d-sm-flex' >
                  <v-btn
                     color="success"
                     depressed
@@ -72,7 +72,7 @@
                     </v-icon>
                   </v-btn>
                   </v-col>
-                  <v-col  class="d-flex justify-end ms-6 me-6">
+                  <v-col class="justify-end ms-6 me-6 d-none d-sm-flex">
                    <v-btn
                     color="primary"
                     depressed
@@ -83,9 +83,7 @@
                     <v-icon style="margin-left:8px;">send</v-icon>
                   </v-btn>
               </v-col>
-            </v-row>
-            <v-row v-if="!checkWidth" >
-              <v-col class='d-flex justify-center' cols="12">
+              <v-col class='justify-center d-flex d-sm-none' cols="12">
                  <v-btn
                     color="success"
                     depressed
@@ -96,7 +94,7 @@
                     </v-icon>
                   </v-btn>
                   </v-col>
-                  <v-col  class="d-flex justify-center" cols="12">
+                  <v-col  class="justify-center d-flex d-sm-none" cols="12">
                    <v-btn
                     color="primary"
                     depressed
@@ -142,7 +140,7 @@ export default {
   data() {
     return {
       screenTitle: 'Perfil',
-      width: 0,
+      width: window.innerWidth,
       valid: false,
       password: '',
       confirmedPassword: '',
@@ -166,24 +164,13 @@ export default {
       },
     changePassword(){
         this.changePasswordStore(this.password)
-    },
-    checkScreenWidth() {
-      setInterval(() => {
-        this.width = window.innerWidth
-      }, 100)
     }
   }),
-  computed: Object.assign({}, computed, computedGeneral, {
-      checkWidth() {
-      if (this.width > 620) {
-        return true
-      } else return false
-    }
-  }),
+  
+  computed: Object.assign({}, computed, computedGeneral),
 
   mounted() {
     this.readUsers(true)
-    this.checkScreenWidth()
   }
 }
 </script>

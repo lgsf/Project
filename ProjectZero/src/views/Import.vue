@@ -40,7 +40,7 @@
                   class="mt-4"
                   @click="addFiles('clients', checkSuccess)"
                 >
-                  <v-icon>mdi-import</v-icon>Importar
+                  <v-icon style="padding-right:8px; padding-left:0px;">mdi-import</v-icon>Importar
                 </v-btn>
               </v-col>
             </v-row>
@@ -61,7 +61,7 @@
               </v-col>
               <v-col cols="1">
                 <v-btn v-if="file" dark color="primary" class="mt-4" @click="addFiles('users')">
-                  <v-icon>mdi-import</v-icon>Importar
+                  <v-icon style="padding-right:8px; padding-left:0px;">mdi-import</v-icon>Importar
                 </v-btn>
               </v-col>
             </v-row>

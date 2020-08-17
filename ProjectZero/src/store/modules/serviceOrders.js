@@ -7,6 +7,7 @@ const state = () => ({
     client: undefined,
     selected: '',
     search: '',
+    currentTaskTab: 0,
     statusList: ['Pendente', 'Em progresso', 'Finalizada', 'Cancelada'],
     serviceOrders: [],
     selectedOrderTasks: [],
@@ -22,6 +23,9 @@ const state = () => ({
 const mutations = {
     updateShowCreateOrderDialog(state, payload) {
         state.showCreateOrderDialog = payload
+    },
+    updateTab(state, payload){
+        state.currentTaskTab = payload
     },
     selectOrder(state, payload) {
         state.selected = payload
@@ -299,6 +303,9 @@ const actions = {
             router.push({ path: `/EditServiceOrder/${context.state.selected.id}` })
         else
             context.commit('updateShowCreateOrderDialog', true)
+    },
+    updateTab(context, payload){
+        context.commit('updateTab', payload)
     },
     returnToServiceOrders(context) {
         context.commit('selectOrder', false)

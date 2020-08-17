@@ -3,14 +3,14 @@
     <v-app-bar app flat>
       <v-app-bar-nav-icon color="primary" @click="drawer = !drawer" class></v-app-bar-nav-icon>
       <v-toolbar-title>
-        <router-link to="/home"><v-img  :src="imgUrl" height="150" width="150" contain></v-img></router-link>
+        <router-link to="/home"><v-img :src="imgUrl" height="150" width="150" contain></v-img></router-link>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn v-if="checkWidth" @click="$router.push('/profile')" color="grey-2" class="mr-3 primary--text">
+      <v-btn @click="$router.push('/profile')" color="grey-2" class="mr-3 primary--text d-none d-sm-flex">
         <span>Perfil</span>
         <v-icon right>mdi-account</v-icon>
       </v-btn>
-      <v-btn v-if="!checkWidth" @click="$router.push('/profile')" color="grey-2" class="mr-3 primary--text">
+      <v-btn @click="$router.push('/profile')" color="grey-2" class="mr-3 primary--text d-flex d-sm-none">
         <v-icon>mdi-account</v-icon>
       </v-btn>
       <v-btn @click="userSignOut" color="grey-2" class="primary--text">
@@ -90,30 +90,17 @@ const computedGeneral = mapState("general", {
 export default {
   data() {
     return {
-      drawer: true,
-      width: 0
+      drawer: true
     }
   },
-  computed: Object.assign({}, computed, computedGeneral, {
-    checkWidth() {
-      if (this.width > 620) {
-        return true
-      } else return false
-    }
-  }),
+  
+  computed: Object.assign({}, computed, computedGeneral),
 
-  methods: Object.assign({}, methods, generalMethods, setupMethods, {
-    checkScreenWidth() {
-      setInterval(() => {
-        this.width = window.innerWidth
-      }, 100)
-    }
-  }),
+  methods: Object.assign({}, methods, generalMethods, setupMethods),
 
   mounted() {
     this.readLogo()
     this.loadMenu()
-    this.checkScreenWidth()
   }
 }
 </script>

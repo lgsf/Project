@@ -50,7 +50,7 @@
             </v-tooltip>
           </v-col>
           <v-col cols="6" align="end" justify="end" class="ma-0 pa-0">
-            <v-btn icon class="ma-2 small-button" color="grey lighten-2" @click="executeAction">
+            <v-btn icon class="ma-2 small-button" color="grey lighten-2" @click="executeAction(0)">
               <v-icon>mdi-eye</v-icon>
             </v-btn>
           </v-col>
@@ -136,7 +136,7 @@
                   v-bind="attrs"
                   v-on="on"
                   color="gray lighten-2 small-button"
-                  @click="executeAction"
+                  @click="executeAction(0)"
                 >
                   <v-icon small>mdi-account-check</v-icon>
                 </v-btn>
@@ -154,7 +154,7 @@
                   v-bind="attrs"
                   v-on="on"
                   color="gray lighten-2 small-button"
-                  @click="executeAction"
+                  @click="executeAction(0)"
                 >
                   <v-icon small>mdi-clock-time-three-outline</v-icon>
                 </v-btn>
@@ -169,7 +169,7 @@
                   v-bind="attrs"
                   v-on="on"
                   color="gray lighten-2 small-button"
-                  @click="executeAction"
+                  @click="executeAction(1)"
                 >
                   <v-icon small>mdi-check</v-icon>
                 </v-btn>
@@ -184,7 +184,7 @@
                   v-bind="attrs"
                   v-on="on"
                   color="gray lighten-2 small-button"
-                  @click="executeAction"
+                  @click="executeAction(2)"
                 >
                   <v-icon small>mdi-paperclip</v-icon>
                 </v-btn>
@@ -199,7 +199,7 @@
                   v-bind="attrs"
                   v-on="on"
                   color="gray lighten-2 small-button"
-                  @click="executeAction"
+                  @click="executeAction(3)"
                 >
                   <v-icon small>mdi-lock-open-outline</v-icon>
                 </v-btn>
@@ -214,7 +214,7 @@
                   v-bind="attrs"
                   v-on="on"
                   color="gray lighten-2 small-button"
-                  @click="executeAction"
+                  @click="executeAction(0)"
                 >
                   <v-icon small>mdi-chat</v-icon>
                 </v-btn>
@@ -257,6 +257,16 @@
 }
 </style>
 <script>
+import { mapState, mapActions } from "vuex"
+
+
+const computed = mapState({
+  tab: state => state.serviceOrders.currentTaskTab
+})
+
+
+
+
 export default {
   props: {
     task: {
@@ -271,10 +281,13 @@ export default {
     };
   },
   methods: {
-    executeAction() {
+    executeAction(payload) {
       if (!this.action) return;
       this.action();
-    }
-  }
+      this.updateTab(payload)
+    },
+    ...mapActions("serviceOrders", ["updateTab"]),
+  },
+  computed
 };
 </script>
