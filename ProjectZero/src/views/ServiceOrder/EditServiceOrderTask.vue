@@ -78,7 +78,7 @@
                   <v-tab @click="updateTab(2)">
                     <v-icon left>mdi-paperclip</v-icon>Anexos
                   </v-tab>
-                  <v-tab @click="updateTab(3  )">
+                  <v-tab @click="updateTab(3)">
                     <v-icon left>mdi-chat</v-icon>Comentários
                   </v-tab>
                   </v-tabs>

@@ -13,6 +13,11 @@
 import Navbar from "./components/Navbar"
 import Footer from "./components/Footer"
 import ModalIdle from "@/components/ModalIdle"
+import { mapState  } from "vuex"
+
+const computedAuth = mapState("auth", {
+  selectedTheme: state => state.selectedTheme
+})
 
 export default {
   components: { Navbar, Footer, ModalIdle },
@@ -22,7 +27,8 @@ export default {
   data() {
     return {}
   },
-  computed: {
+  
+  computed: Object.assign({}, computedAuth,{
     isAuthenticated() {
       return this.$store.state.auth.isAuthenticated
     },
@@ -31,6 +37,14 @@ export default {
     },
     isIdle() {
       return this.$store.state.idleVue.isIdle
+    }
+  }),
+  mounted(){
+    window.onload = () => {
+      if(this.selectedTheme == 'Dark')
+        return this.$vuetify.theme.dark = true
+      else
+      return this.$vuetify.theme.dark = false
     }
   }
 };

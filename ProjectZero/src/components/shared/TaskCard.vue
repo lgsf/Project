@@ -264,9 +264,6 @@ const computed = mapState({
   tab: state => state.serviceOrders.currentTaskTab
 })
 
-
-
-
 export default {
   props: {
     task: {

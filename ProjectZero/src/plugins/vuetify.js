@@ -4,9 +4,15 @@ import Vuetify from 'vuetify/lib'
 
 Vue.use(Vuetify)
 
+import pt from 'vuetify/src/locale/pt.ts'
+
 export default new Vuetify({
   icons: {
     iconfont: 'md'
+  },
+  lang: {
+    locales: { pt },
+    current: 'pt',
   },
   theme: {
     themes: {

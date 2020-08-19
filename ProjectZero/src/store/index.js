@@ -23,7 +23,7 @@ export const store = new Vuex.Store({
   plugins: [
     createPersistedState({
       storage: window.sessionStorage,
-      paths: ['auth.isAuthenticated', 'auth.userName', 'auth.userGroup', 'auth.user.email', 'auth.user.uid', 'auth.sessionStart', 'general.links', 'serviceOrders']
+      paths: ['auth.isAuthenticated', 'auth.userName', 'auth.userGroup', 'auth.selectedTheme', 'auth.user.email', 'auth.user.uid', 'auth.sessionStart', 'general.links', 'serviceOrders']
     })
   ],
 

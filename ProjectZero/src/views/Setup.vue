@@ -18,16 +18,6 @@
         </v-toolbar>
         <Alert class="mt-2 ml-1 mr-1" />
             <v-form @submit.prevent="saveConfiguration">
-              <v-row>
-                <v-col class='ms-6 me-6'>
-                  <v-select 
-                  :items="options" 
-                  :label="themeSelectLabel" 
-                  v-model="selectedTheme" 
-                  @change="setSelectedTheme($event)"
-                  ></v-select>
-                </v-col>
-              </v-row>
             <v-row>
               <v-col class='ms-6 me-6'>
                 <v-text-field
@@ -141,11 +131,6 @@ export default {
   data() {
     return {
       screenTitle: 'Configurações',
-      themeSelectLabel: 'Tema',
-      options: [
-        'Light', 
-        'Dark'
-        ], 
       companyNameLabel: 'Razão social',
       companyContactLabel: 'Contato',
       companyEmailLabel: 'E-mail',
@@ -155,10 +140,6 @@ export default {
   methods: Object.assign({}, methods, {
     uploadLogoButtonClick(){
         this.$refs.uploadLogo.click()
-      },
-    setSelectedTheme(value) {
-        this.$vuetify.theme.light = value == 'Light'
-        this.$vuetify.theme.dark = value == 'Dark'
       }
   }),
 

@@ -2,6 +2,7 @@ import firebase from 'firebase'
 import router from '@/router'
 import { db, moment } from "@/main"
 import catchError from '@/utilities/firebaseErrors'
+import Vuetify from '@/plugins/vuetify'
 
 const state = () => ({
     user: null,
@@ -9,7 +10,7 @@ const state = () => ({
     userName: '',
     userGroup: '',
     sessionStart: undefined,
-    nothing: ''
+    selectedTheme: null
 })
 
 const mutations = {
@@ -29,12 +30,15 @@ const mutations = {
     },
     setUserGroup(state, payload) {
         state.userGroup = payload
+    },
+    setSelectedTheme(state, payload){
+        state.selectedTheme = payload
     }
 }
 
 
 const actions = {
-    userLogin({ commit }, { email, password }) {
+    userLogin({ state, commit, dispatch }, { email, password }) {
         this.dispatch('general/setIsLoading')
         this.dispatch('general/resetAllMessages', '')
         firebase
@@ -50,11 +54,14 @@ const actions = {
                         let currentUser = snapshots.data()
                         commit('setUserName', currentUser.name)
                         commit('setUserGroup', currentUser.group.id)
+                        commit('setSelectedTheme', currentUser.selectedTheme)
+                        dispatch('changeTheme', state.selectedTheme) 
                     })
-                this.dispatch('general/resetIsLoading')
+                   
             })
             .then(() => new Promise(function (resolve) {
                 resolve(router.push('/home'))
+                
             }))
             .catch((error) => {
                 sessionStorage.clear()
@@ -66,7 +73,53 @@ const actions = {
             })
     },
 
-    changePasswordStore({dispatch}, payload ){
+    changeTheme({dispatch}, value){
+        if (value == 'Dark'){
+            Vuetify.framework.theme.dark = true
+            dispatch('general/resetIsLoading', '', {root:true})
+        }   
+        else {
+            Vuetify.framework.theme.dark = false
+            dispatch('general/resetIsLoading', '', {root:true})
+        }
+
+    },
+
+    changeThemeDB({state, commit}){
+        if(state.selectedTheme == 'Light'){
+            Vuetify.framework.theme.dark = true
+            commit('setSelectedTheme', 'Dark')
+            return db.collection("users")
+            .doc(state.user.uid)
+            .update({
+                selectedTheme: 'Dark'
+            })
+            .catch(error => {
+                let errorMessage = catchError(error)
+                this.dispatch('general/setErrorMessage', errorMessage)
+            })
+        }
+            
+        else {
+            Vuetify.framework.theme.dark = false
+            commit('setSelectedTheme', 'Light')
+            return db.collection("users")
+            .doc(state.user.uid)
+            .update({
+                selectedTheme: 'Light'
+            })
+            .catch(error => {
+                let errorMessage = catchError(error)
+                this.dispatch('general/setErrorMessage', errorMessage)
+            })
+        }
+            
+            
+
+    },
+    
+
+    changePasswordStore({dispatch}, payload){
         var user = firebase.auth().currentUser
         var newPassword = payload
         user.updatePassword(newPassword).then(() => {

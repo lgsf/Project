@@ -61,11 +61,21 @@
               </v-col>
             </v-row>
             <v-row>
+                <v-col class='ms-6 me-6'>
+                  <v-select 
+                  :items="options" 
+                  label="Tema" 
+                  v-model="selectedTheme" 
+                  disabled
+                  ></v-select>
+                </v-col>
+              </v-row>
+            <v-row>
               <v-col class='ms-6 me-6 d-none d-sm-flex' >
                  <v-btn
                     color="success"
                     depressed
-                    @click="readConfiguration"
+                    @click="changeThemeDB"
                   > 
                     Mudar o tema
                     <v-icon style="margin-left:8px;">cloud_download
@@ -87,7 +97,7 @@
                  <v-btn
                     color="success"
                     depressed
-                    @click="readConfiguration"
+                    @click="changeThemeDB"
                   > 
                     Mudar o tema
                     <v-icon style="margin-left:8px;">cloud_download
@@ -123,7 +133,11 @@ const computed = mapState("users", {
 })
 
 const computedGeneral = mapState("general", {
-    isLoading: state => state.isLoading
+  isLoading: state => state.isLoading
+})
+
+const computedAuth = mapState("auth", {
+  selectedTheme: state => state.selectedTheme
 })
 
 const methods = mapActions("users", [
@@ -131,7 +145,8 @@ const methods = mapActions("users", [
 ])
 
 const authMethods = mapActions("auth", [
-  "changePasswordStore"
+  "changePasswordStore",
+  "changeThemeDB"
 ])
 
 export default {
@@ -139,6 +154,10 @@ export default {
   name: "Perfil",
   data() {
     return {
+      options: [
+        'Light', 
+        'Dark'
+        ], 
       screenTitle: 'Perfil',
       width: window.innerWidth,
       valid: false,
@@ -167,7 +186,7 @@ export default {
     }
   }),
   
-  computed: Object.assign({}, computed, computedGeneral),
+  computed: Object.assign({}, computed, computedGeneral, computedAuth),
 
   mounted() {
     this.readUsers(true)
