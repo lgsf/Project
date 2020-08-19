@@ -159,13 +159,18 @@ const actions = {
         theme_code: state.selectedTheme,
       })
       .then(() => {
+        if(state.image == null)
+          return
+        else
+        {
         const fileName = 'logo/logo-dropo' + state.image.name.slice(state.image.name.lastIndexOf('.'))
         const storageRef = fileStorage.ref(fileName)
         storageRef.put(state.image)
+        }
       })
       .then(() => {
-        this.dispatch('general/setSuccessMessage', 'Suas configurações foram salvas com sucesso!')
         this.dispatch('setup/readConfiguration')
+        this.dispatch('general/setSuccessMessage', 'Suas configurações foram salvas com sucesso!')
       })
       .catch((error) => {
         this.dispatch('general/resetIsLoading')

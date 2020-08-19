@@ -55,7 +55,7 @@ const actions = {
                         commit('setUserName', currentUser.name)
                         commit('setUserGroup', currentUser.group.id)
                         commit('setSelectedTheme', currentUser.selectedTheme)
-                        dispatch('changeTheme', state.selectedTheme) 
+                        dispatch('changeThemeOnLogin', state.selectedTheme) 
                     })
                    
             })
@@ -73,7 +73,7 @@ const actions = {
             })
     },
 
-    changeTheme({dispatch}, value){
+    changeThemeOnLogin({dispatch}, value){
         if (value == 'Dark'){
             Vuetify.framework.theme.dark = true
             dispatch('general/resetIsLoading', '', {root:true})
@@ -89,6 +89,7 @@ const actions = {
         if(state.selectedTheme == 'Light'){
             Vuetify.framework.theme.dark = true
             commit('setSelectedTheme', 'Dark')
+            this.dispatch('general/setSuccessMessage', 'Tema alterado com sucesso para Dark!')
             return db.collection("users")
             .doc(state.user.uid)
             .update({
@@ -103,6 +104,7 @@ const actions = {
         else {
             Vuetify.framework.theme.dark = false
             commit('setSelectedTheme', 'Light')
+            this.dispatch('general/setSuccessMessage', 'Tema alterado com sucesso para Light!')
             return db.collection("users")
             .doc(state.user.uid)
             .update({
