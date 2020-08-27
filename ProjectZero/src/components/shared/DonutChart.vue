@@ -116,7 +116,7 @@ export default Vue.extend({
       tooltip: { enable: true },
 
       explodeIndex: 3
-    };
+    }
   },
   provide: {
     accumulationchart: [
@@ -131,5 +131,5 @@ export default Vue.extend({
       this.componentKey += 1;
     }
   }
-});
+})
 </script>
