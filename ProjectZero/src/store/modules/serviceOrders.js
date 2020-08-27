@@ -300,7 +300,7 @@ Array.prototype.unique = function (compare) {
 const actions = {
     editServiceOrder(context) {
         if (context.state.selected)
-            router.push({ path: `/EditServiceOrder/${context.state.selected.id}` })
+            router.push({ path: `/editServiceOrder/${context.state.selected.id}` })
         else
             context.commit('updateShowCreateOrderDialog', true)
     },

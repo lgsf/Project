@@ -5,7 +5,7 @@ import Login from '../views/Auth/Login.vue'
 import ResetPassword from '../views/Auth/ResetPassword.vue'
 import Clients from '../views/Clients/Clients.vue'
 import Home from '../views/Home.vue'
-import ImportUtilities from '../views/Import.vue'
+import ImportExportUtilities from '../views/ImportExport.vue'
 import Setup from '../views/Setup.vue'
 import Profile from '../views/Profile.vue'
 import Erp from '../views/ErpOrder/Erp.vue'
@@ -46,9 +46,9 @@ const routes = [
     }
   },
   {
-    path: '/import', //Importações
-    name: 'Import',
-    component: ImportUtilities,
+    path: '/importAndExport', //Importações
+    name: 'ImportExport',
+    component: ImportExportUtilities,
     meta: {
       authRequired: true
     }
@@ -94,7 +94,7 @@ const routes = [
     }
   },
   {
-    path: '/EditServiceOrder/:id', //Ordem de serviço
+    path: '/editServiceOrder/:id', //Ordem de serviço
     name: 'EditServiceOrder',
     component: EditServiceOrder,
     props: true,
@@ -135,7 +135,7 @@ const routes = [
     }
   },
   {
-    path: '/overall-productivity', //Overall Productivity
+    path: '/overallProductivity', //Overall Productivity
     name: 'OverallProductivity',
     component: OverallProductivity,
     meta: {

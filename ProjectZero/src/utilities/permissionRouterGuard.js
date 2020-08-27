@@ -11,7 +11,7 @@ function hasPermissionsNeeded(to, from, permission) {
     else if (to.path === "/users" || to.path === "/groups" && permission.some(e => e.route === "/team")) {
         return true
     }
-    else if (to.path.includes("/EditServiceOrder/") && permission.some(e => e.route === "/serviceOrder")) {
+    else if (to.path.includes("/editServiceOrder/") && permission.some(e => e.route === "/serviceOrder")) {
         return true
     }
     else {
