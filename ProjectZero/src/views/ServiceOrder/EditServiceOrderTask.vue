@@ -339,7 +339,12 @@
                                 <v-list-item v-for="(item, i) in selectedTask.comments" :key="i">
                                   <v-list-item-content>
                                     <v-list-item-title v-html="getCommentTitle(item)"></v-list-item-title>
-                                    <v-list-item-subtitle v-html="item.text"></v-list-item-subtitle>
+                                    <v-tooltip bottom>
+                                      <template v-slot:activator="{ on }">
+                                        <v-list-item-subtitle v-on="on" v-html="item.text"></v-list-item-subtitle>
+                                      </template>
+                                        <span>{{item.text}}</span>
+                                      </v-tooltip>
                                   </v-list-item-content>
                                 </v-list-item>
                               </v-list-item-group>
