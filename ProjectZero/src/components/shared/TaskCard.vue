@@ -199,7 +199,7 @@
                   v-bind="attrs"
                   v-on="on"
                   color="gray lighten-2 small-button"
-                  @click="executeAction(3)"
+                  @click="executeAction(0)"
                 >
                   <v-icon small>mdi-lock-open-outline</v-icon>
                 </v-btn>
@@ -214,7 +214,7 @@
                   v-bind="attrs"
                   v-on="on"
                   color="gray lighten-2 small-button"
-                  @click="executeAction(0)"
+                  @click="executeAction(3)"
                 >
                   <v-icon small>mdi-chat</v-icon>
                 </v-btn>
