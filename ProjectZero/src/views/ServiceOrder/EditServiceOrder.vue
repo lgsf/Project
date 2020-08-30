@@ -326,6 +326,12 @@ export default {
       onMoveTask(evt) {
         if (this.currentUserEmail != evt.draggedContext.element.users?.email && this.orderStatus != 'Em progresso')
           return false
+
+        if(evt.draggedContext?.element?.dependencyTask != null)
+        {
+          let dependentTaskStatus = this.tasks.find(t => t.id == evt.draggedContext.element.dependencyTask).status;
+          return dependentTaskStatus == "Finalizada" || dependentTaskStatus == "Cancelada"
+        }
       },
       checkOrderMethod(title){
         switch (title){
