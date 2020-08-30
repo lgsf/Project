@@ -327,7 +327,7 @@ export default {
         if (this.currentUserEmail != evt.draggedContext.element.users?.email && this.orderStatus != 'Em progresso')
           return false
 
-        if(evt.draggedContext?.element?.dependencyTask != null)
+        if(evt.draggedContext?.element?.dependencyTask != null && evt.draggedContext?.element?.dependencyTask != '')
         {
           let dependentTaskStatus = this.tasks.find(t => t.id == evt.draggedContext.element.dependencyTask).status;
           return dependentTaskStatus == "Finalizada" || dependentTaskStatus == "Cancelada"

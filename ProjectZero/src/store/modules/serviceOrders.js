@@ -210,6 +210,7 @@ function saveCurrentSelectedTask(order, context, resolve) {
     context.state.selectedTask.priority = context.state.selectedTask.priority || ''
     context.state.selectedTask.tags = context.state.selectedTask.tags || []
     var index = orderData.tasks.indexOf(orderData.tasks.find(t => t.id == context.state.selectedTask.id))
+    context.state.selectedTask.dependencyTask = context.state.selectedTask.dependencyTask ?? ''
     orderData.tasks[index] = context.state.selectedTask
     let tags = (orderData.tags || []).concat(context.state.selectedTask.tags || [])
     tags = tags.unique((a, b) => a.color == b.color)
