@@ -197,7 +197,12 @@ const actions = {
     cleanSelectionClient({ commit }) {
        commit('editName', '')
        commit('editEmail', '')
-       commit('editCnpj', '')
+       commit('editCep', '')
+       commit('editCity', '')
+       commit('editComplement', '')
+       commit('editState', '')
+       commit('editNeighborhood', '')
+       commit('editNumber', '')
        
     },
 
@@ -217,7 +222,10 @@ const actions = {
                 snapshots.forEach(clientSnapShot => {
                     let clientData = clientSnapShot.data()
                     clientData.id = clientSnapShot.id
-                    clientData.addressConcatenated = clientData.address.street + ', ' + clientData.address.number + ' - ' + clientData.address.complement + ' - ' + clientData.address.neighborhood + ' - ' + clientData.address.city + '/' + clientData.address.state
+                    if (clientData.address.complement === '')
+                        clientData.addressConcatenated = clientData.address.street + ', ' + clientData.address.number + ' - ' + clientData.address.neighborhood + ' - ' + clientData.address.city + '/' + clientData.address.state
+                    else
+                        clientData.addressConcatenated = clientData.address.street + ', ' + clientData.address.number + ' - ' + clientData.address.complement + ' - ' + clientData.address.neighborhood + ' - ' + clientData.address.city + '/' + clientData.address.state
                     clients.push(clientData)
                 })
                 commit('updateClients', clients)
