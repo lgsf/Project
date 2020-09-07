@@ -29,7 +29,7 @@
             </v-col>
           </v-row>
           <v-row v-if="pickedExport !== ''" >
-            <v-col cols="9" class="ms-6 me-6">
+            <v-col cols="10" xl="9" md="9" lg="9" class="ms-6 me-6">
               <v-radio-group v-model="typeFile" label="Qual o tipo do arquivo de saída:" row>
                 <v-radio label="CSV" value="csv"></v-radio>
                 <v-radio label="XLS" value="xls" ></v-radio>
@@ -37,6 +37,19 @@
                 <v-radio label="JSON" value="json"></v-radio>
               </v-radio-group>
             </v-col>
+            <v-col cols="12" xl="2" md="2" lg="2" class="ms-6 me-6">
+              <v-btn
+                  v-if="typeFile !== ''"
+                  dark
+                  color="primary"
+                  class="mt-4"
+                  @click="saveDb"
+                  
+                >
+                  <v-icon style="padding-right:8px; padding-left:0px;">mdi-import</v-icon>Exportar para {{typeFile}}
+                </v-btn>
+            </v-col>
+            
           </v-row>
           <v-row v-if="picked === 'Import'" >
             <v-col cols="9" class="ms-6 me-6">
@@ -105,7 +118,10 @@ import Alert from "@/components/shared/Alert"
 import { mapActions } from "vuex"
 import XLSX from "xlsx"
 import saveClientsBatch from "@/utilities/saveClientsBatch"
-import { functions } from "@/main"
+import { functions} from "@/main"
+import * as cep from 'cep-promise'
+
+
 
 function readFileContent(file, saveFileContent) {
   let reader = new FileReader();
@@ -153,6 +169,10 @@ export default {
         this.file = null
       }
 
+    },
+    saveDb(){
+      cep('05010000')
+        .then(console.log)
     },
 
     sendInfoMessage(payload) {

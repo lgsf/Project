@@ -1,5 +1,5 @@
 
-import { db } from "@/main"
+import { db, moment } from "@/main"
 import catchError from '@/utilities/firebaseErrors'
 
 const state = () => ({
@@ -26,6 +26,21 @@ const state = () => ({
             value: "email"
         },
         {
+            text: "Endereço",
+            align: "start",
+            value: "addressConcatenated"
+        },
+        {
+            text: "Tipo",
+            align: "start",
+            value: "type"
+        },
+        {
+            text: "Data criação",
+            align: "start",
+            value: "date"
+        },
+        {
             text: "Estado Atual",
             align: "start",
             value: "status"
@@ -36,7 +51,16 @@ const state = () => ({
     editingName: '',
     editingCnpj: '',
     editingEmail: '',
-    editingStatus: ''
+    editingStatus: '',
+    editingDate: '',
+    editingType: '',
+    editingCep: '',
+    editingStreet: '',
+    editingNeighborhood: '',
+    editingNumber: '',
+    editingComplement: '',
+    editingCity: '',
+    editingState: ''
 })
 
 const mutations = {
@@ -54,7 +78,16 @@ const mutations = {
         state.editingName = anySelected ? state.selected.name : ''
         state.editingCnpj = anySelected ? state.selected.cnpj : ''
         state.editingEmail = anySelected ? state.selected.email : ''
-        state.editingStatus = anySelected ? state.selected.status : 'Ativo'
+        state.editingStatus = anySelected ? state.selected.status : 'Ativo',
+        state.editingType = anySelected ? state.selected.type : '',
+        state.editingDate = anySelected ? state.selected.date : '',
+        state.editingCep = anySelected ? state.selected.address.cep : '',
+        state.editingCity = anySelected ? state.selected.address.city : '',
+        state.editingState = anySelected ? state.selected.address.state : '',
+        state.editingNeighborhood = anySelected ? state.selected.address.neighborhood : '',
+        state.editingStreet = anySelected ? state.selected.address.street : '',
+        state.editingNumber = anySelected ? state.selected.address.number : '',
+        state.editingComplement = anySelected ? state.selected.address.complement : '',
         state.editClient = payload
     },
     editName(state, payload) {
@@ -69,6 +102,30 @@ const mutations = {
     editStatus(state, payload) {
         state.editingStatus = payload
     },
+    editType(state, payload) {
+        state.editingType = payload
+    },
+    editCep(state, payload) {
+        state.editingCep = payload
+    },
+    editState(state, payload) {
+        state.editingState = payload
+    },
+    editCity(state, payload) {
+        state.editingCity = payload
+    },
+    editNeighborhood(state, payload) {
+        state.editingNeighborhood = payload
+    },
+    editStreet(state, payload) {
+        state.editingStreet = payload
+    },
+    editNumber(state, payload) {
+        state.editingNumber = payload
+    },
+    editComplement(state, payload) {
+        state.editingComplement = payload
+    },
     updateActiveClients(state, payload) {
         state.activeClients = payload
     }
@@ -81,7 +138,18 @@ function createNewClient(state) {
             name: state.editingName || "",
             email: state.editingEmail || "",
             cnpj: state.editingCnpj || "",
-            status: state.editingStatus || "Ativo"
+            status: state.editingStatus || "Ativo",
+            date: moment().format('DD/MM/YYYY'),
+            type: state.editingType || "",
+            address: {
+                cep: state.editingCep,
+                street: state.editingStreet,
+                number: state.editingNumber,
+                complement: state.editingComplement,
+                neighborhood: state.editingNeighborhood,
+                city: state.editingCity,
+                state: state.editingState
+                }
         }).catch(error => {
             let errorMessage = catchError(error)
             this.dispatch('general/setErrorMessage', errorMessage)
@@ -95,7 +163,17 @@ function updateExistingClient(state) {
             name: state.editingName || "",
             email: state.editingEmail || "",
             cnpj: state.editingCnpj || "",
-            status: state.editingStatus || "Ativo"
+            status: state.editingStatus || "Ativo",
+            type: state.editingType || "",
+            address: {
+                cep: state.editingCep,
+                street: state.editingStreet,
+                number: state.editingNumber,
+                complement: state.editingComplement,
+                neighborhood: state.editingNeighborhood,
+                city: state.editingCity,
+                state: state.editingState
+                }
         }).catch(error => {
             let errorMessage = catchError(error)
             this.dispatch('general/setErrorMessage', errorMessage)
@@ -139,6 +217,7 @@ const actions = {
                 snapshots.forEach(clientSnapShot => {
                     let clientData = clientSnapShot.data()
                     clientData.id = clientSnapShot.id
+                    clientData.addressConcatenated = clientData.address.street + ', ' + clientData.address.number + ' - ' + clientData.address.complement + ' - ' + clientData.address.neighborhood + ' - ' + clientData.address.city + '/' + clientData.address.state
                     clients.push(clientData)
                 })
                 commit('updateClients', clients)
@@ -174,6 +253,40 @@ const actions = {
     editStatus({ state, commit }, payload) {
         if (!state) console.log('Error, state is undifined.')
         commit('editStatus', payload)
+    },
+
+    editAddress({ state, commit }, payload) {
+        if (!state) console.log('Error, state is undifined.')
+        commit('editCep', payload.cep)
+        commit('editState', payload.state)
+        commit('editCity', payload.city)
+        commit('editNeighborhood', payload.neighborhood)
+        commit('editStreet', payload.street)
+    },
+
+    editNumber({ state, commit }, payload) {
+        if (!state) console.log('Error, state is undifined.')
+        commit('editNumber', payload)
+    },
+
+    editComplement({ state, commit }, payload) {
+        if (!state) console.log('Error, state is undifined.')
+        commit('editComplement', payload)
+    },
+
+    editNeighborhood({ state, commit }, payload) {
+        if (!state) console.log('Error, state is undifined.')
+        commit('editNeighborhood', payload)
+    },
+
+    editStreet({ state, commit }, payload) {
+        if (!state) console.log('Error, state is undifined.')
+        commit('editStreet', payload)
+    },
+
+    editType({ state, commit }, payload) {
+        if (!state) console.log('Error, state is undifined.')
+        commit('editType', payload)
     },
 
     saveClient({ state }) {

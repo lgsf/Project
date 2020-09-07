@@ -10,6 +10,7 @@
   "dependencies": {
     "@syncfusion/ej2-vue-charts": "^18.1.56",
     "@syncfusion/ej2-vue-grids": "^18.1.56",
+    "cep-promise": "^4.0.0",
     "core-js": "^3.6.5",
     "firebase": "^7.14.1",
     "idle-vue": "^2.0.5",

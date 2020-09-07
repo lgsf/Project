@@ -36,12 +36,57 @@
                 </v-col>
               </v-row>
               <v-row>
-              <div>
-                <v-radio-group v-model="status" @change="editStatus" :mandatory="true" row>
-                  <v-radio label="Ativo" value="Ativo"></v-radio>
-                  <v-radio label="Inativo" value="Inativo"></v-radio>
-                </v-radio-group>
-              </div>
+                <v-col cols="12">
+                  <v-text-field label="Data de criação" :value="date" disabled ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="12">
+                  <v-text-field label="Cep" :value="cep" @input="checkCep" ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row v-if="cep.length == 8">
+                <v-col cols="12">
+                  <v-text-field label="Rua" :value="street" @input="editStreet" ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row v-if="cep.length == 8">
+                <v-col cols="6">
+                  <v-text-field label="Número" :value="number" @input="editNumber" ></v-text-field>
+                </v-col>
+                <v-col cols="6">
+                  <v-text-field label="Complemento" :value="complement" @input="editComplement" ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row v-if="cep.length == 8">
+                <v-col cols="12">
+                  <v-text-field label="Bairro" :value="neighborhood" @input="editNeighborhood" ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row v-if="cep.length == 8">
+                <v-col cols="6">
+                  <v-text-field label="Cidade" :value="city" disabled></v-text-field>
+                </v-col>
+                <v-col cols="6">
+                  <v-text-field label="Estado" :value="stateOfClient" disabled></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                  <div>
+                    <v-radio-group v-model="type" @change="editType" row>
+                      <v-radio label="Cliente" value="Cliente"></v-radio>
+                      <v-radio label="Fornecedor" value="Fornecedor"></v-radio>
+                      <v-radio label="Ambos" value="Ambos"></v-radio>
+                    </v-radio-group>
+                  </div>
+              </v-row>
+              <v-row>
+                <div>
+                  <v-radio-group v-model="status" @change="editStatus" :mandatory="true" row>
+                    <v-radio label="Ativo" value="Ativo"></v-radio>
+                    <v-radio label="Inativo" value="Inativo"></v-radio>
+                  </v-radio-group>
+                </div>
               </v-row>
             </v-container>
             <small>*Obrigatório</small>
@@ -62,6 +107,8 @@
 import { mapState, mapActions } from "vuex"
 import EmailField from "@/components/shared/EmailField"
 import CnpjField from "@/components/shared/CnpjField"
+import { moment } from "@/main"
+import * as cep from 'cep-promise'
 
 const computed = mapState("clients", {
   title: state => state.editTitle,
@@ -69,7 +116,21 @@ const computed = mapState("clients", {
   name: state => state.editingName,
   cnpj: state => state.editingCnpj,
   email: state => state.editingEmail,
-  status: state => state.editingStatus
+  status: state => state.editingStatus,
+  type: state => state.editingType,
+
+  cep: state => state.editingCep,
+  street: state => state.editingStreet,
+  neighborhood: state => state.editingNeighborhood,
+  number: state => state.editingNumber,
+  complement: state => state.editingComplement,
+  city: state => state.editingCity,
+  stateOfClient: state => state.editingState,
+
+  date: function(state) {
+    if (state.editingDate == '') return moment().format('DD/MM/YYYY')
+    else return state.editingDate
+  }
 })
 
 const methods = mapActions("clients", [
@@ -81,7 +142,13 @@ const methods = mapActions("clients", [
   "saveClient",
   "closeSelectionClient",
   "cleanSelectionClient",
-  "editStatus"
+  "editType",
+  "editStatus",
+  "editAddress",
+  "editNumber",
+  "editComplement",
+  "editStreet",
+  "editNeighborhood"
 ])
 
 export default {
@@ -96,6 +163,16 @@ export default {
     }
   },
   computed,
-  methods
+  methods: Object.assign({}, methods, {
+    checkCep(payload){
+      if (payload.length == 8){
+        cep(payload)
+        .then(data => {
+          this.editAddress(data)
+        })
+      }
+      else return
+    }
+  }),
 }
 </script>
